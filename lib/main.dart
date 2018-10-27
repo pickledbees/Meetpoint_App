@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:meetpoint/Screens/HomeView.dart';
 import 'package:meetpoint/Screens/FirstStartUI.dart';
-import 'package:meetpoint/Screens/InitialiserUI.dart';
+import 'package:meetpoint/Screens/InitialiserView.dart';
 
 void main() {
   print('App starting...');
@@ -20,7 +20,7 @@ class MeetPointApp extends StatelessWidget {
       routes: {
         '/' : (context) => HomeView(HomeController(HomeModel())),
         '/FirstStartUI' : (context) => FirstStartUI(),
-        '/InitialiserUI' : (context) => InitialiserUI(),
+        '/InitialiserUI' : (context) => InitialiserView(InitialiserController()),
       },
     );
   }

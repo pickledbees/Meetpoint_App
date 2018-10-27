@@ -1,5 +1,6 @@
-import 'dart:async';
 import 'package:flutter/foundation.dart';
+import 'dart:async';
+import 'Entities.dart';
 
 Duration timelag = Duration(seconds: 1);
 bool success = true;
@@ -14,6 +15,11 @@ class LocalSessionManager {
   //read-only
   static List<Session> get sessions => _sessions;
   static Session get openSession => _openSession;
+
+  //loads sessions from local memory
+  static Future loadSessions() async {
+    //***load**
+  }
 
   //fetch sessions from server
   static Future fetchSessions() async {
@@ -38,7 +44,7 @@ class LocalSessionManager {
 
   //completes to id if success, throws error if failed
   static Future createSession({@required String sessionTitle}) async {
-    //replace with socket request
+    //**replace with socket request**
     String sessionTitle =
     await Future.delayed(timelag, () =>
     success
@@ -50,7 +56,7 @@ class LocalSessionManager {
 
   //completes to session if success, throws error if failed
   static Future addSession({@required String sessionId}) async {
-    //replace with socket request
+    //**replace with socket request**
     return await Future.delayed(timelag, () =>
     success
         ? _sessions.add(returned_session)
@@ -60,7 +66,7 @@ class LocalSessionManager {
 
   //completes to boolean true if success, throws error if failed
   static Future deleteSession({@required String sessionId}) async {
-    //replace with socket request
+    //**replace with socket request**
     return await Future.delayed(timelag, () =>
     success
         ? _sessions.removeAt(_findSession(sessionId))
@@ -70,7 +76,7 @@ class LocalSessionManager {
 
   //loads session to be the currently open session
   static void loadSession({@required String sessionId}) {
-    //replace with socket request
+    //**replace with socket request**
     _openSession = _sessions[_findSession(sessionId)];
   }
 
@@ -80,7 +86,7 @@ class LocalSessionManager {
     @required String editCallBack,
     List<Map<String,String>> params
   }) async {
-    //replace with socket request
+    //**replace with socket request**
     await Future.delayed(timelag, () =>
     success
         ? success
@@ -88,8 +94,8 @@ class LocalSessionManager {
     );
     //edit local copy if success
     int index = _findSession(sessionId);
-    //editMethod parser
-    //edit appropriate member in _openSession
+    //**editMethod parser**
+    //**edit appropriate member in _openSession**
   }
 }
 
@@ -182,69 +188,3 @@ Session returned_session = Session(
   ],
   timeCreated: 12134223423.0,
 );
-
-//Session definition
-class Session {
-  final String sessionID;
-  final String title;
-  Meetpoint chosenMeetpoint;
-  List<Meetpoint> meetpoints = [];
-  String prefLocationType;
-  List<UserDetails> users = [];
-  double timeCreated;
-
-  Session({
-    @required this.sessionID,
-    @required this.title,
-    this.chosenMeetpoint,
-    this.meetpoints,
-    @required this.prefLocationType,
-    @required this.users,
-    @required this.timeCreated,
-  });
-
-  int get getNumMeetpoints {
-    return null;
-  }
-}
-
-class UserDetails {
-  String name;
-  Location prefStartCoords;
-  String prefTravelMode;
-
-  UserDetails({
-    @required this.name,
-    @required this.prefStartCoords,
-    @required this.prefTravelMode,
-  });
-}
-
-class Location {
-  String name,type,address; //add address
-  List<double> coordinates; //may want to remove
-
-  Location({
-    @required this.name,
-    @required this.type,
-    this.address,
-    this.coordinates,
-  });
-}
-
-class Meetpoint extends Location {
-  String routeImage;
-
-  Meetpoint({
-    @required this.routeImage,
-    @required String name,
-    @required String type,
-    String address,
-    List<double> coordinates,
-  }) {
-    super.name = name;
-    super.type = type;
-    super.address = address;
-    super.coordinates = coordinates;
-  }
-}

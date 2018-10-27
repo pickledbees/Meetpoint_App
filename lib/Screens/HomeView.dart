@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:meetpoint/MVC.dart';
-import 'dart:async';
-import 'package:meetpoint/LocalSessionManager.dart';
+import 'package:meetpoint/LocalInfoManagers/Entities.dart';
+import 'package:meetpoint/LocalInfoManagers/LocalSessionManager.dart';
 
 class HomeView extends View<HomeController> {
+
   HomeView(c) : super(controller: c);
 
   @override
   Widget build(BuildContext context) {
     controller.loadPage();
-    
     return Scaffold(
       appBar: AppBar(title: Text('Sessions'),),
       body: controller.model.body,
@@ -31,6 +31,7 @@ class HomeView extends View<HomeController> {
 }
 
 class HomeController extends Controller<HomeModel> {
+
   HomeController(m) : super(model: m);
 
   loadPage() async {
