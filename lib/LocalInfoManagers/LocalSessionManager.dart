@@ -9,7 +9,7 @@ class LocalSessionManager {
   //token to connect to server
   static final String _TOKEN = 'LOLIPUTZ';
 
-  static List<Session> _sessions = TestData.returned_sessions;
+  static List<Session> _sessions;// = TestData.returned_sessions;
   static Session _openSession;
 
   //read-only
@@ -101,51 +101,50 @@ class Listener {
 
 class TestData {
   static List<Session> returned_sessions = (() {
-  List<Session> arr = [];
-  for (int i = 0; i < 10; i++) {
-    print('heyman');
-  arr.add(
-  Session(
-  sessionID: '123A',
-  title: 'Picnic with fren $i',
-  chosenMeetpoint: Meetpoint(
-  routeImage: 'path/img.jpg',
-  name: 'ParkABC',
-  type: 'Park',
-  ),
-  meetpoints: [
-  Meetpoint(
-  routeImage: 'path/img.jpg',
-  name: 'ParkABC',
-  type: 'Park',
-  ),
-  ],
-  prefLocationType: 'Park',
-  users: [
-  UserDetails(
-  name: 'jon',
-  prefTravelMode: 'Car',
-  prefStartCoords: Location(
-  name: 'Home',
-  type: 'Housing',
-  coordinates: [100.0,200.0],
-  ),
-  ),
-  UserDetails(
-  name: 'jane',
-  prefTravelMode: 'Walking',
-  prefStartCoords: Location(
-  name: 'Work',
-  type: 'Office',
-  coordinates: [200.0,100.0],
-  ),
-  ),
-  ],
-  timeCreated: 12134223423.0,
-  ),
-  );
-  }
-  return arr;
+    List<Session> arr = [];
+    for (int i = 0; i < 10; i++) {
+      arr.add(
+        Session(
+          sessionID: '123A',
+          title: 'Picnic with fren $i',
+          chosenMeetpoint: Meetpoint(
+            routeImage: 'path/img.jpg',
+            name: 'ParkABC',
+            type: 'Park',
+          ),
+          meetpoints: [
+            Meetpoint(
+              routeImage: 'path/img.jpg',
+              name: 'ParkABC',
+              type: 'Park',
+            ),
+          ],
+          prefLocationType: 'Park',
+          users: [
+            UserDetails(
+              name: 'jon',
+              prefTravelMode: 'Car',
+              prefStartCoords: Location(
+                name: 'Home',
+                type: 'Housing',
+                coordinates: [100.0,200.0],
+              ),
+            ),
+            UserDetails(
+              name: 'jane',
+              prefTravelMode: 'Walking',
+              prefStartCoords: Location(
+                name: 'Work',
+                type: 'Office',
+                coordinates: [200.0,100.0],
+              ),
+            ),
+          ],
+          timeCreated: 12134223423.0,
+        ),
+      );
+    }
+    return arr;
   })();
 }
 

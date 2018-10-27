@@ -88,7 +88,7 @@ class HomeModel extends Model {
   loadTiles() {
     List<Session> sessions = LocalSessionManager.sessions;
     List<ListTile> listTiles = <ListTile>[];
-    if (sessions == null) {print('no sessions'); return;}
+    if (sessions == null) return;
     for (Session session in sessions) listTiles.add(
       ListTile(
         leading: Icon(Icons.place),
@@ -104,7 +104,7 @@ class HomeModel extends Model {
     setViewState(() {
       body = Center(
         child: ListView(
-          padding: EdgeInsets.fromLTRB(10.0, 0.0, 10.0, 75.0),
+          padding: EdgeInsets.symmetric(horizontal: 10.0),
           children: listTiles,
         ),
       );

@@ -7,6 +7,7 @@ class LocalUserInfoManager {
   static Future loadUser() async {
     //**read from local memory**
     //**load user details into localUser member**
+    localUser = _user;
     return _user;
   }
 

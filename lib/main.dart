@@ -14,9 +14,9 @@ class MeetPointApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(primarySwatch: Colors.lightBlue,),
+      theme: ThemeData(primarySwatch: Colors.blue,),
       title: 'MeetPoint',
-      initialRoute: '/',//'/InitialiserView',
+      initialRoute: '/InitialiserView',
       routes: {
         '/' : (context) => HomeView(HomeController(HomeModel())),
         '/FirstStartView' : (context) => FirstStartView(FirstStartController()),

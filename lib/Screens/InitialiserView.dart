@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'dart:async';
 import 'package:meetpoint/MVC.dart';
 import 'package:meetpoint/LocalInfoManagers/Entities.dart';
 import 'package:meetpoint/LocalInfoManagers/LocalSessionManager.dart';
@@ -9,9 +10,12 @@ class InitialiserView extends View<InitialiserController> {
 
   InitialiserView(c) : super(controller : c);
 
+  bool r = true;
+
   @override
   Widget build(BuildContext context) {
-    controller.initialise();
+    if (r) controller.initialise(context);
+    r = false;
     return Scaffold(
       body: Center(
         child: Column(
@@ -30,14 +34,18 @@ class InitialiserController extends Controller<InitialiserModel> {
 
   InitialiserController(m) : super(model : m);
 
-  initialise() async {
+  initialise(BuildContext context) async {
     UserDetails user = await LocalUserInfoManager.loadUser();
     if (user != null) {
       try {
         model.setLoaderTextTo('Fetching your sessions...');
         await LocalSessionManager.fetchSessions();
         model.setLoaderTextTo('Welcome ${LocalUserInfoManager.localUser.name}');
-        //**navigate to home view**
+        await Future.delayed(Duration(seconds: 1));
+        Navigator.pushReplacementNamed(
+          context,
+          '/',
+        );
       } catch (e) {
         //**print appropriate error message**
       }
