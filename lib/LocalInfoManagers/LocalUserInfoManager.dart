@@ -9,6 +9,10 @@ class LocalUserInfoManager {
     //**load user details into localUser member**
     return _user;
   }
+
+  static Future saveUser() async {
+    //**save user details to local memory**
+  }
 }
 
 UserDetails _user = UserDetails(

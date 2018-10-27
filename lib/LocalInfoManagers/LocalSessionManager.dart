@@ -9,23 +9,19 @@ class LocalSessionManager {
   //token to connect to server
   static final String _TOKEN = 'LOLIPUTZ';
 
-  static List<Session> _sessions;
+  static List<Session> _sessions = TestData.returned_sessions;
   static Session _openSession;
 
   //read-only
   static List<Session> get sessions => _sessions;
   static Session get openSession => _openSession;
 
-  //loads sessions from local memory
-  static Future loadSessions() async {
-    //***load**
-  }
 
   //fetch sessions from server
   static Future fetchSessions() async {
     _sessions = await Future.delayed(timelag, () =>
     success
-        ? returned_sessions
+        ? TestData.returned_sessions
         : throw 'error'
     );
     return;
@@ -103,52 +99,55 @@ class Listener {
   //listens for updates
 }
 
-List<Session> returned_sessions = (() {
-  List<Session> arr;
+class TestData {
+  static List<Session> returned_sessions = (() {
+  List<Session> arr = [];
   for (int i = 0; i < 10; i++) {
-    arr.add(
-      Session(
-        sessionID: '123A',
-        title: 'Picnic with fren $i',
-        chosenMeetpoint: Meetpoint(
-          routeImage: 'path/img.jpg',
-          name: 'ParkABC',
-          type: 'Park',
-        ),
-        meetpoints: [
-          Meetpoint(
-            routeImage: 'path/img.jpg',
-            name: 'ParkABC',
-            type: 'Park',
-          ),
-        ],
-        prefLocationType: 'Park',
-        users: [
-          UserDetails(
-            name: 'jon',
-            prefTravelMode: 'Car',
-            prefStartCoords: Location(
-              name: 'Home',
-              type: 'Housing',
-              coordinates: [100.0,200.0],
-            ),
-          ),
-          UserDetails(
-            name: 'jane',
-            prefTravelMode: 'Walking',
-            prefStartCoords: Location(
-              name: 'Work',
-              type: 'Office',
-              coordinates: [200.0,100.0],
-            ),
-          ),
-        ],
-        timeCreated: 12134223423.0,
-      ),
-    );
+    print('heyman');
+  arr.add(
+  Session(
+  sessionID: '123A',
+  title: 'Picnic with fren $i',
+  chosenMeetpoint: Meetpoint(
+  routeImage: 'path/img.jpg',
+  name: 'ParkABC',
+  type: 'Park',
+  ),
+  meetpoints: [
+  Meetpoint(
+  routeImage: 'path/img.jpg',
+  name: 'ParkABC',
+  type: 'Park',
+  ),
+  ],
+  prefLocationType: 'Park',
+  users: [
+  UserDetails(
+  name: 'jon',
+  prefTravelMode: 'Car',
+  prefStartCoords: Location(
+  name: 'Home',
+  type: 'Housing',
+  coordinates: [100.0,200.0],
+  ),
+  ),
+  UserDetails(
+  name: 'jane',
+  prefTravelMode: 'Walking',
+  prefStartCoords: Location(
+  name: 'Work',
+  type: 'Office',
+  coordinates: [200.0,100.0],
+  ),
+  ),
+  ],
+  timeCreated: 12134223423.0,
+  ),
+  );
   }
   return arr;
-})();
+  })();
+}
 
 Session returned_session = Session(
   sessionID: '768Z',

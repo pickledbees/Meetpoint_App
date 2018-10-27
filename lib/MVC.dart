@@ -37,6 +37,18 @@ class _ViewState extends State<View> {
     setState(fn);
   }
 
+  void reDispose() {
+    super.dispose();
+  }
+
+  void reDeactivate() {
+    super.deactivate();
+  }
+
+  void reInitState() {
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return _view.build(context);

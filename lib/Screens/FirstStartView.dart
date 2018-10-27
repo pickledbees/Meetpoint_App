@@ -1,6 +1,73 @@
 import 'package:flutter/material.dart';
+import 'package:meetpoint/MVC.dart';
+import 'package:meetpoint/LocalInfoManagers/LocalUserInfoManager.dart';
 import 'package:meetpoint/Models/TravelModes.dart';
 import 'HomeView.dart';
+
+class FirstStartView extends View<FirstStartController> {
+
+  FirstStartView(c) : super(controller: c);
+
+  final _formKey = GlobalKey<FormState>();
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Center(
+        child: Form(
+          key: _formKey,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Container(
+                width: 200.0,
+                child: TextFormField(
+                  validator: null,
+                  controller: controller.nameController,
+                  decoration: InputDecoration(
+                    hintText: 'Name',
+                  ),
+                ),
+              ),
+              Container(
+                width: 200.0,
+                child: TextFormField(
+                  validator: null,
+                  controller: controller.addressController,
+                  decoration: InputDecoration(
+                    hintText: 'Address',
+                  ),
+                ),
+              ),
+              /*
+              DropdownButton(
+                items: null,
+                onChanged: null,
+              ),
+              */
+            ],
+          ),
+        ),
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+      floatingActionButton: RaisedButton(
+        child: Text('Save'),
+        onPressed: null,
+      ),
+    );
+  }
+}
+
+class FirstStartController extends Controller {
+
+  //FirstStartController(m) : super(model: m);
+
+  TextEditingController nameController = TextEditingController();
+  TextEditingController addressController = TextEditingController();
+
+}
+
+
 
 class FirstStartUI extends StatefulWidget {
   @override
