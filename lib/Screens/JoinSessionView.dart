@@ -63,17 +63,16 @@ class JoinSessionController extends Controller<JoinSessionModel> {
 
       try {
         //show loading text
-        model.setHeaderTextTo('Creating your session...');
+        model.setHeaderTextTo('Attempting to join session...');
 
-        //create session
-        String sessionId =
-        await LocalSessionManager.addSession(sessionId: fieldController.text);
+        //join session
+        await LocalSessionManager.joinSession(sessionId: fieldController.text);
 
         //navigate to view
         MaterialPageRoute route = MaterialPageRoute(
-          builder: (context) => SessionView(SessionController(SessionModel(sessionId))),
+          builder: (context) => SessionView(SessionController(SessionModel(fieldController.text))),
         );
-        Navigator.push(context, route);
+        Navigator.pushReplacement(context, route);
 
       } catch (e) {
         //show error

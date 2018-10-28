@@ -74,7 +74,7 @@ class TestData {
     for (int i = 0; i < 10; i++) {
       arr.add(
         Session(
-          sessionID: '123A',
+          sessionID: '${i}23A',
           title: 'Picnic with fren $i',
           chosenMeetpoint: Meetpoint(
             routeImage: 'path/img.jpg',
@@ -116,8 +116,10 @@ class TestData {
     return arr;
   })();
 
+  static int count = 0;
+
   static Session created_session (String sessionTitle) => Session(
-    sessionID: '768Z',
+    sessionID: '${count++}Z',
     title: sessionTitle,
     chosenMeetpoint: Meetpoint(
       routeImage: 'path/img.jpg',

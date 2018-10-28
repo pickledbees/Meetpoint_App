@@ -65,13 +65,15 @@ class InitialiserController extends Controller<InitialiserModel> {
     } else {
 
       try {
-
+        //fetch sessions
         model.setLoaderTextTo('Fetching your sessions...');
         await LocalSessionManager.fetchSessions();
 
+        //show welcome
         model.setLoaderTextTo('Welcome ${LocalUserInfoManager.localUser.name}');
         await Future.delayed(Duration(seconds: 1)); //pause
 
+        //navigate to home view
         MaterialPageRoute route = MaterialPageRoute(
           builder: (context) => HomeView(HomeController(HomeModel())),
         );

@@ -73,7 +73,7 @@ class CreateSessionController extends Controller<CreateSessionModel> {
         MaterialPageRoute route = MaterialPageRoute(
           builder: (context) => SessionView(SessionController(SessionModel(sessionId))),
         );
-        Navigator.push(context, route);
+        Navigator.pushReplacement(context, route);
 
       } catch (e) {
         //show error

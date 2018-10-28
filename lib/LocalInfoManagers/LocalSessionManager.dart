@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'dart:async';
 import 'Entities.dart';
+import 'package:meetpoint/Screens/HomeView.dart';
 
 Duration timelag = Duration(seconds: 1);
 bool success = true;
@@ -27,15 +28,19 @@ class LocalSessionManager {
     return;
   }
 
-  //returns session index based on session id
+  //returns session index based on session id, returns -1 if not found
   static int _findSession(String sessionId) {
+    print('finding $sessionId');
     int index;
     //search through sessions list
     for (Session session in _sessions) {
-      if (session.sessionID == sessionId) index = sessions.indexOf(session);
-      break;
+      if (session.sessionID == sessionId) {
+        index = sessions.indexOf(session);
+        break;
+      }
     }
-    return index;
+    print('found $sessionId at index $index');
+    return index ?? -1;
   }
 
   //completes to id if success, throws error if failed
@@ -49,11 +54,14 @@ class LocalSessionManager {
         : throw 'error'
     );
     _sessions.add(session);
+    HomeView.refresh = true;
     return session.sessionID;
   }
 
   //completes to id if success, throws error if failed
-  static Future addSession({@required String sessionId}) async {
+  static Future joinSession({@required String sessionId}) async {
+    //check if session is already inside local memory
+    if (_findSession(sessionId) != -1) return null;
     //**replace with socket request**
     //adds session on server side + add session on local side
     Session session =
@@ -63,23 +71,28 @@ class LocalSessionManager {
         : throw 'error'
     );
     _sessions.add(session);
+    HomeView.refresh = true;
     return session.sessionID;
   }
 
   //completes to boolean true if success, throws error if failed
   static Future deleteSession({@required String sessionId}) async {
     //**replace with socket request**
-    return await Future.delayed(timelag, () =>
+    await Future.delayed(timelag, () =>
     success
         ? _sessions.removeAt(_findSession(sessionId))
         : throw 'error'
     );
+    HomeView.refresh = true;
+    return true;
   }
 
   //loads session to be the currently open session
   static void loadSession({@required String sessionId}) {
+    print('opening session $sessionId');
     //**replace with socket request**
     _openSession = _sessions[_findSession(sessionId)];
+    print('session ${_openSession.sessionID} opened');
   }
 
   //completes to boolean true if success, throws error if failed

@@ -3,6 +3,8 @@ import 'package:meetpoint/MVC.dart';
 import 'package:meetpoint/LocalInfoManagers/Entities.dart';
 import 'package:meetpoint/LocalInfoManagers/LocalSessionManager.dart';
 import 'package:meetpoint/Screens/SessionView.dart';
+import 'package:meetpoint/Screens/CreateSessionView.dart';
+import 'package:meetpoint/Screens/JoinSessionView.dart';
 
 class HomeView extends View<HomeController> {
 
@@ -11,12 +13,12 @@ class HomeView extends View<HomeController> {
   }
 
   static Widget widget; //reference to self for others to access
-  bool r = true;
+  static bool refresh = true;
 
   @override
   Widget build(BuildContext context) {
-    if (r) controller.model.loadTiles(context);
-    r = false;
+    if (refresh) controller.model.loadTiles(context);
+    refresh = false;
     return Scaffold(
       appBar: AppBar(title: Text('Sessions'),),
       body: controller.model.body,
@@ -26,13 +28,21 @@ class HomeView extends View<HomeController> {
           RaisedButton(
             child: Text('Create'),
             onPressed: () {
-              //**navigate to create session view**
+              //navigate to create session view
+              MaterialPageRoute route = MaterialPageRoute(
+                builder: (context) => CreateSessionView(CreateSessionController(CreateSessionModel())),
+              );
+              Navigator.push(context, route,);
             },
           ),
           RaisedButton(
             child: Text('Join'),
             onPressed: () {
-              //**navigate to join session view**
+              //navigate to join session view
+              MaterialPageRoute route = MaterialPageRoute(
+                builder: (context) => JoinSessionView(JoinSessionController(JoinSessionModel())),
+              );
+              Navigator.push(context, route,);
             },
           ),
         ],
@@ -40,7 +50,6 @@ class HomeView extends View<HomeController> {
     );
   }
 }
-
 
 class HomeController extends Controller<HomeModel> {
 
@@ -86,15 +95,12 @@ class HomeModel extends Model {
             subtitle: Text(session.chosenMeetpoint.name),
             trailing: Icon(Icons.chevron_right),
             onTap: () {
-              LocalSessionManager.loadSession(sessionId: session.sessionID);
-
               //navigate to view
               MaterialPageRoute route = MaterialPageRoute(
                 builder: (context) => SessionView(SessionController(SessionModel(session.sessionID))),
               );
               Navigator.push(context, route);
-
-            }, //session id is in here
+            },
           )
       );
       setViewState(() {
