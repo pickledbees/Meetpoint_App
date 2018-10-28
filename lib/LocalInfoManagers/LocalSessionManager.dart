@@ -53,7 +53,7 @@ class LocalSessionManager {
         ? TestData.created_session(sessionTitle)
         : throw 'error'
     );
-    _sessions.add(session);
+    _sessions.insert(0,session);
     HomeView.refresh = true;
     return session.sessionID;
   }
@@ -70,7 +70,7 @@ class LocalSessionManager {
         ? TestData.joined_session(sessionId)
         : throw 'error'
     );
-    _sessions.add(session);
+    _sessions.insert(0,session);
     HomeView.refresh = true;
     return session.sessionID;
   }
