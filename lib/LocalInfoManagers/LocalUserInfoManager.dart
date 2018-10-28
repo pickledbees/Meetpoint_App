@@ -7,20 +7,11 @@ class LocalUserInfoManager {
   static Future loadUser() async {
     //**read from local memory**
     //**load user details into localUser member**
-    localUser = _user;
-    return _user;
+    localUser = TestData.user;
+    return localUser;//localUser;
   }
 
   static Future saveUser() async {
     //**save user details to local memory**
   }
 }
-
-UserDetails _user = UserDetails(
-  name: 'jon',
-  prefStartCoords: Location(
-    name: null,
-    type: null,
-  ),
-  prefTravelMode: null,
-);

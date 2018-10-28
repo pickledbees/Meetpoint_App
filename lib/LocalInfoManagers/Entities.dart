@@ -65,3 +65,142 @@ class Meetpoint extends Location {
     super.coordinates = coordinates;
   }
 }
+
+
+
+class TestData {
+  static List<Session> returned_sessions = (() {
+    List<Session> arr = [];
+    for (int i = 0; i < 10; i++) {
+      arr.add(
+        Session(
+          sessionID: '123A',
+          title: 'Picnic with fren $i',
+          chosenMeetpoint: Meetpoint(
+            routeImage: 'path/img.jpg',
+            name: 'ParkABC',
+            type: 'Park',
+          ),
+          meetpoints: [
+            Meetpoint(
+              routeImage: 'path/img.jpg',
+              name: 'ParkABC',
+              type: 'Park',
+            ),
+          ],
+          prefLocationType: 'Park',
+          users: [
+            UserDetails(
+              name: 'jon',
+              prefTravelMode: 'Car',
+              prefStartCoords: Location(
+                name: 'Home',
+                type: 'Housing',
+                coordinates: [100.0, 200.0],
+              ),
+            ),
+            UserDetails(
+              name: 'jane',
+              prefTravelMode: 'Walking',
+              prefStartCoords: Location(
+                name: 'Work',
+                type: 'Office',
+                coordinates: [200.0, 100.0],
+              ),
+            ),
+          ],
+          timeCreated: 12134223423.0,
+        ),
+      );
+    }
+    return arr;
+  })();
+
+  static Session created_session (String sessionTitle) => Session(
+    sessionID: '768Z',
+    title: sessionTitle,
+    chosenMeetpoint: Meetpoint(
+      routeImage: 'path/img.jpg',
+      name: 'ParkABC',
+      type: 'Park',
+    ),
+    meetpoints: [
+      Meetpoint(
+        routeImage: 'path/img.jpg',
+        name: 'ParkABC',
+        type: 'Park',
+      ),
+    ],
+    prefLocationType: 'Park',
+    users: [
+      UserDetails(
+        name: 'jon',
+        prefTravelMode: 'Car',
+        prefStartCoords: Location(
+          name: 'Home',
+          type: 'Housing',
+          coordinates: [100.0,200.0],
+        ),
+      ),
+      UserDetails(
+        name: 'jane',
+        prefTravelMode: 'Walking',
+        prefStartCoords: Location(
+          name: 'Work',
+          type: 'Office',
+          coordinates: [200.0,100.0],
+        ),
+      ),
+    ],
+    timeCreated: 12134223423.0,
+  );
+
+
+  static Session joined_session (String sessionId) => Session(
+    sessionID: sessionId,
+    title: 'Picnic with fren $sessionId',
+    chosenMeetpoint: Meetpoint(
+      routeImage: 'path/img.jpg',
+      name: 'ParkABC',
+      type: 'Park',
+    ),
+    meetpoints: [
+      Meetpoint(
+        routeImage: 'path/img.jpg',
+        name: 'ParkABC',
+        type: 'Park',
+      ),
+    ],
+    prefLocationType: 'Park',
+    users: [
+      UserDetails(
+        name: 'jon',
+        prefTravelMode: 'Car',
+        prefStartCoords: Location(
+          name: 'Home',
+          type: 'Housing',
+          coordinates: [100.0,200.0],
+        ),
+      ),
+      UserDetails(
+        name: 'jane',
+        prefTravelMode: 'Walking',
+        prefStartCoords: Location(
+          name: 'Work',
+          type: 'Office',
+          coordinates: [200.0,100.0],
+        ),
+      ),
+    ],
+    timeCreated: 12134223423.0,
+  );
+
+  static UserDetails user = UserDetails(
+    name: 'jon',
+    prefStartCoords: Location(
+      name: null,
+      type: null,
+    ),
+    prefTravelMode: null,
+  );
+}

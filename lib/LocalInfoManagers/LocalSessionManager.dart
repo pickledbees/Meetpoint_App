@@ -41,23 +41,29 @@ class LocalSessionManager {
   //completes to id if success, throws error if failed
   static Future createSession({@required String sessionTitle}) async {
     //**replace with socket request**
-    String sessionTitle =
+    //creates session on server side + add session on local side
+    Session session =
     await Future.delayed(timelag, () =>
     success
-        ? '456A'
+        ? TestData.created_session(sessionTitle)
         : throw 'error'
     );
-    return sessionTitle;
+    _sessions.add(session);
+    return session.sessionID;
   }
 
-  //completes to session if success, throws error if failed
+  //completes to id if success, throws error if failed
   static Future addSession({@required String sessionId}) async {
     //**replace with socket request**
-    return await Future.delayed(timelag, () =>
+    //adds session on server side + add session on local side
+    Session session =
+    await Future.delayed(timelag, () =>
     success
-        ? _sessions.add(returned_session)
+        ? TestData.joined_session(sessionId)
         : throw 'error'
     );
+    _sessions.add(session);
+    return session.sessionID;
   }
 
   //completes to boolean true if success, throws error if failed
@@ -98,91 +104,3 @@ class LocalSessionManager {
 class Listener {
   //listens for updates
 }
-
-class TestData {
-  static List<Session> returned_sessions = (() {
-    List<Session> arr = [];
-    for (int i = 0; i < 10; i++) {
-      arr.add(
-        Session(
-          sessionID: '123A',
-          title: 'Picnic with fren $i',
-          chosenMeetpoint: Meetpoint(
-            routeImage: 'path/img.jpg',
-            name: 'ParkABC',
-            type: 'Park',
-          ),
-          meetpoints: [
-            Meetpoint(
-              routeImage: 'path/img.jpg',
-              name: 'ParkABC',
-              type: 'Park',
-            ),
-          ],
-          prefLocationType: 'Park',
-          users: [
-            UserDetails(
-              name: 'jon',
-              prefTravelMode: 'Car',
-              prefStartCoords: Location(
-                name: 'Home',
-                type: 'Housing',
-                coordinates: [100.0,200.0],
-              ),
-            ),
-            UserDetails(
-              name: 'jane',
-              prefTravelMode: 'Walking',
-              prefStartCoords: Location(
-                name: 'Work',
-                type: 'Office',
-                coordinates: [200.0,100.0],
-              ),
-            ),
-          ],
-          timeCreated: 12134223423.0,
-        ),
-      );
-    }
-    return arr;
-  })();
-}
-
-Session returned_session = Session(
-  sessionID: '768Z',
-  title: 'Picnic with fren Z',
-  chosenMeetpoint: Meetpoint(
-    routeImage: 'path/img.jpg',
-    name: 'ParkABC',
-    type: 'Park',
-  ),
-  meetpoints: [
-    Meetpoint(
-      routeImage: 'path/img.jpg',
-      name: 'ParkABC',
-      type: 'Park',
-    ),
-  ],
-  prefLocationType: 'Park',
-  users: [
-    UserDetails(
-      name: 'jon',
-      prefTravelMode: 'Car',
-      prefStartCoords: Location(
-        name: 'Home',
-        type: 'Housing',
-        coordinates: [100.0,200.0],
-      ),
-    ),
-    UserDetails(
-      name: 'jane',
-      prefTravelMode: 'Walking',
-      prefStartCoords: Location(
-        name: 'Work',
-        type: 'Office',
-        coordinates: [200.0,100.0],
-      ),
-    ),
-  ],
-  timeCreated: 12134223423.0,
-);

@@ -3,14 +3,14 @@ import 'package:meetpoint/MVC.dart';
 import 'SessionView.dart';
 import 'package:meetpoint/LocalInfoManagers/LocalSessionManager.dart';
 
-class CreateSessionView extends View<CreateSessionController> {
+class JoinSessionView extends View<JoinSessionController> {
 
-  CreateSessionView(c) : super(controller: c);
+  JoinSessionView(c) : super(controller: c);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('CreateSession'),),
+      appBar: AppBar(title: Text('JoinSession'),),
       body: Center(
         child: Form(
           key: controller.formKey,
@@ -30,13 +30,13 @@ class CreateSessionView extends View<CreateSessionController> {
                   validator: controller.validate,
                   controller: controller.fieldController,
                   decoration: InputDecoration(
-                    hintText: 'Session Title',
+                    hintText: 'Session ID',
                   ),
                 ),
               ),
               RaisedButton(
-                child: Text('Create'),
-                onPressed: () => controller.createSession(context),
+                child: Text('Join'),
+                onPressed: () => controller.joinSession(context),
               ),
             ],
           ),
@@ -46,9 +46,9 @@ class CreateSessionView extends View<CreateSessionController> {
   }
 }
 
-class CreateSessionController extends Controller<CreateSessionModel> {
+class JoinSessionController extends Controller<JoinSessionModel> {
 
-  CreateSessionController(m) : super(model: m);
+  JoinSessionController(m) : super(model: m);
 
   TextEditingController fieldController = TextEditingController();
   final formKey = GlobalKey<FormState>();
@@ -57,7 +57,7 @@ class CreateSessionController extends Controller<CreateSessionModel> {
     if (val.isEmpty) return 'Please fill in session title';
   }
 
-  createSession(BuildContext context) async {
+  joinSession(BuildContext context) async {
 
     if (formKey.currentState.validate()) {
 
@@ -67,7 +67,7 @@ class CreateSessionController extends Controller<CreateSessionModel> {
 
         //create session
         String sessionId =
-        await LocalSessionManager.createSession(sessionTitle: fieldController.text);
+        await LocalSessionManager.addSession(sessionId: fieldController.text);
 
         //navigate to view
         MaterialPageRoute route = MaterialPageRoute(
@@ -77,7 +77,7 @@ class CreateSessionController extends Controller<CreateSessionModel> {
 
       } catch (e) {
         //show error
-        model.setHeaderTextTo('Failed to create session, try again\nError:\n$e');
+        model.setHeaderTextTo('Failed to join session, try again\nError:\n$e');
 
       }
     }
@@ -85,9 +85,9 @@ class CreateSessionController extends Controller<CreateSessionModel> {
 
 }
 
-class CreateSessionModel extends Model {
+class JoinSessionModel extends Model {
 
-  String headerText = 'Title your session below';
+  String headerText = 'Key in session ID below';
 
   setHeaderTextTo(String text) {
     setViewState(() => headerText = text);

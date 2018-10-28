@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:meetpoint/MVC.dart';
 import 'package:meetpoint/LocalInfoManagers/Entities.dart';
 import 'package:meetpoint/LocalInfoManagers/LocalSessionManager.dart';
+import 'package:meetpoint/Screens/SessionView.dart';
 
 class HomeView extends View<HomeController> {
 
@@ -10,10 +11,12 @@ class HomeView extends View<HomeController> {
   }
 
   static Widget widget; //reference to self for others to access
+  bool r = true;
 
   @override
   Widget build(BuildContext context) {
-    controller.model.loadTiles();
+    if (r) controller.model.loadTiles(context);
+    r = false;
     return Scaffold(
       appBar: AppBar(title: Text('Sessions'),),
       body: controller.model.body,
@@ -23,15 +26,13 @@ class HomeView extends View<HomeController> {
           RaisedButton(
             child: Text('Create'),
             onPressed: () {
-              controller.createSession(sessionTitle: null);
-              //**navigate to session**
+              //**navigate to create session view**
             },
           ),
           RaisedButton(
             child: Text('Join'),
             onPressed: () {
-              controller.removeSession(sessionId: null);
-              //**navigate to session**
+              //**navigate to join session view**
             },
           ),
         ],
@@ -40,41 +41,22 @@ class HomeView extends View<HomeController> {
   }
 }
 
+
 class HomeController extends Controller<HomeModel> {
 
   HomeController(m) : super(model: m);
 
-  createSession({@required String sessionTitle}) async {
-    try {
-      String sessionId =
-      await LocalSessionManager.createSession(sessionTitle: sessionTitle);
-      await LocalSessionManager.addSession(sessionId: sessionId);
-      model.loadTiles();
-    } catch (e) {
-      //error message
-    }
-  }
-
-  joinSession({@required String sessionId}) async {
-    try {
-      await LocalSessionManager.addSession(sessionId: sessionId);
-      model.loadTiles();
-      //navigate to session page
-    } catch (e) {
-      //error message
-    }
-  }
-
-  removeSession({@required String sessionId}) async {
+  removeSession({@required String sessionId, BuildContext context}) async {
     try {
       await LocalSessionManager.deleteSession(sessionId: sessionId);
-      model.loadTiles();
+      model.loadTiles(context);
       //navigate to session page
     } catch (e) {
       //error message
     }
   }
 }
+
 
 class HomeModel extends Model {
   
@@ -85,30 +67,45 @@ class HomeModel extends Model {
     ),
   );
 
-  loadTiles() {
+  loadTiles(BuildContext context) {
     List<Session> sessions = LocalSessionManager.sessions;
     List<ListTile> listTiles = <ListTile>[];
-    if (sessions == null) return;
-    for (Session session in sessions) listTiles.add(
-      ListTile(
-        leading: Icon(Icons.place),
-        title: Text(session.title),
-        subtitle: Text(session.chosenMeetpoint.name),
-        trailing: Icon(Icons.chevron_right),
-        onTap: () {
-          LocalSessionManager.loadSession(sessionId: session.sessionID);
-          //navigate to session view
-        }, //session id is in here
-      )
-    );
-    setViewState(() {
-      body = Center(
-        child: ListView(
-          padding: EdgeInsets.symmetric(horizontal: 10.0),
-          children: listTiles,
-        ),
+    if (sessions == null) {
+      setViewState(() {
+        body = Center(
+          child: Text(
+            'You have no sessions currently'
+          ),
+        );
+      });
+    } else {
+      for (Session session in sessions) listTiles.add(
+          ListTile(
+            leading: Icon(Icons.place),
+            title: Text(session.title),
+            subtitle: Text(session.chosenMeetpoint.name),
+            trailing: Icon(Icons.chevron_right),
+            onTap: () {
+              LocalSessionManager.loadSession(sessionId: session.sessionID);
+
+              //navigate to view
+              MaterialPageRoute route = MaterialPageRoute(
+                builder: (context) => SessionView(SessionController(SessionModel(session.sessionID))),
+              );
+              Navigator.push(context, route);
+
+            }, //session id is in here
+          )
       );
-    });
+      setViewState(() {
+        body = Center(
+          child: ListView(
+            padding: EdgeInsets.symmetric(horizontal: 10.0),
+            children: listTiles,
+          ),
+        );
+      });
+    }
   }
 
 }

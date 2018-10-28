@@ -1,28 +1,43 @@
 import 'package:flutter/material.dart';
 import 'package:meetpoint/MVC.dart';
+import 'package:meetpoint/Standards/TravelModes.dart';
 import 'package:meetpoint/LocalInfoManagers/LocalUserInfoManager.dart';
-import 'package:meetpoint/Models/TravelModes.dart';
+import 'package:meetpoint/LocalInfoManagers/Entities.dart';
 import 'HomeView.dart';
 
 class FirstStartView extends View<FirstStartController> {
 
   FirstStartView(c) : super(controller: c);
 
-  final _formKey = GlobalKey<FormState>();
+  bool r = true;
 
   @override
   Widget build(BuildContext context) {
+    if (r) controller.model.loadTiles();
+    r = false;
     return Scaffold(
-      body: Center(
+      body: Container(
+        padding: EdgeInsets.symmetric(horizontal: 20.0,),
         child: Form(
-          key: _formKey,
+          key: controller.formKey,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
               Container(
-                width: 200.0,
+                margin: EdgeInsets.symmetric(vertical: 30.0,),
+                child: Text(
+                  'Your Default Settings',
+                  style: TextStyle(
+                    fontSize: 20.0,
+                    color: Colors.blueGrey,
+                  ),
+                ),
+              ),
+              Container(
+                margin: EdgeInsets.symmetric(vertical: 5.0,),
                 child: TextFormField(
-                  validator: null,
+                  validator: controller.validate,
                   controller: controller.nameController,
                   decoration: InputDecoration(
                     hintText: 'Name',
@@ -30,21 +45,23 @@ class FirstStartView extends View<FirstStartController> {
                 ),
               ),
               Container(
-                width: 200.0,
+                margin: EdgeInsets.symmetric(vertical: 5.0,),
                 child: TextFormField(
-                  validator: null,
+                  validator: controller.validate,
                   controller: controller.addressController,
                   decoration: InputDecoration(
                     hintText: 'Address',
                   ),
                 ),
               ),
-              /*
-              DropdownButton(
-                items: null,
-                onChanged: null,
+              Container(
+                margin: EdgeInsets.symmetric(vertical: 5.0,),
+                child: DropdownButton(
+                  value: controller.model.dropdownButtonValue,
+                  items: controller.model.items,
+                  onChanged: controller.updatePreference,
+                ),
               ),
-              */
             ],
           ),
         ),
@@ -52,113 +69,73 @@ class FirstStartView extends View<FirstStartController> {
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       floatingActionButton: RaisedButton(
         child: Text('Save'),
-        onPressed: null,
+        onPressed: () => controller.save(context),
       ),
     );
   }
 }
 
-class FirstStartController extends Controller {
+class FirstStartController extends Controller<FirstStartModel> {
 
-  //FirstStartController(m) : super(model: m);
+  FirstStartController(m) : super(model: m);
 
+  //controllers for text fields
   TextEditingController nameController = TextEditingController();
   TextEditingController addressController = TextEditingController();
 
-}
+  //key to access from
+  final formKey = GlobalKey<FormState>();
 
-
-
-class FirstStartUI extends StatefulWidget {
-  @override
-  _FirsStartUIState createState() => _FirsStartUIState();
-}
-
-class _FirsStartUIState extends State<FirstStartUI> {
-
-  final _formKey = GlobalKey<FormState>();
-  TextEditingController nameController = TextEditingController();
-  TextEditingController addressController = TextEditingController();
-  String selectedTravelMode;
-
-  @override
-  void dispose() {
-    nameController.dispose();
-    addressController.dispose();
-    super.dispose();
+  //validator for text fields
+  String validate (val) {
+    if (val.isEmpty) return 'This field is required';
   }
 
-  @override
-  Widget build(BuildContext context) {
+  //updates the value in the dropdown button
+  updatePreference (val) {
+    model.updateDropdownValue(val);
+  }
 
-    //make dropdown list
-    List<DropdownMenuItem> dropDownList;
-    TravelModes.list.forEach((String mode) {
-      DropdownMenuItem item = DropdownMenuItem(
-        value: mode,
-        child: Text(mode),
-      );
-      dropDownList.add(item);
-    });
+  //saves the current inputs
+  save (context) {
 
-    return Scaffold(
-      body: Center(
-        child: Form(
-          key: _formKey,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              Container(
-                child: TextFormField(
-                  controller: nameController,
-                  validator: (val) {
-                    if (val.isEmpty) return 'Please fill in your name';
-                  },
-                  decoration: InputDecoration(
-                    hintText: 'Name',
-                  ),
-                ),
-              ),
-              Container(
-                child: TextFormField(
-                  controller: addressController,
-                  validator: (val) {
-                    if (val.isEmpty) return 'Please fill in your name';
-                  },
-                  decoration: InputDecoration(
-                    hintText: 'Name',
-                  ),
-                ),
-              ),
-              Container(
-                child: DropdownButton(
-                  value: selectedTravelMode,
-                  hint: Text('Preferred Travel Mode'),
-                  items: dropDownList,
-                  onChanged: (value){
-                    setState(() {
-                      selectedTravelMode = value;
-                    });
-                  },
-                ),
-              ),
-            ],
-          ),
+    if (formKey.currentState.validate()) {
+
+      LocalUserInfoManager.localUser = UserDetails(
+        name: nameController.text,
+        prefStartCoords: Location(
+          name: addressController.text,
+          type: null,
+          address: addressController.text,
         ),
-      ),
-      floatingActionButton: RaisedButton(
-        child: Text('Save'),
-        onPressed: () {
-          String name = nameController.text;
-          String address = addressController.text;
-          String travelMode = selectedTravelMode;
-          //save data
-          //if data can be saved, got to home view UI
-          Navigator.pushNamed(
-            context,
-            '/',);
-        },
-      ),
-    );
+        prefTravelMode: model.dropdownButtonValue,
+      );
+
+      MaterialPageRoute route = MaterialPageRoute(
+        builder: (context) => HomeView(HomeController(HomeModel())),
+      );
+      Navigator.pushReplacement(context, route);
+
+    }
+  }
+}
+
+class FirstStartModel extends Model {
+  
+  String dropdownButtonValue = TravelModes.list[0];
+  List<DropdownMenuItem> items = [];
+  
+  loadTiles() {
+    for (String mode in TravelModes.list) {
+      DropdownMenuItem item = DropdownMenuItem(
+        child: Text(mode,),
+        value: mode,
+      );
+      items.add(item);
+    }
+  }
+  
+  updateDropdownValue(val) {
+    setViewState(() => dropdownButtonValue = val);
   }
 }
