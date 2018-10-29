@@ -11,11 +11,11 @@ class LocalSessionManager {
   static final String _TOKEN = 'LOLIPUTZ';
 
   static List<Session> _sessions;// = TestData.returned_sessions;
-  static Session _openSession;
+  static Session _loadedSession;
 
   //read-only
-  static List<Session> get sessions => _sessions;
-  static Session get openSession => _openSession;
+  static List<Session> get getSessions => _sessions;
+  static Session get getLoadedSession => _loadedSession;
 
 
   //fetch sessions from server
@@ -35,7 +35,7 @@ class LocalSessionManager {
     //search through sessions list
     for (Session session in _sessions) {
       if (session.sessionID == sessionId) {
-        index = sessions.indexOf(session);
+        index = _sessions.indexOf(session);
         break;
       }
     }
@@ -88,11 +88,11 @@ class LocalSessionManager {
   }
 
   //loads session to be the currently open session
-  static void loadSession({@required String sessionId}) {
+  static Session loadSession({@required String sessionId}) {
     print('opening session $sessionId');
-    //**replace with socket request**
-    _openSession = _sessions[_findSession(sessionId)];
-    print('session ${_openSession.sessionID} opened');
+    _loadedSession = _sessions[_findSession(sessionId)];
+    print('session ${_loadedSession.sessionID} opened');
+    return _loadedSession;
   }
 
   //completes to boolean true if success, throws error if failed

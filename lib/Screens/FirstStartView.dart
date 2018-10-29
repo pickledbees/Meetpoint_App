@@ -17,7 +17,7 @@ class FirstStartView extends View<FirstStartController> {
     r = false;
     return Scaffold(
       body: Container(
-        padding: EdgeInsets.symmetric(horizontal: 20.0,),
+        padding: const EdgeInsets.symmetric(horizontal: 20.0,),
         child: Form(
           key: controller.formKey,
           child: Column(
@@ -25,7 +25,7 @@ class FirstStartView extends View<FirstStartController> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
               Container(
-                margin: EdgeInsets.symmetric(vertical: 30.0,),
+                margin: const EdgeInsets.symmetric(vertical: 30.0,),
                 child: Text(
                   'Your Default Settings',
                   style: TextStyle(
@@ -35,7 +35,7 @@ class FirstStartView extends View<FirstStartController> {
                 ),
               ),
               Container(
-                margin: EdgeInsets.symmetric(vertical: 5.0,),
+                margin: const EdgeInsets.symmetric(vertical: 5.0,),
                 child: TextFormField(
                   validator: controller.validate,
                   controller: controller.nameController,
@@ -45,7 +45,7 @@ class FirstStartView extends View<FirstStartController> {
                 ),
               ),
               Container(
-                margin: EdgeInsets.symmetric(vertical: 5.0,),
+                margin: const EdgeInsets.symmetric(vertical: 5.0,),
                 child: TextFormField(
                   validator: controller.validate,
                   controller: controller.addressController,
@@ -55,7 +55,7 @@ class FirstStartView extends View<FirstStartController> {
                 ),
               ),
               Container(
-                margin: EdgeInsets.symmetric(vertical: 5.0,),
+                margin: const EdgeInsets.symmetric(vertical: 5.0,),
                 child: DropdownButton(
                   value: controller.model.dropdownButtonValue,
                   items: controller.model.items,
@@ -101,7 +101,8 @@ class FirstStartController extends Controller<FirstStartModel> {
 
     if (formKey.currentState.validate()) {
 
-      LocalUserInfoManager.localUser = UserDetails(
+      //set local user (may want to change to setter)
+      LocalUserInfoManager.setLocalUser = UserDetails(
         name: nameController.text,
         prefStartCoords: Location(
           name: addressController.text,
@@ -122,11 +123,11 @@ class FirstStartController extends Controller<FirstStartModel> {
 
 class FirstStartModel extends Model {
   
-  String dropdownButtonValue = TravelModes.list[0];
+  String dropdownButtonValue = TravelModes.getList[0];
   List<DropdownMenuItem> items = [];
   
   loadTiles() {
-    for (String mode in TravelModes.list) {
+    for (String mode in TravelModes.getList) {
       DropdownMenuItem item = DropdownMenuItem(
         child: Text(mode,),
         value: mode,

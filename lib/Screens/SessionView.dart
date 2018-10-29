@@ -181,17 +181,17 @@ class SessionModel extends Model {
 
   SessionModel(String sessionId) {
     //load session
-    LocalSessionManager.loadSession(sessionId: sessionId);
-    session = LocalSessionManager.openSession;
+    session = LocalSessionManager.loadSession(sessionId: sessionId);
+    //initialise maps display
     mapsDisplay = Widgets.blankMapsDisplay(
       icon: Icons.warning,
       text:'Not enough parameters to calculate',);
   }
 
   Session session;
-  String preferredLocationType = LocationTypes.list[0];
-  String preferredTravelMode1 = TravelModes.list[0];
-  String preferredTravelMode2 = TravelModes.list[0];
+  String preferredLocationType = LocationTypes.getList[0];
+  String preferredTravelMode1 = TravelModes.getList[0];
+  String preferredTravelMode2 = TravelModes.getList[0];
   Widget mapsDisplay;
 
   updatePreferredLocation(val) {
@@ -210,13 +210,13 @@ class SessionModel extends Model {
 
 }
 
-//for widgets to display
+//widgets to display
 class Widgets {
   static Widget primer() {
     return Container(
       margin: const EdgeInsets.fromLTRB(0.0, 10.0, 0.0, 7.0),
       child: Text(
-        'Others can join this meeting with the following ID',
+        'Others can join this meeting with the following session ID',
         style: TextStyle(color: Colors.grey),
       ),
     );
@@ -321,7 +321,7 @@ class Widgets {
 
   static List<DropdownMenuItem> prefLocationTypeDropdownItems() {
     List<DropdownMenuItem> items = [];
-    List<String> types = LocationTypes.list;
+    List<String> types = LocationTypes.getList;
     for (String type in types) {
       DropdownMenuItem item = DropdownMenuItem(
         child: Text(type),
@@ -334,7 +334,7 @@ class Widgets {
 
   static List<DropdownMenuItem> prefTravelModeDropdownItems() {
     List<DropdownMenuItem> items = [];
-    List<String> modes = TravelModes.list;
+    List<String> modes = TravelModes.getList;
     for (String mode in modes) {
       DropdownMenuItem item = DropdownMenuItem(
         child: Text(mode),

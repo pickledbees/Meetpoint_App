@@ -77,7 +77,7 @@ class HomeModel extends Model {
   );
 
   loadTiles(BuildContext context) {
-    List<Session> sessions = LocalSessionManager.sessions;
+    List<Session> sessions = LocalSessionManager.getSessions;
     List<ListTile> listTiles = <ListTile>[];
     if (sessions == null) {
       setViewState(() {
@@ -88,6 +88,7 @@ class HomeModel extends Model {
         );
       });
     } else {
+      //generate tiles
       for (Session session in sessions) listTiles.add(
           ListTile(
             leading: Icon(Icons.place),
@@ -103,10 +104,11 @@ class HomeModel extends Model {
             },
           )
       );
+      //update display
       setViewState(() {
         body = Center(
           child: ListView(
-            padding: EdgeInsets.symmetric(horizontal: 10.0),
+            padding: const EdgeInsets.symmetric(horizontal: 10.0),
             children: listTiles,
           ),
         );

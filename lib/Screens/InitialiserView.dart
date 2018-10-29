@@ -23,7 +23,7 @@ class InitialiserView extends View<InitialiserController> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             Container(
-              padding: EdgeInsets.symmetric(vertical: 20.0),
+              padding: const EdgeInsets.symmetric(vertical: 20.0),
               child: Text(
                 'Meetpoint',
                 style: TextStyle(
@@ -54,9 +54,9 @@ class InitialiserController extends Controller<InitialiserModel> {
     UserDetails user = await LocalUserInfoManager.loadUser();
 
     if (user == null) {
-
-      await Future.delayed(Duration(seconds: 2)); //pause
-
+      //pause
+      await Future.delayed(Duration(seconds: 1));
+      //navigate to first start view
       MaterialPageRoute route = MaterialPageRoute(
         builder: (context) => FirstStartView(FirstStartController(FirstStartModel())),
       );
@@ -68,11 +68,9 @@ class InitialiserController extends Controller<InitialiserModel> {
         //fetch sessions
         model.setLoaderTextTo('Fetching your sessions...');
         await LocalSessionManager.fetchSessions();
-
         //show welcome
-        model.setLoaderTextTo('Welcome ${LocalUserInfoManager.localUser.name}');
+        model.setLoaderTextTo('Welcome ${LocalUserInfoManager.getLocalUser.name}');
         await Future.delayed(Duration(seconds: 1)); //pause
-
         //navigate to home view
         MaterialPageRoute route = MaterialPageRoute(
           builder: (context) => HomeView(HomeController(HomeModel())),

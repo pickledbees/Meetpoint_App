@@ -1,5 +1,5 @@
 abstract class LocationTypes {
-  static List<String> list = [
+  static List<String> _list = [
     'No Preference',
     'Hospital',
     'Library',
@@ -7,4 +7,7 @@ abstract class LocationTypes {
     'Park',
     'Restaurant',
   ];
+
+  static List<String> get getList => _list;
+  static set setList(List<String> l) => _list = l;
 }

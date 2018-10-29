@@ -24,7 +24,7 @@ class JoinSessionView extends View<JoinSessionController> {
                 ),
               ),
               Container(
-                margin: EdgeInsets.symmetric(vertical: 10.0),
+                margin: const EdgeInsets.symmetric(vertical: 10.0),
                 width: 200.0,
                 child: TextFormField(
                   textAlign: TextAlign.center,
