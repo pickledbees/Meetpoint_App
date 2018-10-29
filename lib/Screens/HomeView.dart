@@ -27,23 +27,11 @@ class HomeView extends View<HomeController> {
         children: <Widget>[
           RaisedButton(
             child: Text('Create'),
-            onPressed: () {
-              //navigate to create session view
-              MaterialPageRoute route = MaterialPageRoute(
-                builder: (context) => CreateSessionView(CreateSessionController(CreateSessionModel())),
-              );
-              Navigator.push(context, route,);
-            },
+            onPressed: () => controller.navigateToCreateSession(context),
           ),
           RaisedButton(
             child: Text('Join'),
-            onPressed: () {
-              //navigate to join session view
-              MaterialPageRoute route = MaterialPageRoute(
-                builder: (context) => JoinSessionView(JoinSessionController(JoinSessionModel())),
-              );
-              Navigator.push(context, route,);
-            },
+            onPressed: () => controller.navigateToJoinSession(context),
           ),
         ],
       ),
@@ -54,6 +42,22 @@ class HomeView extends View<HomeController> {
 class HomeController extends Controller<HomeModel> {
 
   HomeController(m) : super(model: m);
+
+  navigateToCreateSession(BuildContext context) {
+    //navigate to create session view
+    MaterialPageRoute route = MaterialPageRoute(
+      builder: (context) => CreateSessionView(CreateSessionController(CreateSessionModel())),
+    );
+    Navigator.push(context, route,);
+  }
+
+  navigateToJoinSession(BuildContext context) {
+    //navigate to join session view
+    MaterialPageRoute route = MaterialPageRoute(
+      builder: (context) => JoinSessionView(JoinSessionController(JoinSessionModel())),
+    );
+    Navigator.push(context, route,);
+  }
 
   removeSession({@required String sessionId, BuildContext context}) async {
     try {
@@ -93,7 +97,7 @@ class HomeModel extends Model {
           ListTile(
             leading: Icon(Icons.place),
             title: Text(session.title),
-            subtitle: Text(session.chosenMeetpoint.name),
+            subtitle: Text(session.chosenMeetpoint?.name ?? 'No chosen meetpoint'),
             trailing: Icon(Icons.chevron_right),
             onTap: () {
               //navigate to view

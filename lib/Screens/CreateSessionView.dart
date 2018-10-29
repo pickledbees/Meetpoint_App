@@ -37,7 +37,7 @@ class CreateSessionView extends View<CreateSessionController> {
               ),
               RaisedButton(
                 child: Text('Create'),
-                onPressed: () => controller.createSession(context),
+                onPressed: () => controller.createSessionAndNavigateToSession(context),
               ),
             ],
           ),
@@ -58,7 +58,7 @@ class CreateSessionController extends Controller<CreateSessionModel> {
     if (val.isEmpty) return 'Please fill in session title';
   }
 
-  createSession(BuildContext context) async {
+  createSessionAndNavigateToSession(BuildContext context) async {
 
     if (formKey.currentState.validate()) {
 

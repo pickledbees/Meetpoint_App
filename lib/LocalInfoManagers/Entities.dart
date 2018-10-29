@@ -87,6 +87,16 @@ class TestData {
               name: 'ParkABC',
               type: 'Park',
             ),
+            Meetpoint(
+              routeImage: 'path/img.jpg',
+              name: 'ParkABD',
+              type: 'Park',
+            ),
+            Meetpoint(
+              routeImage: 'path/img.jpg',
+              name: 'ParkABE',
+              type: 'Park',
+            ),
           ],
           prefLocationType: 'Park',
           users: [
@@ -121,18 +131,8 @@ class TestData {
   static Session created_session (String sessionTitle) => Session(
     sessionID: '${count++}Z',
     title: sessionTitle,
-    chosenMeetpoint: Meetpoint(
-      routeImage: 'path/img.jpg',
-      name: 'ParkABC',
-      type: 'Park',
-    ),
-    meetpoints: [
-      Meetpoint(
-        routeImage: 'path/img.jpg',
-        name: 'ParkABC',
-        type: 'Park',
-      ),
-    ],
+    chosenMeetpoint: null,
+    meetpoints: <Meetpoint>[],
     prefLocationType: 'Park',
     users: [
       UserDetails(
@@ -142,15 +142,6 @@ class TestData {
           name: 'Home',
           type: 'Housing',
           coordinates: [100.0,200.0],
-        ),
-      ),
-      UserDetails(
-        name: 'jane',
-        prefTravelMode: 'Walking',
-        prefStartCoords: Location(
-          name: 'Work',
-          type: 'Office',
-          coordinates: [200.0,100.0],
         ),
       ),
     ],
@@ -170,6 +161,16 @@ class TestData {
       Meetpoint(
         routeImage: 'path/img.jpg',
         name: 'ParkABC',
+        type: 'Park',
+      ),
+      Meetpoint(
+        routeImage: 'path/img.jpg',
+        name: 'ParkABD',
+        type: 'Park',
+      ),
+      Meetpoint(
+        routeImage: 'path/img.jpg',
+        name: 'ParkABE',
         type: 'Park',
       ),
     ],

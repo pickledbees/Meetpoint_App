@@ -37,7 +37,7 @@ class JoinSessionView extends View<JoinSessionController> {
               ),
               RaisedButton(
                 child: Text('Join'),
-                onPressed: () => controller.joinSession(context),
+                onPressed: () => controller.joinSessionAndNavigateToSession(context),
               ),
             ],
           ),
@@ -58,7 +58,7 @@ class JoinSessionController extends Controller<JoinSessionModel> {
     if (val.isEmpty) return 'Please fill in session title';
   }
 
-  joinSession(BuildContext context) async {
+  joinSessionAndNavigateToSession(BuildContext context) async {
 
     if (formKey.currentState.validate()) {
 
