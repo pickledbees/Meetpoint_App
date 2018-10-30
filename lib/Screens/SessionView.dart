@@ -10,8 +10,14 @@ import 'dart:async';
 class SessionView extends View<SessionController> {
   SessionView(c) : super(controller: c);
 
+  Session session = LocalSessionManager.getLoadedSession;
+
   @override
   Widget build(BuildContext context) {
+
+    //pre-fill fields
+    controller.address1.text = session.users[0].prefStartCoords.address;
+    controller.address2.text = session.users[1].prefStartCoords.address;
 
     return Scaffold(
       appBar: AppBar(title: Text(controller.model.session.title),),
@@ -32,13 +38,14 @@ class SessionView extends View<SessionController> {
               usersBar(controller.model.session.users),
 
               //maps display--------------------------------------------------------------
+              Divider(height: 20.0,),
               Container(
                 child: MapsView(MapsController(MapsModel(context: context))),
               ),
-
+              Divider(height: 20.0,),
               //dropdown menu for preferred location types--------------------------------
               Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
                   Container(
                     child: Text(
@@ -49,6 +56,7 @@ class SessionView extends View<SessionController> {
                       ),
                     ),
                   ),
+                  Container(width: 30.0,),
                   Container(
                     child: DropdownButton(
                       value: controller.model.preferredLocationType,
@@ -77,8 +85,8 @@ class SessionView extends View<SessionController> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
                           TextFormField(
-                            validator: controller.validate,
                             controller: controller.address1,
+                            validator: controller.validate,
                             decoration: InputDecoration(
                               hintText: 'Address',
                             ),
@@ -113,8 +121,8 @@ class SessionView extends View<SessionController> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
                           TextFormField(
-                            validator: controller.validate,
                             controller: controller.address2,
+                            validator: controller.validate,
                             decoration: InputDecoration(
                               hintText: 'Address',
                             ),
@@ -206,7 +214,7 @@ class SessionView extends View<SessionController> {
       bar.add(
         Container(
           margin: const EdgeInsets.symmetric(horizontal: 20.0),
-          child: Text(user.name),
+          child: Text(user.name ?? ''),
         )
       );
     }
@@ -249,14 +257,10 @@ class SessionView extends View<SessionController> {
 }
 
 class SessionController extends Controller<SessionModel> {
-
   SessionController(m) : super(model: m);
-  //text field controllers
   TextEditingController address1 = TextEditingController();
   TextEditingController address2 = TextEditingController();
-
   final formKey = GlobalKey<FormState>();
-
   Stream stream; //TODO: initialise stream here-----------------------------------------------------------------
 
   String validate(val) {
@@ -294,35 +298,47 @@ class SessionController extends Controller<SessionModel> {
 }
 
 class SessionModel extends Model {
-
   SessionModel(String sessionId) {
-    //load session
+    //initialise session variables
     session = LocalSessionManager.loadSession(sessionId: sessionId);
+    preferredLocationType = session.prefLocationType;
+    preferredTravelMode1 = session.users[0].prefTravelMode;
+    preferredTravelMode2 = session.users[1].prefTravelMode;
   }
-
   Session session;
   String preferredLocationType = LocationTypes.getList[0];
-  String preferredTravelMode1 = TravelModes.getList[0];
-  String preferredTravelMode2 = TravelModes.getList[0];
+  String preferredTravelMode1;
+  String preferredTravelMode2;
 
   //local visual update
   updatePreferredLocation(val) {
+    session.prefLocationType = val;
     setViewState(() => preferredLocationType = val);
   }
 
   //local visual update
-  updatePreferredTravelMode1(val) {
+  updatePreferredTravelMode1(val) {;
+    session.users[0].prefTravelMode = val;
     setViewState(() => preferredTravelMode1 = val);
   }
 
   //local visual update
   updatePreferredTravelMode2(val) {
+    session.users[1].prefTravelMode = val;
     setViewState(() => preferredTravelMode2 = val);
   }
 
   updateMapsDisplay() {}
 
 }
+
+
+
+
+
+
+
+
 
 
 
@@ -334,14 +350,16 @@ class MapsView extends View<MapsController> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 300.0,
+      color: Colors.green,
+      height: 370.0,
       child: Column(
         children: <Widget>[
           Container(
-            height: 250.0,
+            height: 310.0,
             color: Colors.grey,
             child: controller.model.mapsDisplay
           ),
+          Container(height: 5.0,),
           Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: <Widget>[
@@ -369,7 +387,7 @@ class MapsController extends Controller<MapsModel> {
   MapsController(m) : super(model : m);
 
   calcMeetpoints() {
-    //TODO: send data using LocalInfoManager
+    //TODO: send data using LocalInfoManager------------------------------------------------------------
     model.updateMapsDisplay(type: null); //pass in response type integer----------------!!!!!!!!!!!!
   }
 
@@ -385,7 +403,7 @@ class MapsModel extends Model {
         text: 'Currently no meetpoints, key in parameters',
       );
     } else {
-      mapsDisplay = pagedMapsDisplay(meetpoints: LocalSessionManager.getLoadedSession.meetpoints);
+      mapsDisplay = pagedMapsDisplay();
     }
   }
 
@@ -397,7 +415,7 @@ class MapsModel extends Model {
     setViewState(() {
       switch(type) {
         case 1: //loaded maps display
-          mapsDisplay = pagedMapsDisplay(meetpoints: LocalSessionManager.getLoadedSession.meetpoints);
+          mapsDisplay = pagedMapsDisplay();
           break;
         case 2: //calculating...
           mapsDisplay = blankMapsDisplay(icon: Icons.search, text: 'Calculating your meetpoints...',);
@@ -433,11 +451,11 @@ class MapsModel extends Model {
     );
   }
 
-  Widget pagedMapsDisplay({@required List<Meetpoint> meetpoints}) {
+  Widget pagedMapsDisplay() {
+    List<Meetpoint> meetpoints = LocalSessionManager.getLoadedSession.meetpoints;
     List<Widget> mapPages = [];
     int index = 0;
     for (Meetpoint meetpoint in meetpoints) {
-      print('page $index');
       Widget mapPage = singleMapDisplay(
         mapTitleBar: mapTitleBar(
           name: meetpoint.name,
@@ -503,7 +521,11 @@ class MapsModel extends Model {
             child: Radio(
               value: index,
               groupValue: radioGroupValue,
-              onChanged: (val) => setViewState(() => radioGroupValue = val),
+              onChanged: (val) {
+                setViewState(() {
+                  radioGroupValue = val;
+                });
+              },
             ),
           ),
         ],
@@ -513,7 +535,8 @@ class MapsModel extends Model {
 
   Widget mapImage({@required String url}) {
     return Container(
-      height: 170.0,
+      color: Colors.blueGrey,
+      height: 230.0,
       child: Center(
         child: Text(url),
       ),

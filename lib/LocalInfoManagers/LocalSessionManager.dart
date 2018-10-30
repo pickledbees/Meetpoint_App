@@ -10,7 +10,7 @@ class LocalSessionManager {
   //token to connect to server
   static final String _TOKEN = 'LOLIPUTZ';
 
-  static List<Session> _sessions;// = TestData.returned_sessions;
+  static List<Session> _sessions = [];// = TestData.returned_sessions;
   static Session _loadedSession;
 
   //read-only

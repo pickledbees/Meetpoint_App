@@ -80,22 +80,26 @@ class TestData {
             routeImage: 'path/img.jpg',
             name: 'ParkABC',
             type: 'Park',
+            coordinates: [0.0,0.0],
           ),
           meetpoints: [
             Meetpoint(
               routeImage: 'path/img.jpg',
               name: 'ParkABC',
               type: 'Park',
+              coordinates: [0.0,0.0],
             ),
             Meetpoint(
               routeImage: 'path/img.jpg',
               name: 'ParkABD',
               type: 'Park',
+              coordinates: [0.0,0.0],
             ),
             Meetpoint(
               routeImage: 'path/img.jpg',
               name: 'ParkABE',
               type: 'Park',
+              coordinates: [0.0,0.0],
             ),
           ],
           prefLocationType: 'Park',
@@ -106,6 +110,7 @@ class TestData {
               prefStartCoords: Location(
                 name: 'Home',
                 type: 'Housing',
+                address: 'Block 1234',
                 coordinates: [100.0, 200.0],
               ),
             ),
@@ -115,6 +120,7 @@ class TestData {
               prefStartCoords: Location(
                 name: 'Work',
                 type: 'Office',
+                address: 'Block 324657',
                 coordinates: [200.0, 100.0],
               ),
             ),
@@ -133,7 +139,7 @@ class TestData {
     title: sessionTitle,
     chosenMeetpoint: null,
     meetpoints: <Meetpoint>[],
-    prefLocationType: 'Park',
+    prefLocationType: 'No Preference',
     users: [
       UserDetails(
         name: 'jon',
@@ -141,7 +147,18 @@ class TestData {
         prefStartCoords: Location(
           name: 'Home',
           type: 'Housing',
+          address: 'Home',
           coordinates: [100.0,200.0],
+        ),
+      ),
+      UserDetails(
+        name: null,
+        prefTravelMode: 'No Preference',
+        prefStartCoords: Location(
+          name: null,
+          type: null,
+          address: null,
+          coordinates: [null,null],
         ),
       ),
     ],
@@ -182,6 +199,7 @@ class TestData {
         prefStartCoords: Location(
           name: 'Home',
           type: 'Housing',
+          address: 'Block 203',
           coordinates: [100.0,200.0],
         ),
       ),
@@ -191,6 +209,7 @@ class TestData {
         prefStartCoords: Location(
           name: 'Work',
           type: 'Office',
+          address: 'Office 21',
           coordinates: [200.0,100.0],
         ),
       ),

@@ -83,7 +83,7 @@ class HomeModel extends Model {
   loadTiles(BuildContext context) {
     List<Session> sessions = LocalSessionManager.getSessions;
     List<ListTile> listTiles = <ListTile>[];
-    if (sessions == null) {
+    if (sessions.length == 0) {
       setViewState(() {
         body = Center(
           child: Text(
