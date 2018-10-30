@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:meetpoint/MVC.dart';
 import 'SessionView.dart';
-import 'package:meetpoint/LocalInfoManagers/LocalSessionManager.dart';
+import 'package:meetpoint/Managers/SessionManager_Client.dart';
 
 class JoinSessionView extends View<JoinSessionController> {
 
@@ -10,7 +10,7 @@ class JoinSessionView extends View<JoinSessionController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('JoinSession'),),
+      appBar: AppBar(title: Text('Join Session'),),
       body: Center(
         child: Form(
           key: controller.formKey,
@@ -67,7 +67,7 @@ class JoinSessionController extends Controller<JoinSessionModel> {
         model.setHeaderTextTo('Attempting to join session...');
 
         //join session
-        await LocalSessionManager.joinSession(sessionId: fieldController.text);
+        await SessionManager_Client.joinSession(sessionId: fieldController.text);
 
         //navigate to view
         MaterialPageRoute route = MaterialPageRoute(

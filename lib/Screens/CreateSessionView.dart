@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:meetpoint/MVC.dart';
 import 'SessionView.dart';
-import 'package:meetpoint/LocalInfoManagers/LocalSessionManager.dart';
+import 'package:meetpoint/Managers/SessionManager_Client.dart';
 
 class CreateSessionView extends View<CreateSessionController> {
 
@@ -10,7 +10,7 @@ class CreateSessionView extends View<CreateSessionController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('CreateSession'),),
+      appBar: AppBar(title: Text('Create Session'),),
       body: Center(
         child: Form(
           key: controller.formKey,
@@ -68,7 +68,7 @@ class CreateSessionController extends Controller<CreateSessionModel> {
 
         //create session
         String sessionId =
-        await LocalSessionManager.createSession(sessionTitle: fieldController.text);
+        await SessionManager_Client.createSession(sessionTitle: fieldController.text);
 
         //navigate to view
         MaterialPageRoute route = MaterialPageRoute(

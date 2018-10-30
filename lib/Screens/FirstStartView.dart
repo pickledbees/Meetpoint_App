@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:meetpoint/MVC.dart';
 import 'package:meetpoint/Standards/TravelModes.dart';
-import 'package:meetpoint/LocalInfoManagers/LocalUserInfoManager.dart';
-import 'package:meetpoint/LocalInfoManagers/Entities.dart';
+import 'package:meetpoint/Managers/LocalUserInfoManager.dart';
+import 'package:meetpoint/Managers/Entities.dart';
 import 'HomeView.dart';
 
 class FirstStartView extends View<FirstStartController> {
@@ -102,9 +102,9 @@ class FirstStartController extends Controller<FirstStartModel> {
     if (formKey.currentState.validate()) {
 
       //set local user (may want to change to setter)
-      LocalUserInfoManager.setLocalUser = UserDetails(
+      LocalUserInfoManager.setLocalUser = UserDetails_Client(
         name: nameController.text,
-        prefStartCoords: Location(
+        prefStartCoords: Location_Client(
           name: addressController.text,
           type: null,
           address: addressController.text,

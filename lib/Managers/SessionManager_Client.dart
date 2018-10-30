@@ -6,16 +6,16 @@ import 'package:meetpoint/Screens/HomeView.dart';
 Duration timelag = Duration(seconds: 1);
 bool success = true;
 
-class LocalSessionManager {
+class SessionManager_Client {
   //token to connect to server
   static final String _TOKEN = 'LOLIPUTZ';
 
-  static List<Session> _sessions = [];// = TestData.returned_sessions;
-  static Session _loadedSession;
+  static List<Session_Client> _sessions = [];// = TestData.returned_sessions;
+  static Session_Client _loadedSession;
 
   //read-only
-  static List<Session> get getSessions => _sessions;
-  static Session get getLoadedSession => _loadedSession;
+  static List<Session_Client> get getSessions => _sessions;
+  static Session_Client get getLoadedSession => _loadedSession;
 
 
   //fetch sessions from server
@@ -33,7 +33,7 @@ class LocalSessionManager {
     print('finding $sessionId');
     int index;
     //search through sessions list
-    for (Session session in _sessions) {
+    for (Session_Client session in _sessions) {
       if (session.sessionID == sessionId) {
         index = _sessions.indexOf(session);
         break;
@@ -47,7 +47,7 @@ class LocalSessionManager {
   static Future createSession({@required String sessionTitle}) async {
     //**replace with socket request**
     //creates session on server side + add session on local side
-    Session session =
+    Session_Client session =
     await Future.delayed(timelag, () =>
     success
         ? TestData.created_session(sessionTitle)
@@ -64,7 +64,7 @@ class LocalSessionManager {
     if (_findSession(sessionId) != -1) return null;
     //**replace with socket request**
     //adds session on server side + add session on local side
-    Session session =
+    Session_Client session =
     await Future.delayed(timelag, () =>
     success
         ? TestData.joined_session(sessionId)
@@ -88,7 +88,7 @@ class LocalSessionManager {
   }
 
   //loads session to be the currently open session
-  static Session loadSession({@required String sessionId}) {
+  static Session_Client loadSession({@required String sessionId}) {
     print('opening session $sessionId');
     _loadedSession = _sessions[_findSession(sessionId)];
     print('session ${_loadedSession.sessionID} opened');

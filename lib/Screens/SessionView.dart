@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:meetpoint/MVC.dart';
-import 'package:meetpoint/LocalInfoManagers/LocalSessionManager.dart';
-import 'package:meetpoint/LocalInfoManagers/Entities.dart';
+import 'package:meetpoint/Managers/SessionManager_Client.dart';
+import 'package:meetpoint/Managers/Entities.dart';
 import 'package:meetpoint/Standards/TravelModes.dart';
 import 'package:meetpoint/Standards/LocationTypes.dart';
 import 'package:meetpoint/Screens/MoreSessionInfoView.dart';
@@ -28,7 +28,7 @@ class SessionView extends View<SessionController> {
               sessionIdPrompt(controller.model.session.sessionID),
 
               //users joined in session---------------------------------------------------
-              usersBar(controller.model.session.users),
+              usersBar(controller.model.session.users), //TODO:find some way to update this-----------
 
               //maps display--------------------------------------------------------------
               Divider(height: 20.0,),
@@ -163,7 +163,7 @@ class SessionView extends View<SessionController> {
   //generate primer text
   static Widget primer() {
     return Container(
-      margin: const EdgeInsets.fromLTRB(30.0, 10.0, 30.0, 7.0),
+      margin: const EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 7.0),
       child: Text(
         'Others can join this meeting with the following session ID',
         style: TextStyle(color: Colors.grey),
@@ -199,7 +199,7 @@ class SessionView extends View<SessionController> {
   }
 
   //generate users in users bar
-  static Widget usersBar(List<UserDetails> users) {
+  static Widget usersBar(List<UserDetails_Client> users) {
     List<Widget> bar = [
       Container(
         margin: const EdgeInsets.only(right: 5.0),
@@ -210,7 +210,7 @@ class SessionView extends View<SessionController> {
         child: Text('Joined:'),
       ),
     ];
-    for (UserDetails user in users) {
+    for (UserDetails_Client user in users) {
       bar.add(
         Container(
           margin: const EdgeInsets.symmetric(horizontal: 20.0),
@@ -258,7 +258,7 @@ class SessionView extends View<SessionController> {
 
 class SessionController extends Controller<SessionModel> {
   SessionController(m) : super(model: m) {
-    session = LocalSessionManager.getLoadedSession;
+    session = SessionManager_Client.getLoadedSession;
     address1 = TextEditingController();
     address1.text = session.users[0].prefStartCoords.address;
     address2 = TextEditingController();
@@ -268,7 +268,7 @@ class SessionController extends Controller<SessionModel> {
   TextEditingController address2;
   final formKey = GlobalKey<FormState>();
   Stream stream; //TODO: initialise stream here-----------------------------------------------------------------
-  Session session;
+  Session_Client session;
 
   String validate(val) {
     if (val.isEmpty) return 'This field is required';
@@ -327,12 +327,12 @@ class SessionController extends Controller<SessionModel> {
 class SessionModel extends Model {
   SessionModel(String sessionId) {
     //initialise session variables
-    session = LocalSessionManager.loadSession(sessionId: sessionId);
+    session = SessionManager_Client.loadSession(sessionId: sessionId);
     preferredLocationType = session.prefLocationType;
     preferredTravelMode1 = session.users[0].prefTravelMode;
     preferredTravelMode2 = session.users[1].prefTravelMode;
   }
-  Session session;
+  Session_Client session;
   String preferredLocationType = LocationTypes.getList[0];
   String preferredTravelMode1;
   String preferredTravelMode2;
@@ -354,13 +354,7 @@ class SessionModel extends Model {
 }
 
 
-
-
-
-
-
-
-
+//=================================================================================================================
 
 
 //for nested maps view
@@ -416,7 +410,7 @@ class MapsController extends Controller<MapsModel> {
 class MapsModel extends Model {
   MapsModel({@required this.context}) {
     //initial value
-    if (LocalSessionManager.getLoadedSession.meetpoints.length == 0) {
+    if (SessionManager_Client.getLoadedSession.meetpoints.length == 0) {
       mapsDisplay = blankMapsDisplay(
         icon: Icons.add_circle,
         text: 'Currently no meetpoints, key in parameters',
@@ -470,7 +464,7 @@ class MapsModel extends Model {
   }
 
   Widget pagedMapsDisplay() {
-    List<Meetpoint> meetpoints = LocalSessionManager.getLoadedSession.meetpoints;
+    List<Meetpoint> meetpoints = SessionManager_Client.getLoadedSession.meetpoints;
     List<Widget> mapPages = [];
     int index = 0;
     for (Meetpoint meetpoint in meetpoints) {
@@ -508,7 +502,7 @@ class MapsModel extends Model {
                 child: Text('more'),
                 onPressed: () {
                   MaterialPageRoute route = MaterialPageRoute(
-                    builder: (context) => MoreSessionInfoView(MoreSessionInfoController(MoreSessionInfoModel(index))), //pass in index
+                    builder: (context) => MoreSessionInfoView(MoreSessionInfoController(MoreSessionInfoModel(index))),
                   );
                   Navigator.push(context, route);
                 },

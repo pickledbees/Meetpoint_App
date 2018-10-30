@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
 import 'package:meetpoint/MVC.dart';
-import 'package:meetpoint/LocalInfoManagers/Entities.dart';
-import 'package:meetpoint/LocalInfoManagers/LocalSessionManager.dart';
-import 'package:meetpoint/LocalInfoManagers/LocalUserInfoManager.dart';
+import 'package:meetpoint/Managers/Entities.dart';
+import 'package:meetpoint/Managers/SessionManager_Client.dart';
+import 'package:meetpoint/Managers/LocalUserInfoManager.dart';
 import 'FirstStartView.dart';
 import 'HomeView.dart';
 
@@ -51,7 +51,7 @@ class InitialiserController extends Controller<InitialiserModel> {
 
   initialise(BuildContext context) async {
 
-    UserDetails user = await LocalUserInfoManager.loadUser();
+    UserDetails_Client user = await LocalUserInfoManager.loadUser();
 
     if (user == null) {
       //pause
@@ -67,7 +67,7 @@ class InitialiserController extends Controller<InitialiserModel> {
       try {
         //fetch sessions
         model.setLoaderTextTo('Fetching your sessions...');
-        await LocalSessionManager.fetchSessions();
+        await SessionManager_Client.fetchSessions();
         //show welcome
         model.setLoaderTextTo('Welcome ${LocalUserInfoManager.getLocalUser.name}');
         await Future.delayed(Duration(seconds: 1)); //pause

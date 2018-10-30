@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:meetpoint/MVC.dart';
-import 'package:meetpoint/LocalInfoManagers/Entities.dart';
-import 'package:meetpoint/LocalInfoManagers/LocalSessionManager.dart';
+import 'package:meetpoint/Managers/Entities.dart';
+import 'package:meetpoint/Managers/SessionManager_Client.dart';
 
 class MoreSessionInfoView extends View<MoreSessionInfoController>{
 
@@ -24,11 +24,11 @@ class MoreSessionInfoController extends Controller<MoreSessionInfoModel> {
 class MoreSessionInfoModel extends Model {
 
   MoreSessionInfoModel(int meetpointIndex) {
-    session = LocalSessionManager.getLoadedSession;
+    session = SessionManager_Client.getLoadedSession;
     meetpoint = session.meetpoints[meetpointIndex];
   }
 
-  Session session;
+  Session_Client session;
   Meetpoint meetpoint;
 
 }

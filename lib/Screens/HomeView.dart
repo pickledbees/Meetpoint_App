@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:meetpoint/MVC.dart';
-import 'package:meetpoint/LocalInfoManagers/Entities.dart';
-import 'package:meetpoint/LocalInfoManagers/LocalSessionManager.dart';
+import 'package:meetpoint/Managers/Entities.dart';
+import 'package:meetpoint/Managers/SessionManager_Client.dart';
 import 'package:meetpoint/Screens/SessionView.dart';
 import 'package:meetpoint/Screens/CreateSessionView.dart';
 import 'package:meetpoint/Screens/JoinSessionView.dart';
@@ -59,9 +59,10 @@ class HomeController extends Controller<HomeModel> {
     Navigator.push(context, route,);
   }
 
+  //TODO: find some way to access this UI method---------------------------------------------------------
   removeSession({@required String sessionId, BuildContext context}) async {
     try {
-      await LocalSessionManager.deleteSession(sessionId: sessionId);
+      await SessionManager_Client.deleteSession(sessionId: sessionId);
       model.loadTiles(context);
       //navigate to session page
     } catch (e) {
@@ -81,7 +82,7 @@ class HomeModel extends Model {
   );
 
   loadTiles(BuildContext context) {
-    List<Session> sessions = LocalSessionManager.getSessions;
+    List<Session_Client> sessions = SessionManager_Client.getSessions;
     List<ListTile> listTiles = <ListTile>[];
     if (sessions.length == 0) {
       setViewState(() {
@@ -93,7 +94,7 @@ class HomeModel extends Model {
       });
     } else {
       //generate tiles
-      for (Session session in sessions) listTiles.add(
+      for (Session_Client session in sessions) listTiles.add(
           ListTile(
             leading: Icon(Icons.place),
             title: Text(session.title),

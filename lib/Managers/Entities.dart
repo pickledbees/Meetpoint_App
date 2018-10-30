@@ -1,16 +1,16 @@
 import 'package:flutter/foundation.dart';
 
-//Session definition
-class Session {
+//Session_Client definition
+class Session_Client {
   final String sessionID;
   final String title;
   Meetpoint chosenMeetpoint;
   List<Meetpoint> meetpoints = [];
   String prefLocationType;
-  List<UserDetails> users = [];
+  List<UserDetails_Client> users = [];
   double timeCreated;
 
-  Session({
+  Session_Client({
     @required this.sessionID,
     @required this.title,
     this.chosenMeetpoint,
@@ -25,23 +25,23 @@ class Session {
   }
 }
 
-class UserDetails {
+class UserDetails_Client {
   String name;
-  Location prefStartCoords;
+  Location_Client prefStartCoords;
   String prefTravelMode;
 
-  UserDetails({
+  UserDetails_Client({
     @required this.name,
     @required this.prefStartCoords,
     @required this.prefTravelMode,
   });
 }
 
-class Location {
+class Location_Client {
   String name,type,address; //add address
   List<double> coordinates; //may want to remove
 
-  Location({
+  Location_Client({
     @required this.name,
     @required this.type,
     this.address,
@@ -49,7 +49,7 @@ class Location {
   });
 }
 
-class Meetpoint extends Location {
+class Meetpoint extends Location_Client {
   String routeImage;
 
   Meetpoint({
@@ -69,11 +69,11 @@ class Meetpoint extends Location {
 
 
 class TestData {
-  static List<Session> returned_sessions = (() {
-    List<Session> arr = [];
+  static List<Session_Client> returned_sessions = (() {
+    List<Session_Client> arr = [];
     for (int i = 0; i < 10; i++) {
       arr.add(
-        Session(
+        Session_Client(
           sessionID: '${i}23A',
           title: 'Picnic with fren $i',
           chosenMeetpoint: Meetpoint(
@@ -104,20 +104,20 @@ class TestData {
           ],
           prefLocationType: 'Park',
           users: [
-            UserDetails(
+            UserDetails_Client(
               name: 'jon',
               prefTravelMode: 'Car',
-              prefStartCoords: Location(
+              prefStartCoords: Location_Client(
                 name: 'Home',
                 type: 'Housing',
                 address: 'Block 1234',
                 coordinates: [100.0, 200.0],
               ),
             ),
-            UserDetails(
+            UserDetails_Client(
               name: 'jane',
               prefTravelMode: 'Walking',
-              prefStartCoords: Location(
+              prefStartCoords: Location_Client(
                 name: 'Work',
                 type: 'Office',
                 address: 'Block 324657',
@@ -134,27 +134,27 @@ class TestData {
 
   static int count = 0;
 
-  static Session created_session (String sessionTitle) => Session(
+  static Session_Client created_session (String sessionTitle) => Session_Client(
     sessionID: '${count++}Z',
     title: sessionTitle,
     chosenMeetpoint: null,
     meetpoints: <Meetpoint>[],
     prefLocationType: 'No Preference',
     users: [
-      UserDetails(
+      UserDetails_Client(
         name: 'jon',
         prefTravelMode: 'Car',
-        prefStartCoords: Location(
+        prefStartCoords: Location_Client(
           name: 'Home',
           type: 'Housing',
           address: 'Home',
           coordinates: [100.0,200.0],
         ),
       ),
-      UserDetails(
+      UserDetails_Client(
         name: null,
         prefTravelMode: 'No Preference',
-        prefStartCoords: Location(
+        prefStartCoords: Location_Client(
           name: null,
           type: null,
           address: null,
@@ -166,7 +166,7 @@ class TestData {
   );
 
 
-  static Session joined_session (String sessionId) => Session(
+  static Session_Client joined_session (String sessionId) => Session_Client(
     sessionID: sessionId,
     title: 'Picnic with fren $sessionId',
     chosenMeetpoint: Meetpoint(
@@ -193,20 +193,20 @@ class TestData {
     ],
     prefLocationType: 'Park',
     users: [
-      UserDetails(
+      UserDetails_Client(
         name: 'jon',
         prefTravelMode: 'Car',
-        prefStartCoords: Location(
+        prefStartCoords: Location_Client(
           name: 'Home',
           type: 'Housing',
           address: 'Block 203',
           coordinates: [100.0,200.0],
         ),
       ),
-      UserDetails(
+      UserDetails_Client(
         name: 'jane',
         prefTravelMode: 'Walking',
-        prefStartCoords: Location(
+        prefStartCoords: Location_Client(
           name: 'Work',
           type: 'Office',
           address: 'Office 21',
@@ -217,9 +217,9 @@ class TestData {
     timeCreated: 12134223423.0,
   );
 
-  static UserDetails user = UserDetails(
+  static UserDetails_Client user = UserDetails_Client(
     name: 'jon',
-    prefStartCoords: Location(
+    prefStartCoords: Location_Client(
       name: null,
       type: null,
     ),

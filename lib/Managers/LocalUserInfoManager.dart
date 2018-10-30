@@ -3,10 +3,10 @@ import 'package:flutter/foundation.dart';
 import 'Entities.dart';
 
 class LocalUserInfoManager {
-  static UserDetails _localUser;
+  static UserDetails_Client _localUser;
 
-  static set setLocalUser(UserDetails user) => _localUser = user;
-  static UserDetails get getLocalUser => _localUser;
+  static set setLocalUser(UserDetails_Client user) => _localUser = user;
+  static UserDetails_Client get getLocalUser => _localUser;
 
   static Future loadUser() async {
     //**read from local memory**
