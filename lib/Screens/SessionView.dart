@@ -9,15 +9,8 @@ import 'dart:async';
 
 class SessionView extends View<SessionController> {
   SessionView(c) : super(controller: c);
-
-  Session session = LocalSessionManager.getLoadedSession;
-
   @override
   Widget build(BuildContext context) {
-
-    //pre-fill fields
-    controller.address1.text = session.users[0].prefStartCoords.address;
-    controller.address2.text = session.users[1].prefStartCoords.address;
 
     return Scaffold(
       appBar: AppBar(title: Text(controller.model.session.title),),
@@ -90,11 +83,12 @@ class SessionView extends View<SessionController> {
                             decoration: InputDecoration(
                               hintText: 'Address',
                             ),
+                            onEditingComplete: controller.sendUpdateAddress1,
                           ),
                           DropdownButton(
                             value: controller.model.preferredTravelMode1,
                             items: prefTravelModeDropdownItems(),
-                            onChanged: controller.updatePreferredTravelMode1,
+                            onChanged: controller.sendUpdatePreferredTravelMode1,
                           ),
                         ],
                       ),
@@ -126,11 +120,12 @@ class SessionView extends View<SessionController> {
                             decoration: InputDecoration(
                               hintText: 'Address',
                             ),
+                            onEditingComplete: controller.sendUpdateAddress2,
                           ),
                           DropdownButton(
                             value: controller.model.preferredTravelMode2,
                             items: prefTravelModeDropdownItems(),
-                            onChanged: controller.updatePreferredTravelMode2,
+                            onChanged: controller.sendUpdatePreferredTravelMode2,
                           ),
                         ],
                       ),
@@ -148,7 +143,12 @@ class SessionView extends View<SessionController> {
                   builder: (context,snapshot) {
                     //TODO: edit variables
                     controller.editFields('session_object_in_string_form');
-                    build(context); //rebuild entire page
+                    //if preferred travel location updated, controller.updatePreferredLocation
+                    //if address1 edited, addrees1 updated
+                    //if address2 edited, address2 updated
+                    //if preferred travel mode1 updated, controller.updatePreferredTravelMode1
+                    //if preferred travle mode2 updated, controller.updatePreferredTravelMode1
+                    //if new calculation, build(context); //rebuild entire page
                   },
                 ),
                 */
@@ -257,35 +257,62 @@ class SessionView extends View<SessionController> {
 }
 
 class SessionController extends Controller<SessionModel> {
-  SessionController(m) : super(model: m);
-  TextEditingController address1 = TextEditingController();
-  TextEditingController address2 = TextEditingController();
+  SessionController(m) : super(model: m) {
+    session = LocalSessionManager.getLoadedSession;
+    address1 = TextEditingController();
+    address1.text = session.users[0].prefStartCoords.address;
+    address2 = TextEditingController();
+    address2.text = session.users[1].prefStartCoords.address;
+  }
+  TextEditingController address1;
+  TextEditingController address2;
   final formKey = GlobalKey<FormState>();
   Stream stream; //TODO: initialise stream here-----------------------------------------------------------------
+  Session session;
 
   String validate(val) {
     if (val.isEmpty) return 'This field is required';
   }
 
-  //local visual update
+  //TODO: implement server side stuff --------------------------------------------------------------------------
+  //local memory + server update
+  sendUpdatePreferredLocation(val) {
+    updatePreferredLocation(val);
+  }
+  sendUpdateAddress1() {
+    updateAddress1(); //local
+  }
+  sendUpdateAddress2() {
+    updateAddress2(); //local
+  }
+  sendUpdatePreferredTravelMode1(val) {
+    updatePreferredTravelMode1(val); //local
+  }
+  sendUpdatePreferredTravelMode2(val) {
+    updatePreferredTravelMode2(val); //local
+  }
+
+  //local memory plus visual updates
   updatePreferredLocation(val) {
-    //TODO: implement update session sequence-----------------------------------------------------------------
+    session.prefLocationType = val;
     model.updatePreferredLocation(val);
   }
-
-  //local visual update
+  updateAddress1() {
+    session.users[0].prefStartCoords.address = address1.text;
+  }
+  updateAddress2() {
+    session.users[1].prefStartCoords.address = address2.text;
+  }
   updatePreferredTravelMode1(val) {
-    //TODO: implement update session sequence-----------------------------------------------------------------
+    session.users[0].prefTravelMode = val;
     model.updatePreferredTravelMode1(val);
   }
-
-  //local visual update
   updatePreferredTravelMode2(val) {
-    //TODO: implement update session sequence-----------------------------------------------------------------
+    session.users[1].prefTravelMode = val;
     model.updatePreferredTravelMode2(val);
   }
 
-  //send parameters for calculation calculate
+  //send parameters for calculation calculate ????
   calcMeetpoints() {
     //TODO: implement update session sequence-----------------------------------------------------------------
     if (formKey.currentState.validate()) print('hello');
@@ -312,24 +339,18 @@ class SessionModel extends Model {
 
   //local visual update
   updatePreferredLocation(val) {
-    session.prefLocationType = val;
     setViewState(() => preferredLocationType = val);
   }
 
   //local visual update
   updatePreferredTravelMode1(val) {;
-    session.users[0].prefTravelMode = val;
     setViewState(() => preferredTravelMode1 = val);
   }
 
   //local visual update
   updatePreferredTravelMode2(val) {
-    session.users[1].prefTravelMode = val;
     setViewState(() => preferredTravelMode2 = val);
   }
-
-  updateMapsDisplay() {}
-
 }
 
 
@@ -344,7 +365,6 @@ class SessionModel extends Model {
 
 //for nested maps view
 class MapsView extends View<MapsController> {
-
   MapsView(c) : super(controller : c);
 
   @override
@@ -371,7 +391,7 @@ class MapsView extends View<MapsController> {
                     color: Colors.white,
                   ),
                 ),
-                onPressed: () {controller.calcMeetpoints();},
+                onPressed: () {controller.calcMeetpoints();}, //TODO: think about how to validate-----------------
               ),
               Container(width: 10.0,),
             ],
@@ -382,19 +402,18 @@ class MapsView extends View<MapsController> {
   }
 }
 
-class MapsController extends Controller<MapsModel> {
 
+class MapsController extends Controller<MapsModel> {
   MapsController(m) : super(model : m);
 
   calcMeetpoints() {
     //TODO: send data using LocalInfoManager------------------------------------------------------------
     model.updateMapsDisplay(type: null); //pass in response type integer----------------!!!!!!!!!!!!
   }
-
 }
 
-class MapsModel extends Model {
 
+class MapsModel extends Model {
   MapsModel({@required this.context}) {
     //initial value
     if (LocalSessionManager.getLoadedSession.meetpoints.length == 0) {
@@ -406,7 +425,6 @@ class MapsModel extends Model {
       mapsDisplay = pagedMapsDisplay();
     }
   }
-
   Widget mapsDisplay;
   BuildContext context;
   int radioGroupValue = -1;
