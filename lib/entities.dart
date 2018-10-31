@@ -30,8 +30,8 @@ class SessionsLog {
     return names;
   }
 
-  List<Meetpoint> get getChosenMeetpoints {
-    List<Meetpoint> meetpoints = [];
+  List<Meetpoint_Client> get getChosenMeetpoints {
+    List<Meetpoint_Client> meetpoints = [];
     for (Session_Client session in sessions) meetpoints.add(session.chosenMeetpoint);
   }
 }
@@ -41,8 +41,8 @@ class Session_Client {
 
   final String sessionID;
   final String title;
-  List<Meetpoint> meetpoints = [];
-  Meetpoint chosenMeetpoint = Meetpoint();
+  List<Meetpoint_Client> meetpoints = [];
+  Meetpoint_Client chosenMeetpoint = Meetpoint_Client();
   String prefLocationType;
   List<UserDetails_Client> users = [];
   double timeCreated;
@@ -52,7 +52,7 @@ class Session_Client {
   }
 }
 
-class Meetpoint extends Location_Client {
+class Meetpoint_Client extends Location_Client {
   String routeImage;
 }
 

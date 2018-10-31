@@ -4,8 +4,8 @@ import 'package:flutter/foundation.dart';
 class Session_Client {
   final String sessionID;
   final String title;
-  Meetpoint chosenMeetpoint;
-  List<Meetpoint> meetpoints = [];
+  Meetpoint_Client chosenMeetpoint;
+  List<Meetpoint_Client> meetpoints = [];
   String prefLocationType;
   List<UserDetails_Client> users = [];
   double timeCreated;
@@ -49,17 +49,17 @@ class Location_Client {
   });
 }
 
-class Meetpoint extends Location_Client {
+class Meetpoint_Client extends Location_Client {
   String routeImage;
 
-  Meetpoint({
+  Meetpoint_Client({
     @required this.routeImage,
     @required String name,
     @required String type,
     String address,
     List<double> coordinates,
   }) {
-    super.name = name;
+    super.name  = name;
     super.type = type;
     super.address = address;
     super.coordinates = coordinates;
@@ -76,26 +76,26 @@ class TestData {
         Session_Client(
           sessionID: '${i}23A',
           title: 'Picnic with fren $i',
-          chosenMeetpoint: Meetpoint(
+          chosenMeetpoint: Meetpoint_Client(
             routeImage: 'path/img.jpg',
             name: 'ParkABC',
             type: 'Park',
             coordinates: [0.0,0.0],
           ),
           meetpoints: [
-            Meetpoint(
+            Meetpoint_Client(
               routeImage: 'path/img.jpg',
               name: 'ParkABC',
               type: 'Park',
               coordinates: [0.0,0.0],
             ),
-            Meetpoint(
+            Meetpoint_Client(
               routeImage: 'path/img.jpg',
               name: 'ParkABD',
               type: 'Park',
               coordinates: [0.0,0.0],
             ),
-            Meetpoint(
+            Meetpoint_Client(
               routeImage: 'path/img.jpg',
               name: 'ParkABE',
               type: 'Park',
@@ -138,7 +138,7 @@ class TestData {
     sessionID: '${count++}Z',
     title: sessionTitle,
     chosenMeetpoint: null,
-    meetpoints: <Meetpoint>[],
+    meetpoints: <Meetpoint_Client>[],
     prefLocationType: 'No Preference',
     users: [
       UserDetails_Client(
@@ -169,23 +169,23 @@ class TestData {
   static Session_Client joined_session (String sessionId) => Session_Client(
     sessionID: sessionId,
     title: 'Picnic with fren $sessionId',
-    chosenMeetpoint: Meetpoint(
+    chosenMeetpoint: Meetpoint_Client(
       routeImage: 'path/img.jpg',
       name: 'ParkABC',
       type: 'Park',
     ),
     meetpoints: [
-      Meetpoint(
+      Meetpoint_Client(
         routeImage: 'path/img.jpg',
         name: 'ParkABC',
         type: 'Park',
       ),
-      Meetpoint(
+      Meetpoint_Client(
         routeImage: 'path/img.jpg',
         name: 'ParkABD',
         type: 'Park',
       ),
-      Meetpoint(
+      Meetpoint_Client(
         routeImage: 'path/img.jpg',
         name: 'ParkABE',
         type: 'Park',

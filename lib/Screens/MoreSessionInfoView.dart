@@ -29,6 +29,6 @@ class MoreSessionInfoModel extends Model {
   }
 
   Session_Client session;
-  Meetpoint meetpoint;
+  Meetpoint_Client meetpoint;
 
 }

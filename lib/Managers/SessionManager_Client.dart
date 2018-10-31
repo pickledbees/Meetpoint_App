@@ -112,6 +112,9 @@ class SessionManager_Client {
     //**editMethod parser**
     //**edit appropriate member in _openSession**
   }
+
+  updateLocalUserInfo(UserDetails_Client userDetails) {}
+  //TODO: implement------------------------------------------------------------------------------
 }
 
 class Listener {

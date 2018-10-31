@@ -311,6 +311,7 @@ class SessionController extends Controller<SessionModel> {
     session.users[1].prefTravelMode = val;
     model.updatePreferredTravelMode2(val);
   }
+  updateChosenMeetpoint(val) {} //TODO: implement ------------------------------------------------------------
 
   //send parameters for calculation calculate ????
   calcMeetpoints() {
@@ -430,7 +431,7 @@ class MapsModel extends Model {
           mapsDisplay = pagedMapsDisplay();
           break;
         case 2: //calculating...
-          mapsDisplay = blankMapsDisplay(icon: Icons.search, text: 'Calculating your meetpoints...',);
+          mapsDisplay = blankMapsDisplay(icon: Icons.search, text: 'Calculating your Meetpoints...',);
           break;
         case 3: //not enough params
           mapsDisplay = blankMapsDisplay(icon: Icons.warning, text: 'Not enough parameters',);
@@ -464,10 +465,10 @@ class MapsModel extends Model {
   }
 
   Widget pagedMapsDisplay() {
-    List<Meetpoint> meetpoints = SessionManager_Client.getLoadedSession.meetpoints;
+    List<Meetpoint_Client> meetpoints = SessionManager_Client.getLoadedSession.meetpoints;
     List<Widget> mapPages = [];
     int index = 0;
-    for (Meetpoint meetpoint in meetpoints) {
+    for (Meetpoint_Client meetpoint in meetpoints) {
       Widget mapPage = singleMapDisplay(
         mapTitleBar: mapTitleBar(
           name: meetpoint.name,
@@ -536,6 +537,7 @@ class MapsModel extends Model {
               onChanged: (val) {
                 setViewState(() {
                   radioGroupValue = val;
+                  //TODO: send chosen meetpoint--------------------------------------------------
                 });
               },
             ),
