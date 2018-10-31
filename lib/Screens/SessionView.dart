@@ -343,7 +343,7 @@ class SessionModel extends Model {
   }
 
   //local visual update
-  updatePreferredTravelMode1(val) {;
+  updatePreferredTravelMode1(val) {
     setViewState(() => preferredTravelMode1 = val);
   }
 
