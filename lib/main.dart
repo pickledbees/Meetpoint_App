@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:meetpoint/Screens/HomeView.dart';
 import 'package:meetpoint/Screens/FirstStartView.dart';
 import 'package:meetpoint/Screens/InitialiserView.dart';
-import 'package:http/http.dart';
+import 'package:http/http.dart' as http;
 
 void main() {
   print('App starting...');
@@ -43,5 +43,6 @@ class _HttpTestState extends State<StatefulWidget> {
   }
 
   sendRequest() {
+    http.get('localhost:3000/hello').then((data) => setState(() => info = data.toString()));
   }
 }
