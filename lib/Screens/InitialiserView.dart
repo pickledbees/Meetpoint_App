@@ -8,9 +8,7 @@ import 'FirstStartView.dart';
 import 'HomeView.dart';
 
 class InitialiserView extends View<InitialiserController> {
-
   InitialiserView(c) : super(controller : c);
-
   bool r = true;
 
   @override
@@ -46,7 +44,6 @@ class InitialiserView extends View<InitialiserController> {
 }
 
 class InitialiserController extends Controller<InitialiserModel> {
-
   InitialiserController(m) : super(model : m);
 
   initialise(BuildContext context) async {

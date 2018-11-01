@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'Entities.dart';
+import 'package:meetpoint/Managers/SessionManager_Client.dart';
 
 class LocalUserInfoManager {
   static UserDetails_Client _localUser;
@@ -12,10 +13,13 @@ class LocalUserInfoManager {
     //**read from local memory**
     //**load user details into localUser member**
     _localUser = TestData.user;
-    return _localUser;//localUser;
+    return null;//localUser;
   }
 
-  static Future saveUser() async {
-    //**save user details to local memory**
+  static Future saveUser(UserDetails_Client user) async {
+    bool result = await SessionManager_Client.saveUser(user);
+    //if error throw necessary dialog
+    _localUser = user;
+    return result;
   }
 }

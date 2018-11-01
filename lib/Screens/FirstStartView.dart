@@ -102,7 +102,7 @@ class FirstStartController extends Controller<FirstStartModel> {
     if (formKey.currentState.validate()) {
 
       //set local user (may want to change to setter)
-      LocalUserInfoManager.setLocalUser = UserDetails_Client(
+      UserDetails_Client user = UserDetails_Client(
         name: nameController.text,
         prefStartCoords: Location_Client(
           name: addressController.text,
@@ -112,11 +112,25 @@ class FirstStartController extends Controller<FirstStartModel> {
         prefTravelMode: model.dropdownButtonValue,
       );
 
-      MaterialPageRoute route = MaterialPageRoute(
-        builder: (context) => HomeView(HomeController(HomeModel())),
-      );
-      Navigator.pushReplacement(context, route);
+      LocalUserInfoManager.saveUser(
+          user
+      ).then((success) {
+        if (success) {
 
+          //navigate to page
+          MaterialPageRoute route = MaterialPageRoute(
+            builder: (context) => HomeView(HomeController(HomeModel())),
+          );
+          Navigator.pushReplacement(context, route);
+
+        } else {
+
+          throw 'Save failed, try again later';
+
+        }
+      }).catchError((error) {}
+        //TODO: handle error---------------------------------------------------------------------
+      );
     }
   }
 }

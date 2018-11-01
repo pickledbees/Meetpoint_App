@@ -386,7 +386,7 @@ class MapsView extends View<MapsController> {
                     color: Colors.white,
                   ),
                 ),
-                onPressed: () {controller.calcMeetpoints();}, //TODO: think about how to validate-----------------
+                onPressed: () => controller.calcMeetpoints, //TODO: think about how to validate-----------------
               ),
               Container(width: 10.0,),
             ],
@@ -395,17 +395,17 @@ class MapsView extends View<MapsController> {
       ),
     );
   }
-}
+}//TODO: think about how to validate----------------------------------------------------------------------
 
 
 class MapsController extends Controller<MapsModel> {
   MapsController(m) : super(model : m);
 
   calcMeetpoints() {
-    //TODO: send data using LocalInfoManager------------------------------------------------------------
+    //TODO: send data using SessionManager_Client------------------------------------------------------------
     model.updateMapsDisplay(type: null); //pass in response type integer----------------!!!!!!!!!!!!
   }
-}
+}//TODO: send data using SessionManager_Client------------------------------------------------------------
 
 
 class MapsModel extends Model {

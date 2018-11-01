@@ -39,6 +39,7 @@ class HomeView extends View<HomeController> {
   }
 }
 
+
 class HomeController extends Controller<HomeModel> {
 
   HomeController(m) : super(model: m);
