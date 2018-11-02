@@ -4,7 +4,6 @@ import 'SessionView.dart';
 import 'package:meetpoint/Managers/SessionManager_Client.dart';
 
 class CreateSessionView extends View<CreateSessionController> {
-
   CreateSessionView(c) : super(controller: c);
 
   @override
@@ -48,46 +47,35 @@ class CreateSessionView extends View<CreateSessionController> {
 }
 
 class CreateSessionController extends Controller<CreateSessionModel> {
-
   CreateSessionController(m) : super(model: m);
-
   TextEditingController fieldController = TextEditingController();
   final formKey = GlobalKey<FormState>();
 
   String validate(val) {
     if (val.isEmpty) return 'Please fill in session title';
   }
-
   createSessionAndNavigateToSession(BuildContext context) async {
-
     if (formKey.currentState.validate()) {
-
       try {
         //show loading text
         model.setHeaderTextTo('Creating your session...');
-
         //create session
         String sessionId =
         await SessionManager_Client.createSession(sessionTitle: fieldController.text);
-
         //navigate to view
         MaterialPageRoute route = MaterialPageRoute(
           builder: (context) => SessionView(SessionController(SessionModel(sessionId))),
         );
         Navigator.pushReplacement(context, route);
-
       } catch (e) {
         //show error
         model.setHeaderTextTo('Failed to create session, try again\nError:\n$e');
-
       }
     }
   }
-
 }
 
 class CreateSessionModel extends Model {
-
   String headerText = 'Title your session below';
 
   setHeaderTextTo(String text) {

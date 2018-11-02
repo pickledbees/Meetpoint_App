@@ -1,16 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:meetpoint/Screens/HomeView.dart';
-import 'package:meetpoint/Screens/FirstStartView.dart';
 import 'package:meetpoint/Screens/InitialiserView.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert';
 import 'package:meetpoint/HttpUtil.dart';
+import 'package:meetpoint/Managers/SessionManager_Client.dart';
 import 'dart:async';
 
 void main() {
   print('App starting...');
   runApp(MeetPointApp());
   //runApp(Test());
+  //TODO: set up stream here, call SessionManager_Client.updateSession() when required-------------
 }
 
 class MeetPointApp extends StatelessWidget {

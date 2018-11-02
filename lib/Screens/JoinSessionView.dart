@@ -4,7 +4,6 @@ import 'SessionView.dart';
 import 'package:meetpoint/Managers/SessionManager_Client.dart';
 
 class JoinSessionView extends View<JoinSessionController> {
-
   JoinSessionView(c) : super(controller: c);
 
   @override
@@ -48,45 +47,35 @@ class JoinSessionView extends View<JoinSessionController> {
 }
 
 class JoinSessionController extends Controller<JoinSessionModel> {
-
   JoinSessionController(m) : super(model: m);
-
   TextEditingController fieldController = TextEditingController();
   final formKey = GlobalKey<FormState>();
 
   String validate(val) {
     if (val.isEmpty) return 'Please fill in session title';
   }
-
   joinSessionAndNavigateToSession(BuildContext context) async {
 
     if (formKey.currentState.validate()) {
-
       try {
         //show loading text
         model.setHeaderTextTo('Attempting to join session...');
-
         //join session
         await SessionManager_Client.joinSession(sessionId: fieldController.text);
-
         //navigate to view
         MaterialPageRoute route = MaterialPageRoute(
           builder: (context) => SessionView(SessionController(SessionModel(fieldController.text))),
         );
         Navigator.pushReplacement(context, route);
-
       } catch (e) {
         //show error
         model.setHeaderTextTo('Failed to join session, try again\nError:\n$e');
-
       }
     }
   }
-
 }
 
 class JoinSessionModel extends Model {
-
   String headerText = 'Key in session ID below';
 
   setHeaderTextTo(String text) {

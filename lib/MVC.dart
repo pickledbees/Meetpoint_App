@@ -63,6 +63,9 @@ class Controller<M extends Model> {
   _ViewState _state;
   M model;
 
+  //to check if state object is loaded
+  bool get mounted => _state?.mounted;
+
   //getter for reference to associated view widget, makes it available for subclasses
   Widget get widget => _widget;
 
@@ -75,6 +78,9 @@ class Controller<M extends Model> {
 //Model class
 class Model {
   _ViewState _state;
+
+  //to check if state object is loaded
+  bool get mounted => _state?.mounted;
 
   //allows model to reload the view
   void setViewState(VoidCallback fn) {

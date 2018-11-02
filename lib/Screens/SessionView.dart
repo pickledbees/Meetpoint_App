@@ -14,7 +14,7 @@ class SessionView extends View<SessionController> {
   }
 
   static BuildContext viewContext; //for access for dynamically built navigation buttons
-  static Widget widget; //reference to self for others to access
+  static SessionView widget; //reference to self object for others to access
 
   @override
   Widget build(BuildContext context) {
@@ -55,7 +55,7 @@ class SessionView extends View<SessionController> {
                         color: Colors.white,
                       ),
                     ),
-                    onPressed: () => controller.calcMeetpoints, //TODO: think about how to validate-----------------
+                    onPressed: () => controller.calcMeetpoints(), //TODO: think about how to validate-----------------
                   ),
                   Container(width: 10.0,),
                 ],
@@ -79,7 +79,7 @@ class SessionView extends View<SessionController> {
                     child: DropdownButton(
                       value: controller.model.preferredLocationType,
                       items: prefLocationTypeDropdownItems(),
-                      onChanged: controller.updatePreferredLocation,
+                      onChanged: controller.sendUpdatePreferredLocation,
                     ),
                   ),
                 ],
@@ -291,8 +291,9 @@ class SessionController extends Controller<SessionModel> {
   TextEditingController address1;
   TextEditingController address2;
   final formKey = GlobalKey<FormState>();
-  Stream stream; //TODO: initialise stream here-----------------------------------------------------------------
   Session_Client session;
+
+  bool get isMounted => mounted;
 
   String validate(val) {
     if (val.isEmpty) return 'This field is required';
@@ -301,19 +302,54 @@ class SessionController extends Controller<SessionModel> {
   //TODO: implement server side stuff --------------------------------------------------------------------------
   //local memory + server update
   sendUpdatePreferredLocation(val) {
-    updatePreferredLocation(val);
+    SessionManager_Client.requestSessionEdit(
+      sessionId: session.sessionID,
+      field: Field.preferredLocationType,
+      value: val,
+    ).then((success) {
+      if (success) updatePreferredLocation(val); //local
+      else throw 'server failed to update field';
+    }).catchError(model.showErrorDialog);
   }
   sendUpdateAddress1() {
-    updateAddress1(); //local
+    SessionManager_Client.requestSessionEdit(
+      sessionId: session.sessionID,
+      field: Field.user1Address,
+      value: address1.text,
+    ).then((success) {
+      if (success) updateAddress1(); //local
+      else throw 'server failed to update field';
+    }).catchError(model.showErrorDialog);
   }
   sendUpdateAddress2() {
-    updateAddress2(); //local
+    SessionManager_Client.requestSessionEdit(
+      sessionId: session.sessionID,
+      field: Field.user2Address,
+      value: address2.text,
+    ).then((success) {
+      if (success) updateAddress2(); //local
+      else throw 'server failed to update field';
+    }).catchError(model.showErrorDialog);
   }
   sendUpdatePreferredTravelMode1(val) {
-    updatePreferredTravelMode1(val); //local
+    SessionManager_Client.requestSessionEdit(
+      sessionId: session.sessionID,
+      field: Field.user1PreferredTravelMode,
+      value: val,
+    ).then((success) {
+      if (success) updatePreferredTravelMode1(val); //local
+      else throw 'server failed to update field';
+    }).catchError(model.showErrorDialog);
   }
   sendUpdatePreferredTravelMode2(val) {
-    updatePreferredTravelMode2(val); //local
+    SessionManager_Client.requestSessionEdit(
+      sessionId: session.sessionID,
+      field: Field.user2PreferredTravelMode,
+      value: val,
+    ).then((success) {
+      if (success) updatePreferredTravelMode2(val); //local
+      else throw 'server failed to update field';
+    }).catchError(model.showErrorDialog);
   }
 
   //local memory plus visual updates
@@ -340,13 +376,20 @@ class SessionController extends Controller<SessionModel> {
   //send parameters for calculation calculate ????
   calcMeetpoints() {
     //TODO: implement update session sequence-----------------------------------------------------------------
-    if (!formKey.currentState.validate()) return;
-    model.updateMapsDisplay(type: null); //pass in response type integer----------------!!!!!!!!!!!!
+    if (!formKey.currentState.validate()) return; //validate fields
+
+    model.updateMapsDisplay(type: 2); //show loader text
+
+    SessionManager_Client.calcMeetpoint() //calculate and wait for result
+    .then((success) {
+      if (!mounted) return;
+      if (success) model.updateMapsDisplay(type: 1);
+      else model.updateMapsDisplay(type: 4);
+    }).catchError((error) {
+      if (mounted) model.updateMapsDisplay(type: 5);
+    });
   }
 
-  editFields(String session_object_in_string_form) {
-    //TODO: call LocalInfoManager to edit session-----------------------------------------------------------------
-  }
 }
 
 class SessionModel extends Model {
@@ -373,6 +416,8 @@ class SessionModel extends Model {
   String preferredTravelMode2;
   Widget mapsDisplay;
   int chosenMeetpointIndex;
+
+  bool get isMounted => mounted;
 
   //local visual update
   updatePreferredLocation(val) {
@@ -513,15 +558,24 @@ class SessionModel extends Model {
 
   //callback for radio button
   updateChosenMeetpoint(val) {
-    //set chosen meetpoint
-    session.chosenMeetpoint = session.meetpoints[val];
-    //reflect on mainpage
-    HomeView.refresh = true;
-    //update view
-    setViewState(() {
-      chosenMeetpointIndex = val;
-      mapsDisplay = pagedMapsDisplay();
-    });
+    print(val.runtimeType);
+    //send update
+    SessionManager_Client.requestSessionEdit(
+      sessionId: session.sessionID,
+      field: Field.chosenMeetpoint,
+      value: val.toString(),
+    ).then((success) {
+      if (!success) throw 'server failed to update field';
+      //set chosen meetpoint
+      session.chosenMeetpoint = session.meetpoints[val];
+      //reflect on home page
+      HomeView.refresh = true;
+      //update view
+      setViewState(() {
+        chosenMeetpointIndex = val;
+        mapsDisplay = pagedMapsDisplay();
+      });
+    }).catchError(showErrorDialog);
   }
 
   Widget mapImage({@required String url}) {
@@ -533,213 +587,6 @@ class SessionModel extends Model {
       ),
     );
   }
-}
 
-
-//=================================================================================================================
-
-
-//for nested maps view
-class MapsView extends View<MapsController> {
-  MapsView(c) : super(controller : c);
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      color: Colors.green,
-      height: 370.0,
-      child: Column(
-        children: <Widget>[
-          Container(
-            height: 310.0,
-            color: Colors.grey,
-            child: controller.model.mapsDisplay
-          ),
-          Container(height: 5.0,),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: <Widget>[
-              RaisedButton(
-                color: Colors.deepOrange,
-                child: Text(
-                  'Calculate',
-                  style: TextStyle(
-                    color: Colors.white,
-                  ),
-                ),
-                onPressed: () => controller.calcMeetpoints, //TODO: think about how to validate-----------------
-              ),
-              Container(width: 10.0,),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-}//TODO: think about how to validate----------------------------------------------------------------------
-
-
-class MapsController extends Controller<MapsModel> {
-  MapsController(m) : super(model : m);
-
-  calcMeetpoints() {
-    //TODO: send data using SessionManager_Client------------------------------------------------------------
-    model.updateMapsDisplay(type: null); //pass in response type integer----------------!!!!!!!!!!!!
-  }
-}//TODO: send data using SessionManager_Client------------------------------------------------------------
-
-
-class MapsModel extends Model {
-  MapsModel({@required this.context}) {
-    //initial value
-    if (SessionManager_Client.getLoadedSession.meetpoints.length == 0) {
-      mapsDisplay = blankMapsDisplay(
-        icon: Icons.add_circle,
-        text: 'Currently no meetpoints, key in parameters',
-      );
-    } else {
-      mapsDisplay = pagedMapsDisplay();
-    }
-  }
-  Widget mapsDisplay;
-  BuildContext context;
-  int radioGroupValue = 0;
-
-  updateMapsDisplay({@required int type}) {
-    print('maps display updated');
-    setViewState(() {
-      switch(type) {
-        case 1: //loaded maps display
-          mapsDisplay = pagedMapsDisplay();
-          break;
-        case 2: //calculating...
-          mapsDisplay = blankMapsDisplay(icon: Icons.search, text: 'Calculating your Meetpoints...',);
-          break;
-        case 3: //not enough params
-          mapsDisplay = blankMapsDisplay(icon: Icons.warning, text: 'Not enough parameters',);
-          break;
-        case 4: //no meetpoint found
-          mapsDisplay = blankMapsDisplay(icon: Icons.warning, text: 'No meetpoint found',);
-          break;
-        case 5: //could not connect
-          mapsDisplay = blankMapsDisplay(icon: Icons.warning, text: 'Not connected to server',);
-          break;
-      }
-    });
-  }
-
-  updateTitleBar(val) {
-    print('radio pressed');
-    setViewState(() {
-      print('titlebar updated');
-      radioGroupValue = val;
-    });
-  }
-
-  Widget blankMapsDisplay({
-    @required IconData icon,
-    @required String text,
-  }) {
-    return Center(
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          Container(
-            margin: const EdgeInsets.only(right: 10.0),
-            child: Icon(icon),
-          ),
-          Text(text),
-        ],
-      ),
-    );
-  }
-
-  Widget pagedMapsDisplay() {
-    List<Meetpoint_Client> meetpoints = SessionManager_Client.getLoadedSession.meetpoints;
-    List<Widget> mapPages = [];
-    int index = 0;
-    for (Meetpoint_Client meetpoint in meetpoints) {
-      Widget mapPage = singleMapDisplay(
-        mapTitleBar: mapTitleBar(
-          name: meetpoint.name,
-          index: index,
-        ),
-        mapImage: mapImage(
-          url: meetpoint.routeImage,
-        ),
-        index: index++,
-      );
-      mapPages.add(mapPage);
-    }
-    return PageView(
-      children: mapPages,
-    );
-  }
-
-  Widget singleMapDisplay({
-    @required Widget mapTitleBar,
-    @required Widget mapImage,
-    @required int index,
-  }) {
-    return Center(
-      child: Column(
-        children: <Widget>[
-          mapTitleBar,
-          mapImage,
-          Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: <Widget>[
-              RaisedButton( //more button
-                child: Text('more'),
-                onPressed: () {
-                  MaterialPageRoute route = MaterialPageRoute(
-                    builder: (context) => MoreSessionInfoView(MoreSessionInfoController(MoreSessionInfoModel(index))),
-                  );
-                  Navigator.push(context, route);
-                },
-              ),
-              Container(width: 10.0,),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget mapTitleBar({
-    @required String name,
-    @required int index,
-  }) {
-    print('maptitlebar built with index $index');
-    return Container(
-      color: Colors.white,
-      height: 30.0,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          Container(
-            padding: const EdgeInsets.only(left:20.0),
-            child: Text(name),
-          ),
-          Container(
-            child: Radio(
-              value: index,
-              groupValue: radioGroupValue,
-              onChanged: updateTitleBar,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget mapImage({@required String url}) {
-    return Container(
-      color: Colors.blueGrey,
-      height: 230.0,
-      child: Center(
-        child: Text(url),
-      ),
-    );
-  }
+  showErrorDialog(error) {} //TODO: to implement
 }

@@ -12,11 +12,14 @@ class HomeView extends View<HomeController> {
     widget = this;
   }
 
-  static Widget widget; //reference to self for others to access
+  static HomeView widget; //reference to self object for others to access
+  BuildContext viewContext;
   static bool refresh = true;
 
   @override
   Widget build(BuildContext context) {
+    viewContext = context;
+
     if (refresh) controller.model.loadTiles(context);
     refresh = false;
     return Scaffold(
@@ -50,8 +53,9 @@ class HomeView extends View<HomeController> {
 
 
 class HomeController extends Controller<HomeModel> {
-
   HomeController(m) : super(model: m);
+
+  bool get isMounted => mounted;
 
   navigateToCreateSession(BuildContext context) {
     //navigate to create session view
@@ -83,6 +87,8 @@ class HomeController extends Controller<HomeModel> {
 
 
 class HomeModel extends Model {
+
+  bool get isMounted => mounted;
   
   Widget body = Center(
     child: Text(
