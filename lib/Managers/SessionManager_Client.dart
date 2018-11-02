@@ -178,16 +178,16 @@ class SessionManager_Client {
     @required String field,
     @required String value,
   }) {
-    //will always be able to find session as index will always be valid (originating from actual session)
+    if (_findSession(sessionId) == -1 ) return; //if server sends invalid ID
     Session_Client session = _sessions[_findSession(sessionId)];
-    //request parser to update local stuff
+    //update local stuff
     switch (field) {
       case Field.preferredLocationType:
         session.prefLocationType = value;
         print(field);
         break;
       case Field.chosenMeetpoint:
-        session.chosenMeetpoint = _loadedSession.meetpoints[int.parse(value)];
+        session.chosenMeetpoint = session.meetpoints[int.parse(value)];
         print(field);
         break;
       case Field.user1Address:
@@ -221,7 +221,7 @@ class SessionManager_Client {
     }
 
     HomeView.refresh = true;
-  }
+  }//TODO: may be a bit buggy, try to fix---------------------------------------------------------------------
 
   static Future saveUser(UserDetails_Client user) async {
     //send save request
