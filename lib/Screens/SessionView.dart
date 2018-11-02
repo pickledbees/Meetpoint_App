@@ -5,12 +5,20 @@ import 'package:meetpoint/Managers/Entities.dart';
 import 'package:meetpoint/Standards/TravelModes.dart';
 import 'package:meetpoint/Standards/LocationTypes.dart';
 import 'package:meetpoint/Screens/MoreSessionInfoView.dart';
+import 'package:meetpoint/Screens/HomeView.dart';
 import 'dart:async';
 
 class SessionView extends View<SessionController> {
-  SessionView(c) : super(controller: c);
+  SessionView(c) : super(controller: c) {
+    widget = this;
+  }
+
+  static BuildContext viewContext; //for access for dynamically built navigation buttons
+  static Widget widget; //reference to self for others to access
+
   @override
   Widget build(BuildContext context) {
+    viewContext = context;
 
     return Scaffold(
       appBar: AppBar(title: Text(controller.model.session.title),),
@@ -33,7 +41,24 @@ class SessionView extends View<SessionController> {
               //maps display--------------------------------------------------------------
               Divider(height: 20.0,),
               Container(
-                child: MapsView(MapsController(MapsModel(context: context))),
+                height: 308.0,
+                child: controller.model.mapsDisplay,
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: <Widget>[
+                  RaisedButton(
+                    color: Colors.deepOrange,
+                    child: Text(
+                      'Calculate',
+                      style: TextStyle(
+                        color: Colors.white,
+                      ),
+                    ),
+                    onPressed: () => controller.calcMeetpoints, //TODO: think about how to validate-----------------
+                  ),
+                  Container(width: 10.0,),
+                ],
               ),
               Divider(height: 20.0,),
               //dropdown menu for preferred location types--------------------------------
@@ -133,7 +158,6 @@ class SessionView extends View<SessionController> {
                   ],
                 ),
               ),
-
               //empty space + stream handler
               Container(
                 height: 200.0,
@@ -316,13 +340,13 @@ class SessionController extends Controller<SessionModel> {
   //send parameters for calculation calculate ????
   calcMeetpoints() {
     //TODO: implement update session sequence-----------------------------------------------------------------
-    if (formKey.currentState.validate()) print('hello');
+    if (!formKey.currentState.validate()) return;
+    model.updateMapsDisplay(type: null); //pass in response type integer----------------!!!!!!!!!!!!
   }
 
   editFields(String session_object_in_string_form) {
     //TODO: call LocalInfoManager to edit session-----------------------------------------------------------------
   }
-
 }
 
 class SessionModel extends Model {
@@ -332,11 +356,23 @@ class SessionModel extends Model {
     preferredLocationType = session.prefLocationType;
     preferredTravelMode1 = session.users[0].prefTravelMode;
     preferredTravelMode2 = session.users[1].prefTravelMode;
+    chosenMeetpointIndex = session.chosenMeetpointIndex;
+    //initial maps display
+    if (session.meetpoints.length == 0) {
+      mapsDisplay = blankMapsDisplay(
+        icon: Icons.add_circle,
+        text: 'Currently no meetpoints, key in parameters',
+      );
+    } else {
+      mapsDisplay = pagedMapsDisplay();
+    }
   }
   Session_Client session;
   String preferredLocationType = LocationTypes.getList[0];
   String preferredTravelMode1;
   String preferredTravelMode2;
+  Widget mapsDisplay;
+  int chosenMeetpointIndex;
 
   //local visual update
   updatePreferredLocation(val) {
@@ -351,6 +387,151 @@ class SessionModel extends Model {
   //local visual update
   updatePreferredTravelMode2(val) {
     setViewState(() => preferredTravelMode2 = val);
+  }
+
+  //for map display
+  updateMapsDisplay({@required int type}) {
+    print('maps display updated');
+    setViewState(() {
+      switch(type) {
+        case 1: //loaded maps display
+          mapsDisplay = pagedMapsDisplay();
+          break;
+        case 2: //calculating...
+          mapsDisplay = blankMapsDisplay(icon: Icons.search, text: 'Calculating your Meetpoints...',);
+          break;
+        case 3: //not enough params
+          mapsDisplay = blankMapsDisplay(icon: Icons.warning, text: 'Not enough parameters',);
+          break;
+        case 4: //no meetpoint found
+          mapsDisplay = blankMapsDisplay(icon: Icons.warning, text: 'No meetpoint found',);
+          break;
+        case 5: //could not connect
+          mapsDisplay = blankMapsDisplay(icon: Icons.warning, text: 'Not connected to server',);
+          break;
+      }
+    });
+  }
+
+  Widget blankMapsDisplay({
+    @required IconData icon,
+    @required String text,
+  }) {
+    return Center(
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          Container(
+            margin: const EdgeInsets.only(right: 10.0),
+            child: Icon(icon),
+          ),
+          Text(text),
+        ],
+      ),
+    );
+  }
+
+  Widget pagedMapsDisplay() {
+    List<Meetpoint_Client> meetpoints = session.meetpoints;
+    List<Widget> mapPages = [];
+    int index = 0;
+    for (Meetpoint_Client meetpoint in meetpoints) {
+      Widget mapPage = singleMapDisplay(
+        mapTitleBar: mapTitleBar(
+          name: meetpoint.name,
+          index: index,
+        ),
+        mapImage: mapImage(
+          url: meetpoint.routeImage,
+        ),
+        index: index++,
+      );
+      mapPages.add(mapPage);
+    }
+    return PageView(
+      children: mapPages,
+    );
+  }
+
+  Widget singleMapDisplay({
+    @required Widget mapTitleBar,
+    @required Widget mapImage,
+    @required int index,
+  }) {
+    return Center(
+      child: Column(
+        children: <Widget>[
+          mapTitleBar,
+          mapImage,
+          Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: <Widget>[
+              RaisedButton( //more button
+                child: Text('more'),
+                onPressed: () {
+                  MaterialPageRoute route = MaterialPageRoute(
+                    builder: (context) => MoreSessionInfoView(MoreSessionInfoController(MoreSessionInfoModel(index))),
+                  );
+                  Navigator.push(SessionView.viewContext, route);
+                },
+              ),
+              Container(width: 10.0,),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget mapTitleBar({
+    @required String name,
+    @required int index,
+  }) {
+    print('maptitlebar built with index $index');
+    return Container(
+      color: Colors.white,
+      height: 30.0,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          Container(
+            padding: const EdgeInsets.only(left:20.0),
+            child: Text(name),
+          ),
+          Container(
+            child: Radio(
+              value: index,
+              groupValue: chosenMeetpointIndex,
+              onChanged: updateChosenMeetpoint,
+              activeColor: Colors.deepOrange,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  //callback for radio button
+  updateChosenMeetpoint(val) {
+    //set chosen meetpoint
+    session.chosenMeetpoint = session.meetpoints[val];
+    //reflect on mainpage
+    HomeView.refresh = true;
+    //update view
+    setViewState(() {
+      chosenMeetpointIndex = val;
+      mapsDisplay = pagedMapsDisplay();
+    });
+  }
+
+  Widget mapImage({@required String url}) {
+    return Container(
+      color: Colors.blueGrey,
+      height: 230.0,
+      child: Center(
+        child: Text(url),
+      ),
+    );
   }
 }
 
@@ -422,9 +603,10 @@ class MapsModel extends Model {
   }
   Widget mapsDisplay;
   BuildContext context;
-  int radioGroupValue = -1;
+  int radioGroupValue = 0;
 
   updateMapsDisplay({@required int type}) {
+    print('maps display updated');
     setViewState(() {
       switch(type) {
         case 1: //loaded maps display
@@ -443,6 +625,14 @@ class MapsModel extends Model {
           mapsDisplay = blankMapsDisplay(icon: Icons.warning, text: 'Not connected to server',);
           break;
       }
+    });
+  }
+
+  updateTitleBar(val) {
+    print('radio pressed');
+    setViewState(() {
+      print('titlebar updated');
+      radioGroupValue = val;
     });
   }
 
@@ -520,6 +710,7 @@ class MapsModel extends Model {
     @required String name,
     @required int index,
   }) {
+    print('maptitlebar built with index $index');
     return Container(
       color: Colors.white,
       height: 30.0,
@@ -534,12 +725,7 @@ class MapsModel extends Model {
             child: Radio(
               value: index,
               groupValue: radioGroupValue,
-              onChanged: (val) {
-                setViewState(() {
-                  radioGroupValue = val;
-                  //TODO: send chosen meetpoint--------------------------------------------------
-                });
-              },
+              onChanged: updateTitleBar,
             ),
           ),
         ],

@@ -30,7 +30,7 @@ class FirstStartView extends View<FirstStartController> {
                   'Your Default Settings',
                   style: TextStyle(
                     fontSize: 20.0,
-                    color: Colors.blueGrey,
+                    color: Colors.cyan,
                   ),
                 ),
               ),
@@ -68,6 +68,7 @@ class FirstStartView extends View<FirstStartController> {
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       floatingActionButton: RaisedButton(
+        color: Colors.white,
         child: Text('Save'),
         onPressed: () => controller.save(context),
       ),

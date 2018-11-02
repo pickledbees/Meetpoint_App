@@ -10,7 +10,10 @@ class MoreSessionInfoView extends View<MoreSessionInfoController>{
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(),
+      appBar: AppBar(title: Text(controller.model.meetpoint.name)),
+      body: Center(
+        child: Text(controller.model.meetpoint.name),
+      ),
     );
   }
 }

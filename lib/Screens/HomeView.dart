@@ -26,12 +26,21 @@ class HomeView extends View<HomeController> {
       floatingActionButton: ButtonBar(
         children: <Widget>[
           RaisedButton(
-            child: Text('Create'),
-            onPressed: () => controller.navigateToCreateSession(context),
-          ),
-          RaisedButton(
+            color: Colors.white,
+            splashColor: Colors.deepOrange,
             child: Text('Join'),
             onPressed: () => controller.navigateToJoinSession(context),
+          ),
+          RaisedButton(
+            color: Colors.deepOrange,
+            splashColor: Colors.white,
+            child: Text(
+              'Create',
+              style: TextStyle(
+                color: Colors.white,
+              ),
+            ),
+            onPressed: () => controller.navigateToCreateSession(context),
           ),
         ],
       ),

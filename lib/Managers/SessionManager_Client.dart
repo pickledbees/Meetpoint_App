@@ -145,7 +145,7 @@ class SessionManager_Client {
   //completes to boolean true if success, throws error if failed
   static Future requestSessionEdit({
     @required String sessionId,
-    @required String field,
+    @required Field field,
     @required String value,
   }) async {
     //send edit request
@@ -159,6 +159,12 @@ class SessionManager_Client {
         'value' : value,
       },
     );//TODO: parse map into boolean
+
+    updateSession(
+      sessionId: sessionId,
+      field: field,
+      value: value,
+    );
 
     //TODO: remove chunk when done
     return await Future.delayed(timelag, () =>
@@ -185,5 +191,41 @@ class SessionManager_Client {
     return true;
   }//TODO: to complete
 
-  updateSession(String data) {} //????
+  static updateSession({
+    @required String sessionId,
+    @required var field,
+    @required String value,
+  }) {
+    switch (field) {
+      case Field.preferredLocationType:
+        print(field);
+        break;
+      case Field.chosenMeetpoint:
+        print(field);
+        break;
+      case Field.user1Address:
+        print(field);
+        break;
+      case Field.user2address:
+        print(field);
+        break;
+      case Field.user1PreferredTravelMode:
+        print(field);
+        break;
+      case Field.user2preferredTravelMode:
+        print(field);
+        break;
+      default:
+        print(field);
+    }
+  }
+}
+
+enum Field {
+  preferredLocationType,
+  chosenMeetpoint,
+  user1Address,
+  user1PreferredTravelMode,
+  user2address,
+  user2preferredTravelMode,
 }

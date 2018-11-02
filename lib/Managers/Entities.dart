@@ -20,8 +20,13 @@ class Session_Client {
     @required this.timeCreated,
   });
 
-  int get getNumMeetpoints {
-    return null;
+  int get chosenMeetpointIndex {
+    int index = 0;
+    if (chosenMeetpoint == null) return -1;
+    for (Meetpoint_Client meetpoint in meetpoints) {
+      if (meetpoint.name == chosenMeetpoint.name) return index;
+      index++;
+    }
   }
 }
 

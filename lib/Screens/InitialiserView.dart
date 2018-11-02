@@ -26,7 +26,7 @@ class InitialiserView extends View<InitialiserController> {
                 'Meetpoint',
                 style: TextStyle(
                   fontSize: 50.0,
-                  color: Colors.blueGrey,
+                  color: Colors.cyan,
                 ),
               ),
             ),

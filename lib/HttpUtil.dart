@@ -4,7 +4,7 @@ import 'package:flutter/foundation.dart';
 
 abstract class HttpUtil {
   //for easy changing of ip
-  static const String serverURL = 'http://192.168.0.183:3000/Meetpoint';
+  static const String serverURL = 'http://10.27.7.227:3000/Meetpoint';
   static final _Methods _methods= const _Methods();
 
   static _Methods get methods => _methods;
@@ -36,7 +36,7 @@ class _Methods {
   final String saveUser = 'updateUser';
   final String getSessions = 'getSessions';
   final String createSession = 'createSession';
-  final String joinSession = 'createSession';
+  final String joinSession = 'joinSession';
   final String deleteSession = 'deleteSession';
   final String editSession = 'editSession';
   final String calculate = 'calculate';
