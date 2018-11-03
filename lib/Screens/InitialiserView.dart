@@ -4,8 +4,10 @@ import 'package:meetpoint/MVC.dart';
 import 'package:meetpoint/Managers/Entities.dart';
 import 'package:meetpoint/Managers/SessionManager_Client.dart';
 import 'package:meetpoint/Managers/LocalUserInfoManager.dart';
+import 'package:meetpoint/HttpUtil.dart';
 import 'FirstStartView.dart';
 import 'HomeView.dart';
+import 'package:web_socket_channel/io.dart';
 
 class InitialiserView extends View<InitialiserController> {
   InitialiserView(c) : super(controller : c);
@@ -65,6 +67,9 @@ class InitialiserController extends Controller<InitialiserModel> {
         //fetch sessions
         model.setLoaderTextTo('Fetching your sessions...');
         await SessionManager_Client.fetchSessions();
+        //open channel
+        model.setLoaderTextTo('Connecting to server...');
+        SessionManager_Client.channel = IOWebSocketChannel.connect('ws://echo.websocket.org');//HttpUtil.serverURL);
         //show welcome
         model.setLoaderTextTo('Welcome ${LocalUserInfoManager.getLocalUser.name}');
         await Future.delayed(Duration(seconds: 1)); //pause

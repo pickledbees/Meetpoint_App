@@ -7,7 +7,6 @@ import 'package:meetpoint/Screens/CreateSessionView.dart';
 import 'package:meetpoint/Screens/JoinSessionView.dart';
 
 class HomeView extends View<HomeController> {
-
   HomeView(c) : super(controller: c) {
     widget = this;
   }
@@ -28,6 +27,11 @@ class HomeView extends View<HomeController> {
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       floatingActionButton: ButtonBar(
         children: <Widget>[
+          //set up listener for stream
+          StreamBuilder(
+            stream: SessionManager_Client.channel.stream,
+            builder: SessionManager_Client.streamHandler,
+          ),
           RaisedButton(
             color: Colors.white,
             splashColor: Colors.deepOrange,
@@ -51,9 +55,8 @@ class HomeView extends View<HomeController> {
   }
 }
 
-
 class HomeController extends Controller<HomeModel> {
-  HomeController(m) : super(model: m);
+  HomeController(m) : super(model: m) ;
 
   bool get isMounted => mounted;
 

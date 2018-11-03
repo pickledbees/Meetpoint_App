@@ -33,11 +33,11 @@ class MoreSessionInfoView extends View<MoreSessionInfoController>{
               children: <Widget>[
                 RaisedButton(
                   child: Text('Open in Maps'),
-                  onPressed: controller.openInMaps(),
+                  onPressed: () => controller.openInMaps(),
                 ),
                 RaisedButton(
                   child: Text('See it on Google'),
-                  onPressed: controller.searchOnGoogle(),
+                  onPressed: () => controller.searchOnGoogle(),
                 ),
               ],
             )
@@ -56,7 +56,7 @@ class MoreSessionInfoController extends Controller<MoreSessionInfoModel> {
   } //TODO: implement--------------------------------------------------------------
 
   searchOnGoogle() async {
-    String searchTerm = '${model.meetpoint.name} ${model.meetpoint.address}';
+    String searchTerm = '${model.meetpoint.name}';
     String url = "https://www.google.com/search?q=${Uri.encodeFull(
         searchTerm)}";
     if (await canLaunch(url)) {

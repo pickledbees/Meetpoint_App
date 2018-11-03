@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:meetpoint/Screens/InitialiserView.dart';
 import 'package:meetpoint/HttpUtil.dart';
-import 'package:meetpoint/Managers/SessionManager_Client.dart';
-import 'dart:async';
+import 'package:web_socket_channel/io.dart';
+import 'dart:convert';
 
 void main() {
   print('App starting...');
   runApp(MeetPointApp());
   //runApp(Test());
-  //TODO: set up stream here, call SessionManager_Client.updateSession() when required-------------
+  //runApp(Test2());
 }
 
 class MeetPointApp extends StatelessWidget {
@@ -25,8 +25,15 @@ class MeetPointApp extends StatelessWidget {
 }
 
 
-//For testing porpoises ----------------------------------------------------------------------
 
+
+
+
+
+
+
+
+//For testing porpoises ----------------------------------------------------------------------
 
 class Test extends StatelessWidget {
   @override
@@ -107,4 +114,83 @@ class _HttpTestState extends State<StatefulWidget> {
     });
   }
 
+}
+
+class Test2 extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    final title = 'socket test';
+    return MaterialApp(
+      theme: ThemeData(primarySwatch: Colors.blue),
+      title: title,
+      home: SocketTest(
+        channel : IOWebSocketChannel.connect('ws://echo.websocket.org'),
+        title : title,
+      ),
+    );
+  }
+}
+
+class SocketTest extends StatefulWidget {
+  SocketTest({
+    Key key,
+    @required this.channel,
+    @required this.title,
+  }) : super (key : key);
+
+  final IOWebSocketChannel channel;
+  final title;
+
+  @override
+  SocketTestState createState() => SocketTestState();
+}
+
+class SocketTestState extends State<SocketTest> {
+
+  TextEditingController controller = TextEditingController();
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: Text(widget.title)),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Container(
+              margin: EdgeInsets.symmetric(vertical: 10.0),
+              width: 200.0,
+              child: TextField(
+                controller: controller,
+              ),
+            ),
+            StreamBuilder(
+              stream: widget.channel.stream,
+              builder: (context,snapshot) {
+                if (snapshot.hasData) {
+                  Map map = json.decode(snapshot.data);
+                  return Text(map['obj']['nestkey']);
+                } else {
+                  return Text('');
+                }
+                //return Text(snapshot.hasData ? '${snapshot.data}' : '');
+              },
+            ),
+          ],
+        ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        child: Icon(Icons.send),
+        onPressed: () {
+          Map myJson = <String,dynamic>{
+            'string' : controller.text,
+            'obj' : {
+              'nestkey' : 'nesval ${controller.text}',
+            }
+          };
+          if (controller.text.isNotEmpty) widget.channel.sink.add(json.encode(myJson));
+        },
+      ),
+    );
+  }
 }

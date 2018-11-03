@@ -1,9 +1,13 @@
+import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'dart:async';
 import 'Entities.dart';
 import 'package:meetpoint/Screens/HomeView.dart';
 import 'package:meetpoint/Screens/SessionView.dart';
 import 'package:meetpoint/HttpUtil.dart';
+import 'package:web_socket_channel/io.dart';
+import 'package:web_socket_channel/web_socket_channel.dart';
+import 'dart:convert';
 
 Duration timelag = Duration(milliseconds: 10);
 bool success = true;
@@ -11,6 +15,7 @@ bool success = true;
 class SessionManager_Client {
   //token to connect to server
   static final String _USERID = 'LOLIPUTZ';
+  static IOWebSocketChannel channel;
 
   //currently loaded sessions
   static List<Session_Client> _sessions = [];
@@ -22,7 +27,6 @@ class SessionManager_Client {
 
   //fetch sessions from server
   static Future fetchSessions() async {
-
     Map sessions_mapForm = await HttpUtil.postData(
       url: HttpUtil.serverURL,
       data: {
@@ -172,6 +176,69 @@ class SessionManager_Client {
     );
   }//TODO: to complete
 
+  static Future saveUser(UserDetails_Client user) async {
+    //send save request
+    Map ok_map = await HttpUtil.postData(
+      url: HttpUtil.serverURL,
+      data: {
+        'method' : HttpUtil.methods.saveUser,
+        'userId' : _USERID,
+        'name' : user.name,
+        'defaultTravelMode' : user.prefTravelMode,
+        'defaultStartName' : user.prefStartCoords.name,
+        'defaultStartAddress' : user.prefStartCoords.address,
+      },
+    );//TODO: parse map into boolean
+
+    return true;
+  }//TODO: parse ok (map) into boolean and save user based on success or not
+
+  static Future calcMeetpoint() async {
+    //calculate meetpoint
+    var meetpoints_mapform = await HttpUtil.postData(
+      url: HttpUtil.serverURL,
+      data: {
+        'method' : HttpUtil.methods.calculate,
+        'userId' : _USERID,
+        'sessionId' : _loadedSession.sessionID,
+      },
+      decode: false, //FOR DEBUGGING
+    );
+    print(meetpoints_mapform);// FOR DEBUGGING
+    return true;
+  }//TODO: parse result (map) into meetpoint list and assign to meetpoints
+
+  static bool getNew = true;
+  static var oldTimestamp;
+
+  //to handle unprompted incoming data in the background
+  static Widget streamHandler(BuildContext context, AsyncSnapshot snapshot) {
+    if (snapshot.hasData) {
+      //extract data
+      Map body = json.decode(snapshot.data);
+
+      //process if it is new snapshot
+      if (body['timestamp'] != oldTimestamp) {
+        //update timestamp
+        oldTimestamp = body['timestamp'];
+        print(snapshot.data);
+
+        //parse request
+        switch (body['method']) {
+          case 'editSession': //up to zach to handle
+            updateSession(
+              sessionId: body['sessionId'],
+              field: body['field'],
+              value: body['value'],
+            );
+            break;
+        }
+      }
+    }
+    //just to fill the space
+    return Text('');
+  } //TODO: make it handle other requests
+
   //local update
   static updateSession({
     @required String sessionId,
@@ -209,51 +276,24 @@ class SessionManager_Client {
       default:
         print(field);
     }
-
+    /*
     //remote updates
-    if (HomeView.widget.controller.isMounted) {
-      HomeView.refresh = true;
-      HomeView.widget.build(HomeView.widget.viewContext);
+    if (HomeView.widget != null) { //check if view has been initialised
+      if (HomeView.widget.controller.isMounted) { //check if view is in view
+        HomeView.refresh = true;
+        HomeView.widget.build(HomeView.widget.viewContext);
+      }
     }
-
-    if (SessionView.widget.controller.isMounted) {
-      SessionView.widget.build(SessionView.viewContext);
+    */
+    /*
+    if (SessionView.widget != null) { //check if view has been initialised
+      if (SessionView.widget.controller.isMounted) { //check if view is in view
+        SessionView.widget.build(SessionView.viewContext);
+      }
     }
-
+    */
     HomeView.refresh = true;
-  }//TODO: may be a bit buggy, try to fix---------------------------------------------------------------------
-
-  static Future saveUser(UserDetails_Client user) async {
-    //send save request
-    Map ok_map = await HttpUtil.postData(
-      url: HttpUtil.serverURL,
-      data: {
-        'method' : HttpUtil.methods.saveUser,
-        'userId' : _USERID,
-        'name' : user.name,
-        'defaultTravelMode' : user.prefTravelMode,
-        'defaultStartName' : user.prefStartCoords.name,
-        'defaultStartAddress' : user.prefStartCoords.address,
-      },
-    );//TODO: parse map into boolean
-
-    return true;
-  }//TODO: parse ok (map) into boolean and save user based on success or not
-
-  static Future calcMeetpoint() async {
-    //calculate meetpoint
-    var meetpoints_mapform = await HttpUtil.postData(
-      url: HttpUtil.serverURL,
-      data: {
-        'method' : HttpUtil.methods.calculate,
-        'userId' : _USERID,
-        'sessionId' : _loadedSession.sessionID,
-      },
-      decode: false, //FOR DEBUGGING
-    );
-    print(meetpoints_mapform);// FOR DEBUGGING
-    return true;
-  }//TODO: parse result (map) into meetpoint list and assign to meetpoints
+  }//TODO: can update local memory, but not the UI, maybe try to fix---------------------------------------------------------------------
 }
 
 abstract class Field {

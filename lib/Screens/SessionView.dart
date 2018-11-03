@@ -6,6 +6,8 @@ import 'package:meetpoint/Standards/TravelModes.dart';
 import 'package:meetpoint/Standards/LocationTypes.dart';
 import 'package:meetpoint/Screens/MoreSessionInfoView.dart';
 import 'package:meetpoint/Screens/HomeView.dart';
+import 'dart:convert';
+import 'dart:math';
 import 'dart:async';
 
 class SessionView extends View<SessionController> {
@@ -161,25 +163,24 @@ class SessionView extends View<SessionController> {
               //empty space + stream handler
               Container(
                 height: 200.0,
-                /*
-                child: StreamBuilder( //to handle incoming updates
-                  stream: null,
-                  builder: (context,snapshot) {
-                    //TODO: edit variables
-                    controller.editFields('session_object_in_string_form');
-                    //if preferred travel location updated, controller.updatePreferredLocation
-                    //if address1 edited, addrees1 updated
-                    //if address2 edited, address2 updated
-                    //if preferred travel mode1 updated, controller.updatePreferredTravelMode1
-                    //if preferred travle mode2 updated, controller.updatePreferredTravelMode1
-                    //if new calculation, build(context); //rebuild entire page
-                  },
-                ),
-                */
               ),
             ],
           ),
         ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        child: Icon(Icons.send),
+        onPressed: () {
+          print('test data sent');
+          Map data = {
+            'method' : 'editSession',
+            'sessionId' : '123A',
+            'field' : 'CM',
+            'value' : '2',
+            'timestamp' : DateTime.now().millisecondsSinceEpoch
+          };
+          SessionManager_Client.channel.sink.add(json.encode(data));
+        },
       ),
     );
   }
@@ -419,24 +420,38 @@ class SessionModel extends Model {
 
   bool get isMounted => mounted;
 
-  //local visual update
+  //local visual updates
   updatePreferredLocation(val) {
     setViewState(() => preferredLocationType = val);
   }
-
-  //local visual update
   updatePreferredTravelMode1(val) {
     setViewState(() => preferredTravelMode1 = val);
   }
-
-  //local visual update
   updatePreferredTravelMode2(val) {
     setViewState(() => preferredTravelMode2 = val);
   }
+  updateChosenMeetpoint(val) {
+    //send update
+    SessionManager_Client.requestSessionEdit(
+      sessionId: session.sessionID,
+      field: Field.chosenMeetpoint,
+      value: val.toString(),
+    ).then((success) {
+      if (!success) throw 'server failed to update field';
+      //set chosen meetpoint
+      session.chosenMeetpoint = session.meetpoints[val];
+      //reflect on home page
+      HomeView.refresh = true;
+      //update view
+      setViewState(() {
+        chosenMeetpointIndex = val;
+        mapsDisplay = pagedMapsDisplay();
+      });
+    }).catchError(showErrorDialog);
+  }
 
-  //for map display
+  //update to proper state
   updateMapsDisplay({@required int type}) {
-    print('maps display updated');
     setViewState(() {
       switch(type) {
         case 1: //loaded maps display
@@ -458,6 +473,7 @@ class SessionModel extends Model {
     });
   }
 
+  //builds a blank display with chosen text
   Widget blankMapsDisplay({
     @required IconData icon,
     @required String text,
@@ -476,6 +492,7 @@ class SessionModel extends Model {
     );
   }
 
+  //builds the scrollable consisting of single map displays
   Widget pagedMapsDisplay() {
     List<Meetpoint_Client> meetpoints = session.meetpoints;
     List<Widget> mapPages = [];
@@ -498,6 +515,7 @@ class SessionModel extends Model {
     );
   }
 
+  //builds a single map display, TITLE BAR + MAP + MORE button
   Widget singleMapDisplay({
     @required Widget mapTitleBar,
     @required Widget mapImage,
@@ -528,11 +546,11 @@ class SessionModel extends Model {
     );
   }
 
+  //builds the title bar for a map
   Widget mapTitleBar({
     @required String name,
     @required int index,
   }) {
-    print('maptitlebar built with index $index');
     return Container(
       color: Colors.white,
       height: 30.0,
@@ -556,28 +574,7 @@ class SessionModel extends Model {
     );
   }
 
-  //callback for radio button
-  updateChosenMeetpoint(val) {
-    print(val.runtimeType);
-    //send update
-    SessionManager_Client.requestSessionEdit(
-      sessionId: session.sessionID,
-      field: Field.chosenMeetpoint,
-      value: val.toString(),
-    ).then((success) {
-      if (!success) throw 'server failed to update field';
-      //set chosen meetpoint
-      session.chosenMeetpoint = session.meetpoints[val];
-      //reflect on home page
-      HomeView.refresh = true;
-      //update view
-      setViewState(() {
-        chosenMeetpointIndex = val;
-        mapsDisplay = pagedMapsDisplay();
-      });
-    }).catchError(showErrorDialog);
-  }
-
+  //builds one map image
   Widget mapImage({@required String url}) {
     return Container(
       color: Colors.blueGrey,
