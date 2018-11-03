@@ -8,7 +8,7 @@ class Session_Client {
   List<Meetpoint_Client> meetpoints = [];
   String prefLocationType;
   List<UserDetails_Client> users = [];
-  double timeCreated;
+  int timeCreated;
 
   Session_Client({
     @required this.sessionID,
@@ -17,7 +17,7 @@ class Session_Client {
     this.meetpoints,
     @required this.prefLocationType,
     @required this.users,
-    @required this.timeCreated,
+    this.timeCreated,
   });
 
   int get chosenMeetpointIndex {
@@ -130,7 +130,7 @@ class TestData {
               ),
             ),
           ],
-          timeCreated: 12134223423.0,
+          timeCreated: 12134223423,
         ),
       );
     }
@@ -167,7 +167,7 @@ class TestData {
         ),
       ),
     ],
-    timeCreated: 12134223423.0,
+    timeCreated: 12134223423,
   );
 
 
@@ -219,7 +219,7 @@ class TestData {
         ),
       ),
     ],
-    timeCreated: 12134223423.0,
+    timeCreated: 12134223423,
   );
 
   static UserDetails_Client user = UserDetails_Client(

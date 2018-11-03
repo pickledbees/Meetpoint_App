@@ -372,11 +372,9 @@ class SessionController extends Controller<SessionModel> {
     session.users[1].prefTravelMode = val;
     model.updatePreferredTravelMode2(val);
   }
-  updateChosenMeetpoint(val) {} //TODO: implement ------------------------------------------------------------
 
-  //send parameters for calculation calculate ????
+  //send current loaded parameters for calculation
   calcMeetpoints() {
-    //TODO: implement update session sequence-----------------------------------------------------------------
     if (!formKey.currentState.validate()) return; //validate fields
 
     model.updateMapsDisplay(type: 2); //show loader text
@@ -389,8 +387,7 @@ class SessionController extends Controller<SessionModel> {
     }).catchError((error) {
       if (mounted) model.updateMapsDisplay(type: 5);
     });
-  }
-
+  }//TODO: implement update session sequence-----------------------------------------------------------------
 }
 
 class SessionModel extends Model {
