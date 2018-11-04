@@ -18,18 +18,16 @@ class SessionManager_Client {
   //token to connect to server
   static final String _USERID = 'LOLIPUTZ';
   static IOWebSocketChannel channel;
-
   //currently loaded sessions
   static List<Session_Client> _sessions = [];
   static Session_Client _loadedSession;
-
   //read-only
   static List<Session_Client> get getSessions => _sessions;
   static Session_Client get getLoadedSession => _loadedSession;
 
   //returns session index based on session id, returns -1 if not found
   static int _findSession(String sessionId) {
-    print('finding $sessionId');
+    //print('finding $sessionId');
     int index;
     //search through sessions list
     for (Session_Client session in _sessions) {
@@ -38,12 +36,22 @@ class SessionManager_Client {
         break;
       }
     }
-    print('found $sessionId at index $index');
+    //print('found $sessionId at index $index');
     return index ?? -1;
+  }
+
+  //loads session to be the currently open session
+  static Session_Client loadSession({@required String sessionId}) {
+    //print('opening session $sessionId');
+    if (_findSession(sessionId) == -1) throw 'no such session';
+    _loadedSession = _sessions[_findSession(sessionId)];
+    //print('session ${_loadedSession.sessionID} opened');
+    return _loadedSession;
   }
 
   //fetch sessions from server
   static Future fetchSessions() async {
+
     var sessions_mapForm = await HttpUtil.postData(
       url: HttpUtil.serverURL,
       data: {
@@ -131,187 +139,206 @@ class SessionManager_Client {
   //completes to id if success, throws error if failed
   static Future createSession({@required String sessionTitle}) async {
     //creates session on server side
-    Map createdSession_mapForm = await HttpUtil.postData(
+    var createdSession_mapForm = await HttpUtil.postData(
       url: HttpUtil.serverURL,
       data: {
         'method' : HttpUtil.methods.createSession,
         'userId' : _USERID,
         'sessionTitle' : sessionTitle,
       },
-      decode: false,
+      decode: true,
       //TODO: parse map into Session_Client
     );
 
-    print(createdSession_mapForm);
-
-    /*PRELIMINARY PARSER
-    Session_Client createdSession = Session_Client(
-      sessionID: createdSession_mapForm['sessionId'],
-      title: sessionTitle,
-      chosenMeetpoint: null,
-      meetpoints: <Meetpoint_Client>[],
-      prefLocationType: LocationTypes.getList[0],
-      users: [
-        UserDetails_Client(
-          name: createdSession_mapForm['U1N'],
-          prefTravelMode: createdSession_mapForm['U1T'],
-          prefStartCoords: Location_Client(
-            name: createdSession_mapForm['U1A'],
-            type: null,
-            address: createdSession_mapForm['U1A'],
+    if (createdSession_mapForm['result'] == 'O') {
+      Session_Client session = Session_Client(
+        sessionID: createdSession_mapForm['sessionId'].toString(),
+        title: sessionTitle,
+        chosenMeetpoint: null,
+        meetpoints: <Meetpoint_Client>[],
+        prefLocationType: 'No Preference',
+        users: [
+          UserDetails_Client(
+            name: createdSession_mapForm['U1N'],
+            prefTravelMode: createdSession_mapForm['U1T'],
+            prefStartCoords: Location_Client(
+              name: createdSession_mapForm['U1A'],
+              type: '',
+              address: createdSession_mapForm['U1A'],
+              coordinates: [100.0,200.0],
+            ),
           ),
-        ),
-        UserDetails_Client(
-          name: null,
-          prefTravelMode: 'No Preference',
-          prefStartCoords: Location_Client(
+          UserDetails_Client(
             name: null,
-            type: null,
-            address: null,
+            prefTravelMode: 'No Preference',
+            prefStartCoords: Location_Client(
+              name: null,
+              type: null,
+              address: null,
+              coordinates: [null,null],
+            ),
           ),
-        ),
-      ],
-    );
-    */
+        ],
+      );
 
-    //TODO: remove chunk when done
-    Session_Client session = //change assignment
-    await Future.delayed(timelag, () =>
-    success
-        ? TestData.created_session(sessionTitle)
-        : throw 'error'
-    );
+      //add session on local side
+      _sessions.insert(0,session);
+      HomeView.refresh = true;
+      return session.sessionID;
 
-    //add session on local side
-    _sessions.insert(0,session);
-    HomeView.refresh = true;
-    return session.sessionID;
-  }//TODO: parse session (map) into Session_Client assign to 'session' (X)
+    } else {
+      throw 'Server failed to create session.';
+    }
+
+  }//TODO: Await testing with zach
 
   //completes to id if success, throws error if failed
   static Future joinSession({@required String sessionId}) async {
     //check if session is already inside local memory
     if (_findSession(sessionId) != -1) return null;
     //requests to join / add session on server side
-    Map joinedSession_mapForm = await HttpUtil.postData(
+    var joinedSession_mapForm = await HttpUtil.postData(
       url: HttpUtil.serverURL,
       data: {
         'method' : HttpUtil.methods.joinSession,
         'userId' : _USERID,
         'sessionId' : sessionId,
       },
-      decode : false,
     );
-    //TODO: parse map into Session_Client
 
-    print(joinedSession_mapForm);
+    if (joinedSession_mapForm['result'] == 'O') {
+      //store meetpoints list
+      List<Meetpoint_Client> meetpoints = [];
+      for (int i = 0; i < joinedSession_mapForm['meetpoints'].length; i++) {
+        meetpoints.add(
+            Meetpoint_Client(
+              routeImage: joinedSession_mapForm['meetpoints'][i]['routeImage'],
+              name: joinedSession_mapForm['meetpoints'][i]['name'],
+              type: null,
+              coordinates: <double>[
+                joinedSession_mapForm['meetpoints'][i]['coordinates']['lat'],
+                joinedSession_mapForm['meetpoints'][i]['coordinates']['lon'],
+              ],
+            )
+        );
+      }
 
-    /*PRELIMINARY PARSER
-    String title = joinedSession_mapForm['title'];
-    String prefLocationType = joinedSession_mapForm['prefLocationType'];
-    String U1N = joinedSession_mapForm['U1N'];
-    String U1T = joinedSession_mapForm['U1T'];
-    String U1A = joinedSession_mapForm['U1A'];
-    String U2N = joinedSession_mapForm['U2N'];
-    String U2T = joinedSession_mapForm['U2T'];
-    String U2A = joinedSession_mapForm['U2A'];
-
-    List<Meetpoint_Client> meetpoints = [];
-    joinedSession_mapForm['meetpoints'].forEach((key,meetpoint) {
-      String routeImage = meetpoint['routeImage'];
-      String name = meetpoint['name'];
-      List<double> coordinates = [
-        double.parse(meetpoint['coordinates']['lat']),
-        double.parse(meetpoint['coordinates']['lon']),
-      ];
-      meetpoints.add(Meetpoint_Client(
-        routeImage: routeImage,
-        name: name,
-        type: null,
-        coordinates: coordinates,
-      ));
-    });
-
-    Meetpoint_Client chosenMeetpoint = meetpoints[joinedSession_mapForm['chosenMeetpoint']];
-
-    Session_Client session = Session_Client(
-      sessionID: sessionId,
-      title: title,
-      prefLocationType: prefLocationType,
-      chosenMeetpoint: chosenMeetpoint,
-      meetpoints: meetpoints,
-      users: [
-        UserDetails_Client(
-          name: U1N,
-          prefTravelMode: U1T,
-          prefStartCoords: Location_Client(
-            name: U1A,
-            type: null,
-            address: U1A,
+      Session_Client session = Session_Client(
+        sessionID: joinedSession_mapForm['sessionId'],
+        title: joinedSession_mapForm['title'],
+        chosenMeetpoint: meetpoints[int.parse(joinedSession_mapForm['chosenMeetpoint'])],
+        meetpoints: meetpoints,
+        prefLocationType: joinedSession_mapForm['prefLocationType'],
+        users: [
+          UserDetails_Client(
+            name: joinedSession_mapForm['U1N'],
+            prefTravelMode: joinedSession_mapForm['U1T'],
+            prefStartCoords: Location_Client(
+              name: joinedSession_mapForm['U1A'],
+              type: '',
+              address: joinedSession_mapForm['U1A'],
+            ),
           ),
-        ),
-        UserDetails_Client(
-          name: U2N,
-          prefTravelMode: U2T,
-          prefStartCoords: Location_Client(
-            name: U2A,
-            type: null,
-            address: U2A,
+          UserDetails_Client(
+            name: joinedSession_mapForm['U2N'],
+            prefTravelMode: joinedSession_mapForm['U2T'],
+            prefStartCoords: Location_Client(
+              name: joinedSession_mapForm['U2A'],
+              type: '',
+              address: joinedSession_mapForm['U2A'],
+            ),
           ),
-        ),
-      ],
-    );
-    */
+        ],
+      );
 
-    //TODO: remove chunk when done
-    Session_Client session = //change assignment
-    await Future.delayed(timelag, () =>
-    success
-        ? TestData.joined_session(sessionId)
-        : throw 'error'
-    );
+      //add session on local side
+      _sessions.insert(0,session);
+      HomeView.refresh = true;
+      return session.sessionID;
 
-    //add session on local side
-    _sessions.insert(0,session);
-    HomeView.refresh = true;
-    return session.sessionID;
-  }//TODO: parse session (map) into Session_Client assign to 'session' (X)
+    } else {
+      throw 'Failed to join session';
+    }
+
+  }//TODO: Await testing with zach
 
   //completes to boolean true if success, throws error if failed
   static Future deleteSession({@required String sessionId}) async {
     //delete session on server
-    Map result_map = await HttpUtil.postData(
+    var response = await HttpUtil.postData(
       url: HttpUtil.serverURL,
       data: {
         'method' : HttpUtil.methods.deleteSession,
         'userId' : _USERID,
         'sessionId' : sessionId
       },
-      decode : false,
-    );//TODO: parse map into boolean
-
-    print(result_map);
-
-    //TODO: remove chunk when done
-    await Future.delayed(timelag, () =>
-    success
-        ? _sessions.removeAt(_findSession(sessionId))
-        : throw 'error'
+      decode : true,
     );
 
-    //delete session on local
-    HomeView.refresh = true;
-    return true;
-  }//TODO: parse ok (map) into boolean and delete based on success or not
+    if (response['result'] == 'O') {
+      HomeView.refresh = true;
+      return true;
+    } else {
+      return false;
+    }
+  }//TODO: await zach testing
 
-  //loads session to be the currently open session
-  static Session_Client loadSession({@required String sessionId}) {
-    print('opening session $sessionId');
-    if (_findSession(sessionId) == -1) throw 'no such session';
-    _loadedSession = _sessions[_findSession(sessionId)];
-    print('session ${_loadedSession.sessionID} opened');
-    return _loadedSession;
-  }
+  static Future saveUser(UserDetails_Client user) async {
+    print('saving user...');
+    //send save request
+
+    var response = await HttpUtil.postData(
+      url: HttpUtil.serverURL,
+      data: {
+        'method' : HttpUtil.methods.saveUser,
+        'userId' : _USERID,
+        'name' : user.name,
+        'defaultTravelMode' : user.prefTravelMode,
+        'defaultStartName' : user.prefStartCoords.name,
+        'defaultStartAddress' : user.prefStartCoords.address,
+      },
+    );
+
+    //PRELIMINARY PARSER
+    bool ok = response['result'] == 'O';
+    return ok;
+  }//TODO: Await testing with zach
+
+  static Future calcMeetpoint() async {
+    //calculate meetpoint
+    var meetpoints_mapform = await HttpUtil.postData(
+      url: HttpUtil.serverURL,
+      data: {
+        'method' : HttpUtil.methods.calculate,
+        'userId' : _USERID,
+        'sessionId' : _loadedSession.sessionID,
+      },
+      decode: true, //FOR DEBUGGING
+    );
+
+    if (meetpoints_mapform['result'] == 'O') {
+      //store meetpoints list
+      List<Meetpoint_Client> meetpoints = [];
+      for (int i = 0; i < meetpoints_mapform['meetpoints'].length; i++) {
+        meetpoints.add(
+            Meetpoint_Client(
+              routeImage: meetpoints_mapform['meetpoints'][i]['routeImage'],
+              name: meetpoints_mapform['meetpoints'][i]['name'],
+              type: null,
+              coordinates: <double>[
+                meetpoints_mapform['meetpoints'][i]['coordinates']['lat'],
+                meetpoints_mapform['meetpoints'][i]['coordinates']['lon'],
+              ],
+            )
+        );
+      }
+      //store into session
+      _loadedSession.meetpoints = meetpoints;
+      return true;
+    } else {
+      return false;
+    }
+  }//TODO: await testing with zach
 
   //completes to boolean true if success, throws error if failed
   static Future requestSessionEdit({
@@ -320,7 +347,7 @@ class SessionManager_Client {
     @required String value,
   }) async {
     //send edit request
-    Map result_map = await HttpUtil.postData(
+    var response = await HttpUtil.postData(
       url: HttpUtil.serverURL,
       data: {
         'method' : HttpUtil.methods.editSession,
@@ -332,7 +359,7 @@ class SessionManager_Client {
       decode: false,
     );
 
-    print(result_map);
+    print(response);
 
     //TODO: remove chunk when done
     return await Future.delayed(timelag, () =>
@@ -342,68 +369,15 @@ class SessionManager_Client {
     );
   }//TODO: to complete
 
-  static Future saveUser(UserDetails_Client user) async {
-    //send save request
-    Map ok_map = await HttpUtil.postData(
-      url: HttpUtil.serverURL,
-      data: {
-        'method' : HttpUtil.methods.saveUser,
-        'userId' : _USERID,
-        'name' : user.name,
-        'defaultTravelMode' : user.prefTravelMode,
-        'defaultStartName' : user.prefStartCoords.name,
-        'defaultStartAddress' : user.prefStartCoords.address,
-      },
-      decode: false,
-    );//TODO: parse map into boolean
-
-    print(ok_map);
-
-    return true;
-  }//TODO: parse ok (map) into boolean and save user based on success or not
-
-  static Future calcMeetpoint() async {
-    //calculate meetpoint
-    var meetpoints_mapform = await HttpUtil.postData(
-      url: HttpUtil.serverURL,
-      data: {
-        'method' : HttpUtil.methods.calculate,
-        'userId' : _USERID,
-        'sessionId' : _loadedSession.sessionID,
-      },
-      decode: false, //FOR DEBUGGING
-    );
-
-    print(meetpoints_mapform);// FOR DEBUGGING
-
-    /*PRELIMINARY PARSER
-    List<Meetpoint_Client> meetpoints = [];
-    session['meetpoints'].forEach((key,meetpoint) {
-      if (key == 'result') return;
-      String routeImage = meetpoint['routeImage'];
-      String name = meetpoint['name'];
-      List<double> coordinates = [
-        double.parse(meetpoint['coordinates']['lat']),
-        double.parse(meetpoint['coordinates']['lon']),
-      ];
-      meetpoints.add(Meetpoint_Client(
-        routeImage: routeImage,
-        name: name,
-        type: null,
-        coordinates: coordinates,
-      ));
-    });
-    */
-
-    return true;
-  }//TODO: parse result (map) into meetpoint list and assign to meetpoints (X)
-
+  //for stream handler to identify latest snapshots
   static bool getNew = true;
   static var oldTimestamp;
-
   //to handle unprompted incoming data in the background
   static Widget streamHandler(BuildContext context, AsyncSnapshot snapshot) {
     if (snapshot.hasData) {
+      print(snapshot.data.runtimeType);
+
+      /*
       //extract data
       Map body = json.decode(snapshot.data);
 
@@ -424,12 +398,13 @@ class SessionManager_Client {
             break;
         }
       }
+      */
     }
     //just to fill the space
     return Text('');
   } //TODO: possibly make it handle other requests
 
-  //local update
+  //local information update (called by streamHandler)
   static updateSession({
     @required String sessionId,
     @required String field,

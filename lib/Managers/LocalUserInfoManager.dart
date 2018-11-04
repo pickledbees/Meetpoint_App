@@ -13,7 +13,7 @@ class LocalUserInfoManager {
     //**read from local memory**
     //**load user details into localUser member**
     _localUser = TestData.user;
-    return _localUser;
+    return null;//_localUser;
   }
 
   static Future saveUser(UserDetails_Client user) async {

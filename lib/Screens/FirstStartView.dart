@@ -129,7 +129,7 @@ class FirstStartController extends Controller<FirstStartModel> {
           throw 'Save failed, try again later';
 
         }
-      }).catchError((error) {}
+      }).catchError((error) {print(error);}
         //TODO: handle error---------------------------------------------------------------------
       );
     }

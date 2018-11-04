@@ -55,6 +55,9 @@ class InitialiserController extends Controller<InitialiserModel> {
     if (user == null) {
       //pause
       await Future.delayed(Duration(seconds: 1));
+      //open channel
+      model.setLoaderTextTo('Connecting to server...');
+      SessionManager_Client.channel = IOWebSocketChannel.connect('ws://echo.websocket.org');//'ws://echo.websocket.org'//'ws://10.27.196.9:9090'
       //navigate to first start view
       MaterialPageRoute route = MaterialPageRoute(
         builder: (context) => FirstStartView(FirstStartController(FirstStartModel())),
@@ -69,7 +72,7 @@ class InitialiserController extends Controller<InitialiserModel> {
         await SessionManager_Client.fetchSessions();
         //open channel
         model.setLoaderTextTo('Connecting to server...');
-        SessionManager_Client.channel = IOWebSocketChannel.connect('ws://echo.websocket.org');//HttpUtil.serverURL);
+        SessionManager_Client.channel = IOWebSocketChannel.connect('ws://echo.websocket.org');//'ws://echo.websocket.org'
         //show welcome
         model.setLoaderTextTo('Welcome ${LocalUserInfoManager.getLocalUser.name}');
         await Future.delayed(Duration(seconds: 1)); //pause
@@ -88,7 +91,6 @@ class InitialiserController extends Controller<InitialiserModel> {
 }
 
 class InitialiserModel extends Model {
-
   String loaderText = 'Loading...';
 
   setLoaderTextTo(String txt) {

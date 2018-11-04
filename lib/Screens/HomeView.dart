@@ -139,5 +139,4 @@ class HomeModel extends Model {
       });
     }
   }
-
 }

@@ -6,9 +6,6 @@ import 'package:meetpoint/Standards/TravelModes.dart';
 import 'package:meetpoint/Standards/LocationTypes.dart';
 import 'package:meetpoint/Screens/MoreSessionInfoView.dart';
 import 'package:meetpoint/Screens/HomeView.dart';
-import 'dart:convert';
-import 'dart:math';
-import 'dart:async';
 
 class SessionView extends View<SessionController> {
   SessionView(c) : super(controller: c) {
@@ -168,6 +165,7 @@ class SessionView extends View<SessionController> {
           ),
         ),
       ),
+      /*
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.send),
         onPressed: () {
@@ -179,9 +177,11 @@ class SessionView extends View<SessionController> {
             'value' : '2',
             'timestamp' : DateTime.now().millisecondsSinceEpoch
           };
-          SessionManager_Client.channel.sink.add(json.encode(data));
+          //SessionManager_Client.channel.sink.add(json.encode(data));
+          SessionManager_Client.channel.sink.add(1312423);
         },
       ),
+      */
     );
   }
 
@@ -300,7 +300,6 @@ class SessionController extends Controller<SessionModel> {
     if (val.isEmpty) return 'This field is required';
   }
 
-  //TODO: implement server side stuff --------------------------------------------------------------------------
   //local memory + server update
   sendUpdatePreferredLocation(val) {
     SessionManager_Client.requestSessionEdit(
@@ -387,7 +386,7 @@ class SessionController extends Controller<SessionModel> {
     }).catchError((error) {
       if (mounted) model.updateMapsDisplay(type: 5);
     });
-  }//TODO: implement update session sequence-----------------------------------------------------------------
+  }
 }
 
 class SessionModel extends Model {
@@ -415,6 +414,7 @@ class SessionModel extends Model {
   Widget mapsDisplay;
   int chosenMeetpointIndex;
 
+  //boolean getter to see if screen is in view
   bool get isMounted => mounted;
 
   //local visual updates
