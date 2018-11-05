@@ -16,7 +16,7 @@ bool success = true;
 
 class SessionManager_Client {
   //token to connect to server
-  static final String _USERID = 'LOLIPUTZ';
+  static final _USERID = 'Z21432543523.0'; //TODO: change to double when testing with zach
   static IOWebSocketChannel channel;
   //currently loaded sessions
   static List<Session_Client> _sessions = [];
@@ -49,20 +49,22 @@ class SessionManager_Client {
     return _loadedSession;
   }
 
-  //fetch sessions from server
+  //fetch sessions from server, returns true if success throws error if failed
   static Future fetchSessions() async {
 
-    var sessions_mapForm = await HttpUtil.postData(
+    Map sessions_mapForm = await HttpUtil.postData(
       url: HttpUtil.serverURL,
       data: {
         'method' : HttpUtil.methods.getSessions,
         'userId' : _USERID,
       },
-      decode: false,//for debug
+      decode: true,//for debug
     );
     //TODO: parse map into List<Session_Client>
 
-    print(sessions_mapForm);
+    print(sessions_mapForm.runtimeType);
+    //print(sessions_mapForm['result']);
+    print(sessions_mapForm.keys.toList().join(" "));
 
     /* PRELIMINARY PARSER
     List<Session_Client> sessions = [];
@@ -209,18 +211,20 @@ class SessionManager_Client {
     if (joinedSession_mapForm['result'] == 'O') {
       //store meetpoints list
       List<Meetpoint_Client> meetpoints = [];
-      for (int i = 0; i < joinedSession_mapForm['meetpoints'].length; i++) {
-        meetpoints.add(
-            Meetpoint_Client(
-              routeImage: joinedSession_mapForm['meetpoints'][i]['routeImage'],
-              name: joinedSession_mapForm['meetpoints'][i]['name'],
-              type: null,
-              coordinates: <double>[
-                joinedSession_mapForm['meetpoints'][i]['coordinates']['lat'],
-                joinedSession_mapForm['meetpoints'][i]['coordinates']['lon'],
-              ],
-            )
-        );
+      if (joinedSession_mapForm['meetpoints'].length > 0) {
+        for (int i = 0; i < joinedSession_mapForm['meetpoints'].length; i++) {
+          meetpoints.add(
+              Meetpoint_Client(
+                routeImage: joinedSession_mapForm['meetpoints'][i]['routeImage'],
+                name: joinedSession_mapForm['meetpoints'][i]['name'],
+                type: null,
+                coordinates: <double>[
+                  joinedSession_mapForm['meetpoints'][i]['coordinates']['lat'],
+                  joinedSession_mapForm['meetpoints'][i]['coordinates']['lon'],
+                ],
+              )
+          );
+        }
       }
 
       Session_Client session = Session_Client(
@@ -257,12 +261,12 @@ class SessionManager_Client {
       return session.sessionID;
 
     } else {
-      throw 'Failed to join session';
+      throw 'Failed to join session, session may be full or does not exist.';
     }
 
   }//TODO: Await testing with zach
 
-  //completes to boolean true if success, throws error if failed
+  //completes to boolean true if success, false if processing completed but action failed, throws error if processing failed
   static Future deleteSession({@required String sessionId}) async {
     //delete session on server
     var response = await HttpUtil.postData(
@@ -276,13 +280,16 @@ class SessionManager_Client {
     );
 
     if (response['result'] == 'O') {
+      //local delete
+      _sessions.removeAt(_findSession(sessionId));
       HomeView.refresh = true;
       return true;
     } else {
       return false;
     }
-  }//TODO: await zach testing
+  }//TODO: Await zach testing
 
+  //completes to boolean true if success, false if processing completed but action failed, throws error if processing failed
   static Future saveUser(UserDetails_Client user) async {
     print('saving user...');
     //send save request
@@ -304,6 +311,7 @@ class SessionManager_Client {
     return ok;
   }//TODO: Await testing with zach
 
+  //completes to boolean true if success, false if processing completed but action failed, throws error if processing failed
   static Future calcMeetpoint() async {
     //calculate meetpoint
     var meetpoints_mapform = await HttpUtil.postData(
@@ -334,11 +342,13 @@ class SessionManager_Client {
       }
       //store into session
       _loadedSession.meetpoints = meetpoints;
+      _loadedSession.chosenMeetpoint = meetpoints[0];
+      HomeView.refresh = true;
       return true;
     } else {
       return false;
     }
-  }//TODO: await testing with zach
+  }//TODO: Await testing with zach
 
   //completes to boolean true if success, throws error if failed
   static Future requestSessionEdit({
@@ -356,18 +366,15 @@ class SessionManager_Client {
         'field' : field,
         'value' : value,
       },
-      decode: false,
+      decode: true,
     );
 
-    print(response);
-
-    //TODO: remove chunk when done
-    return await Future.delayed(timelag, () =>
-    success
-        ? success
-        : throw 'error'
-    );
-  }//TODO: to complete
+    if (response['result'] == 'O') {
+      return true;
+    } else {
+      throw 'Error updating field!';
+    }
+  }//TODO: await testing with zach
 
   //for stream handler to identify latest snapshots
   static bool getNew = true;

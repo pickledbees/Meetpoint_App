@@ -22,7 +22,10 @@ class HomeView extends View<HomeController> {
     if (refresh) controller.model.loadTiles(context);
     refresh = false;
     return Scaffold(
-      appBar: AppBar(title: Text('Sessions'),),
+      appBar: AppBar(
+        title: Text('Home'),
+        leading: Icon(Icons.home),
+      ),
       body: controller.model.body,
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       floatingActionButton: ButtonBar(
@@ -33,8 +36,6 @@ class HomeView extends View<HomeController> {
             builder: SessionManager_Client.streamHandler,
           ),
           RaisedButton(
-            color: Colors.white,
-            splashColor: Colors.deepOrange,
             child: Text('Join'),
             onPressed: () => controller.navigateToJoinSession(context),
           ),
@@ -87,7 +88,6 @@ class HomeController extends Controller<HomeModel> {
     }
   }
 }
-
 
 class HomeModel extends Model {
 

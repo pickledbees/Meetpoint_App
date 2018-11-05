@@ -6,9 +6,7 @@ import 'package:meetpoint/Managers/Entities.dart';
 import 'HomeView.dart';
 
 class FirstStartView extends View<FirstStartController> {
-
   FirstStartView(c) : super(controller: c);
-
   bool r = true;
 
   @override
@@ -77,9 +75,7 @@ class FirstStartView extends View<FirstStartController> {
 }
 
 class FirstStartController extends Controller<FirstStartModel> {
-
   FirstStartController(m) : super(model: m);
-
   //controllers for text fields
   TextEditingController nameController = TextEditingController();
   TextEditingController addressController = TextEditingController();
@@ -137,7 +133,6 @@ class FirstStartController extends Controller<FirstStartModel> {
 }
 
 class FirstStartModel extends Model {
-  
   String dropdownButtonValue = TravelModes.getList[0];
   List<DropdownMenuItem> items = [];
   

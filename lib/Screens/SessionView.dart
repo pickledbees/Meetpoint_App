@@ -20,7 +20,15 @@ class SessionView extends View<SessionController> {
     viewContext = context;
 
     return Scaffold(
-      appBar: AppBar(title: Text(controller.model.session.title),),
+      appBar: AppBar(
+        title: Text(controller.model.session.title),
+        actions: <Widget>[
+          IconButton(
+            icon: Icon(Icons.delete),
+            onPressed: () {controller.deleteSession();},
+          )
+        ],
+      ),
       body: SingleChildScrollView(
         padding: EdgeInsets.symmetric(horizontal: 10.0,),
         child: Form(
@@ -232,7 +240,13 @@ class SessionView extends View<SessionController> {
       ),
       Container(
         margin: const EdgeInsets.only(right: 5.0),
-        child: Text('Joined:'),
+        child: Text(
+          'Joined:',
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 16.0,
+          ),
+        ),
       ),
     ];
     for (UserDetails_Client user in users) {
@@ -387,6 +401,17 @@ class SessionController extends Controller<SessionModel> {
       if (mounted) model.updateMapsDisplay(type: 5);
     });
   }
+  deleteSession() async {
+    print('delete');
+    BuildContext context = SessionView.viewContext;
+    //show confirmation
+    model.showConfirmationDialog();
+
+    bool success = await SessionManager_Client.deleteSession(sessionId: SessionManager_Client.getLoadedSession.sessionID);
+    if (success) {
+      Navigator.pop(SessionView.viewContext);
+    }
+  } //TODO: FIX----------------------------------------------------
 }
 
 class SessionModel extends Model {
@@ -452,19 +477,20 @@ class SessionModel extends Model {
     setViewState(() {
       switch(type) {
         case 1: //loaded maps display
+          chosenMeetpointIndex = 0;
           mapsDisplay = pagedMapsDisplay();
           break;
         case 2: //calculating...
           mapsDisplay = blankMapsDisplay(icon: Icons.search, text: 'Calculating your Meetpoints...',);
           break;
         case 3: //not enough params
-          mapsDisplay = blankMapsDisplay(icon: Icons.warning, text: 'Not enough parameters',);
+          mapsDisplay = blankMapsDisplay(icon: Icons.warning, text: 'Not enough parameters.',);
           break;
         case 4: //no meetpoint found
-          mapsDisplay = blankMapsDisplay(icon: Icons.warning, text: 'No meetpoint found',);
+          mapsDisplay = blankMapsDisplay(icon: Icons.warning, text: 'No meetpoint found.',);
           break;
         case 5: //could not connect
-          mapsDisplay = blankMapsDisplay(icon: Icons.warning, text: 'Not connected to server',);
+          mapsDisplay = blankMapsDisplay(icon: Icons.warning, text: 'Connection to server has an issue.',);
           break;
       }
     });
@@ -583,4 +609,6 @@ class SessionModel extends Model {
   }
 
   showErrorDialog(error) {} //TODO: to implement
+  showConfirmationDialog() {
+  }
 }

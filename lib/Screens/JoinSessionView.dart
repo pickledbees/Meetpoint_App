@@ -26,6 +26,8 @@ class JoinSessionView extends View<JoinSessionController> {
                 margin: const EdgeInsets.symmetric(vertical: 10.0),
                 width: 200.0,
                 child: TextFormField(
+                  maxLength: 13,
+                  maxLengthEnforced: true,
                   textAlign: TextAlign.center,
                   validator: controller.validate,
                   controller: controller.fieldController,

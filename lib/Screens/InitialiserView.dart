@@ -28,7 +28,7 @@ class InitialiserView extends View<InitialiserController> {
                 'Meetpoint',
                 style: TextStyle(
                   fontSize: 50.0,
-                  color: Colors.cyan,
+                  color: Color.fromRGBO(11, 143, 160, 1.0),
                 ),
               ),
             ),
@@ -49,7 +49,7 @@ class InitialiserController extends Controller<InitialiserModel> {
   InitialiserController(m) : super(model : m);
 
   initialise(BuildContext context) async {
-
+    //load user
     UserDetails_Client user = await LocalUserInfoManager.loadUser();
 
     if (user == null) {
@@ -69,7 +69,7 @@ class InitialiserController extends Controller<InitialiserModel> {
       try {
         //fetch sessions
         model.setLoaderTextTo('Fetching your sessions...');
-        await SessionManager_Client.fetchSessions();
+        //await SessionManager_Client.fetchSessions();
         //open channel
         model.setLoaderTextTo('Connecting to server...');
         SessionManager_Client.channel = IOWebSocketChannel.connect('ws://echo.websocket.org');//'ws://echo.websocket.org'
