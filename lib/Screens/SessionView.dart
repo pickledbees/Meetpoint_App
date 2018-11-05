@@ -405,6 +405,7 @@ class SessionController extends Controller<SessionModel> {
       if (mounted) model.updateMapsDisplay(type: 5);
     });
   }
+
   //prompts delete dialog box
   promptDelete() {
     showDialog(
