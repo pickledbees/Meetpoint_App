@@ -69,7 +69,7 @@ class InitialiserController extends Controller<InitialiserModel> {
       try {
         //fetch sessions
         model.setLoaderTextTo('Fetching your sessions...');
-        //await SessionManager_Client.fetchSessions();
+        await SessionManager_Client.fetchSessions();
         //open channel
         model.setLoaderTextTo('Connecting to server...');
         SessionManager_Client.channel = IOWebSocketChannel.connect('ws://echo.websocket.org');//'ws://echo.websocket.org'

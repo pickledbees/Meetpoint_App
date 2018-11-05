@@ -25,7 +25,7 @@ class SessionView extends View<SessionController> {
         actions: <Widget>[
           IconButton(
             icon: Icon(Icons.delete),
-            onPressed: () {controller.deleteSession();},
+            onPressed: () {controller.promptDelete();},
           )
         ],
       ),
@@ -390,6 +390,10 @@ class SessionController extends Controller<SessionModel> {
   calcMeetpoints() {
     if (!formKey.currentState.validate()) return; //validate fields
 
+    //ensure all text fields are updated and captured by server (covers user forgetfulness: changing and nor confirming)
+    sendUpdateAddress1();
+    sendUpdateAddress2();
+
     model.updateMapsDisplay(type: 2); //show loader text
 
     SessionManager_Client.calcMeetpoint() //calculate and wait for result
@@ -401,17 +405,46 @@ class SessionController extends Controller<SessionModel> {
       if (mounted) model.updateMapsDisplay(type: 5);
     });
   }
-  deleteSession() async {
-    print('delete');
-    BuildContext context = SessionView.viewContext;
-    //show confirmation
-    model.showConfirmationDialog();
-
-    bool success = await SessionManager_Client.deleteSession(sessionId: SessionManager_Client.getLoadedSession.sessionID);
-    if (success) {
-      Navigator.pop(SessionView.viewContext);
-    }
-  } //TODO: FIX----------------------------------------------------
+  //prompts delete dialog box
+  promptDelete() {
+    showDialog(
+      context: SessionView.viewContext,
+      builder: (context) {
+        return AlertDialog(
+          title: Text('Are You Sure?'),
+          content: Text('Deleting this session is permanent, '
+                        'however other users already inside remain in the session.\n'
+                        '\nAre you sure you want to delete this?'
+          ),
+          actions: <Widget>[
+            FlatButton(
+              child: Text('Delete'),
+              onPressed: () {
+                //close dialog box
+                Navigator.of(context).pop();
+                //attempt to delete on server
+                SessionManager_Client.deleteSession(sessionId: session.sessionID)
+                .then((result) {
+                  if (result) {
+                    //navigate out of session
+                    Navigator.pop(context);
+                  } else {
+                    throw 'Failed to delete session on server, try again later.';
+                  }
+                }).catchError((error) {
+                  model.showErrorDialog(error);
+                });
+              },
+            ),
+            FlatButton(
+              child: Text('Cancel'),
+              onPressed: () => Navigator.of(context).pop(),
+            ),
+          ],
+        );
+      }
+    );
+  }
 }
 
 class SessionModel extends Model {
@@ -608,7 +641,21 @@ class SessionModel extends Model {
     );
   }
 
-  showErrorDialog(error) {} //TODO: to implement
-  showConfirmationDialog() {
+  showErrorDialog(error) {
+    showDialog(
+      context: SessionView.viewContext,
+      builder: (context) {
+        return AlertDialog(
+          title: Text('Oops!'),
+          content: Text(error),
+          actions: <Widget>[
+            FlatButton(
+              child: Text('Dismiss'),
+              onPressed: () => Navigator.of(context).pop(),
+            ),
+          ],
+        );
+      }
+    );
   }
 }

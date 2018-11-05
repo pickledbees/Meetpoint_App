@@ -4,7 +4,7 @@ import 'package:flutter/foundation.dart';
 
 abstract class HttpUtil {
   //for easy changing of ip
-  static const String serverURL = 'http://10.27.7.227:3000/meetpoint'; //TODO: zach 'http://10.27.196.9:8080/meetpoint'
+  static const String serverURL = 'http://192.168.1.161:3000/meetpoint'; //TODO: zach 'http://10.27.196.9:8080/meetpoint'
   static final _Methods _methods= const _Methods();
 
   static _Methods get methods => _methods;
@@ -27,7 +27,7 @@ abstract class HttpUtil {
   }) async {
     print('sending request...');
     http.Response res = await http.post(url, body: data,); //TODO: REMEMBER TO ENCODE BACK DURING DEPLOYMENT!!!!!
-    //if (res.statusCode != 200) throw res.statusCode;
+    if (res.statusCode != 200) throw 'Failed to communicate with server';
     print('Response recieved: status code is ${res.statusCode.toString()}');
     return decode ? json.decode(res.body) : res.body;
   }

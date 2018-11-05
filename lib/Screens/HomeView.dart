@@ -115,7 +115,10 @@ class HomeModel extends Model {
       //generate tiles
       for (Session_Client session in sessions) listTiles.add(
           ListTile(
-            leading: Icon(Icons.place),
+            leading: Icon(
+              Icons.place,
+              size: 30.0,
+            ),
             title: Text(session.title),
             subtitle: Text(session.chosenMeetpoint?.name ?? 'No chosen meetpoint'),
             trailing: Icon(Icons.chevron_right),
@@ -138,5 +141,23 @@ class HomeModel extends Model {
         );
       });
     }
+  }
+
+  showErrorDialog(error) {
+    showDialog(
+        context: SessionView.viewContext,
+        builder: (context) {
+          return AlertDialog(
+            title: Text('Oops!'),
+            content: Text(error),
+            actions: <Widget>[
+              FlatButton(
+                child: Text('Dismiss'),
+                onPressed: () => Navigator.of(context).pop(),
+              ),
+            ],
+          );
+        }
+    );
   }
 }

@@ -16,7 +16,7 @@ bool success = true;
 
 class SessionManager_Client {
   //token to connect to server
-  static final _USERID = 'Z21432543523.0'; //TODO: change to double when testing with zach
+  static final String _USERID = 'LOLIPUTZ';
   static IOWebSocketChannel channel;
   //currently loaded sessions
   static List<Session_Client> _sessions = [];
@@ -261,7 +261,7 @@ class SessionManager_Client {
       return session.sessionID;
 
     } else {
-      throw 'Failed to join session, session may be full or does not exist.';
+      throw 'Session may be full or does not exist.';
     }
 
   }//TODO: Await testing with zach
@@ -324,7 +324,7 @@ class SessionManager_Client {
       decode: true, //FOR DEBUGGING
     );
 
-    if (meetpoints_mapform['result'] == 'O') {
+    if (meetpoints_mapform['result'] == 'O' && meetpoints_mapform['meetpoints'].length > 0) {
       //store meetpoints list
       List<Meetpoint_Client> meetpoints = [];
       for (int i = 0; i < meetpoints_mapform['meetpoints'].length; i++) {
@@ -346,6 +346,9 @@ class SessionManager_Client {
       HomeView.refresh = true;
       return true;
     } else {
+      _loadedSession.meetpoints = <Meetpoint_Client>[];
+      _loadedSession.chosenMeetpoint = null;
+      HomeView.refresh = true;
       return false;
     }
   }//TODO: Await testing with zach
@@ -372,7 +375,7 @@ class SessionManager_Client {
     if (response['result'] == 'O') {
       return true;
     } else {
-      throw 'Error updating field!';
+      throw 'Failed to complete action.\n\nYou might not be connected to the Internet.';
     }
   }//TODO: await testing with zach
 

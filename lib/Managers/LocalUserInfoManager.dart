@@ -1,7 +1,8 @@
+import 'dart:io';
 import 'dart:async';
-import 'package:flutter/foundation.dart';
 import 'Entities.dart';
 import 'package:meetpoint/Managers/SessionManager_Client.dart';
+import 'package:path_provider/path_provider.dart';
 
 class LocalUserInfoManager {
   static UserDetails_Client _localUser;
