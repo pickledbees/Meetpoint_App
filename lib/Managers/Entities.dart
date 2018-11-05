@@ -40,6 +40,22 @@ class UserDetails_Client {
     @required this.prefStartCoords,
     @required this.prefTravelMode,
   });
+
+  UserDetails_Client.fromJson(Map<String,dynamic> map) {
+    name = map['name'];
+    prefStartCoords = Location_Client(
+      name: map['address'],
+      type: null,
+      address: map['address'],
+    );
+    prefTravelMode = map['preTravelMode'];
+  }
+
+  Map<String,dynamic> toJson() => {
+    'name': name,
+    'address' : prefStartCoords.address,
+    'preTravelMode' : prefTravelMode,
+  };
 }
 
 class Location_Client {
