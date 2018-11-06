@@ -2,12 +2,11 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
 
-abstract class HttpUtil {
-  //for easy changing of ip
-  static const String serverURL = 'http://192.168.1.161:3000/meetpoint'; //TODO: zach 'http://10.27.196.9:8080/meetpoint'
-  static final _Methods _methods= const _Methods();
+bool zach = false;
 
-  static _Methods get methods => _methods;
+abstract class HttpUtil {
+  //for easy changing of ip                 //zach                                  //me
+  static final String serverURL = zach ? 'http://10.27.196.9:8080/meetpoint' : 'http://192.168.1.161:3000/meetpoint';
 
   //returns a map or string depending on 'decode' setting, throw the error code
   static Future getData({
@@ -25,21 +24,9 @@ abstract class HttpUtil {
     @required Map data,
     bool decode = true,
   }) async {
-    print('sending request...');
-    http.Response res = await http.post(url, body: data,); //TODO: REMEMBER TO ENCODE BACK DURING DEPLOYMENT!!!!!
+    var data2send = zach ? json.encode(data) : data;
+    http.Response res = await http.post(url, body: data2send,);
     if (res.statusCode != 200) throw 'Failed to communicate with server';
-    print('Response recieved: status code is ${res.statusCode.toString()}');
     return decode ? json.decode(res.body) : res.body;
   }
-}
-
-class _Methods {
-  const _Methods();
-  final String saveUser = 'updateUser';
-  final String getSessions = 'getSessions';
-  final String createSession = 'createSession';
-  final String joinSession = 'joinSession';
-  final String deleteSession = 'deleteSession';
-  final String editSession = 'editSession';
-  final String calculate = 'calculate';
 }

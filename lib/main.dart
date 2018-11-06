@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:meetpoint/Screens/InitialiserView.dart';
-import 'package:meetpoint/HttpUtil.dart';
-import 'package:web_socket_channel/io.dart';
-import 'dart:convert';
+import 'package:meetpoint/Managers/SessionManager_Client.dart';
+import 'dart:async';
 
 void main() {
   print('App starting...');
   runApp(MeetPointApp());
+  SessionManager_Client.poll();
   //runApp(Test());
   //runApp(Test2());
 }
@@ -32,4 +32,11 @@ class MeetPointApp extends StatelessWidget {
       home: InitialiserView(InitialiserController(InitialiserModel())),
     );
   }
+}
+
+void looper() {
+  Timer(Duration(seconds: 2), () {
+    print('yo');
+    looper();
+  });
 }

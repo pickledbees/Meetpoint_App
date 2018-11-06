@@ -58,7 +58,6 @@ class HomeView extends View<HomeController> {
 
 class HomeController extends Controller<HomeModel> {
   HomeController(m) : super(model: m) ;
-
   bool get isMounted => mounted;
 
   navigateToCreateSession(BuildContext context) {
@@ -77,16 +76,6 @@ class HomeController extends Controller<HomeModel> {
     Navigator.push(context, route,);
   }
 
-  //TODO: find some way to access this UI method---------------------------------------------------------
-  removeSession({@required String sessionId, BuildContext context}) async {
-    try {
-      await SessionManager_Client.deleteSession(sessionId: sessionId);
-      model.loadTiles(context);
-      //navigate to session page
-    } catch (e) {
-      //error message
-    }
-  }
 }
 
 class HomeModel extends Model {
@@ -141,23 +130,5 @@ class HomeModel extends Model {
         );
       });
     }
-  }
-
-  showErrorDialog(error) {
-    showDialog(
-        context: SessionView.viewContext,
-        builder: (context) {
-          return AlertDialog(
-            title: Text('Oops!'),
-            content: Text(error),
-            actions: <Widget>[
-              FlatButton(
-                child: Text('Dismiss'),
-                onPressed: () => Navigator.of(context).pop(),
-              ),
-            ],
-          );
-        }
-    );
   }
 }

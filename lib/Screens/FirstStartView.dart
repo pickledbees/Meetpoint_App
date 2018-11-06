@@ -79,8 +79,6 @@ class FirstStartController extends Controller<FirstStartModel> {
   //controllers for text fields
   TextEditingController nameController = TextEditingController();
   TextEditingController addressController = TextEditingController();
-
-  //key to access from
   final formKey = GlobalKey<FormState>();
 
   //validator for text fields

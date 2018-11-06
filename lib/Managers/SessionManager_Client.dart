@@ -16,7 +16,7 @@ bool success = true;
 
 class SessionManager_Client {
   //token to connect to server
-  static final String _USERID = 'LOLIPUTZ';
+  static final String _USERID = 'dsadsadsadas';
   static IOWebSocketChannel channel;
   //currently loaded sessions
   static List<Session_Client> _sessions = [];
@@ -55,7 +55,7 @@ class SessionManager_Client {
     Map sessions_mapForm = await HttpUtil.postData(
       url: HttpUtil.serverURL,
       data: {
-        'method' : HttpUtil.methods.getSessions,
+        'method' : Methods.getSessions,
         'userId' : _USERID,
       },
       decode: true,//for debug
@@ -144,7 +144,7 @@ class SessionManager_Client {
     var createdSession_mapForm = await HttpUtil.postData(
       url: HttpUtil.serverURL,
       data: {
-        'method' : HttpUtil.methods.createSession,
+        'method' : Methods.createSession,
         'userId' : _USERID,
         'sessionTitle' : sessionTitle,
       },
@@ -202,7 +202,7 @@ class SessionManager_Client {
     var joinedSession_mapForm = await HttpUtil.postData(
       url: HttpUtil.serverURL,
       data: {
-        'method' : HttpUtil.methods.joinSession,
+        'method' : Methods.joinSession,
         'userId' : _USERID,
         'sessionId' : sessionId,
       },
@@ -272,7 +272,7 @@ class SessionManager_Client {
     var response = await HttpUtil.postData(
       url: HttpUtil.serverURL,
       data: {
-        'method' : HttpUtil.methods.deleteSession,
+        'method' : Methods.deleteSession,
         'userId' : _USERID,
         'sessionId' : sessionId
       },
@@ -297,7 +297,7 @@ class SessionManager_Client {
     var response = await HttpUtil.postData(
       url: HttpUtil.serverURL,
       data: {
-        'method' : HttpUtil.methods.saveUser,
+        'method' : Methods.saveUser,
         'userId' : _USERID,
         'name' : user.name,
         'defaultTravelMode' : user.prefTravelMode,
@@ -317,7 +317,7 @@ class SessionManager_Client {
     var meetpoints_mapform = await HttpUtil.postData(
       url: HttpUtil.serverURL,
       data: {
-        'method' : HttpUtil.methods.calculate,
+        'method' : Methods.calculate,
         'userId' : _USERID,
         'sessionId' : _loadedSession.sessionID,
       },
@@ -363,7 +363,7 @@ class SessionManager_Client {
     var response = await HttpUtil.postData(
       url: HttpUtil.serverURL,
       data: {
-        'method' : HttpUtil.methods.editSession,
+        'method' : Methods.editSession,
         'userId' : _USERID,
         'sessionId' : sessionId,
         'field' : field,
@@ -414,8 +414,45 @@ class SessionManager_Client {
     return Text('');
   } //TODO: possibly make it handle other requests
 
-  //local information update (called by streamHandler)
-  static updateSession({
+  //polls for updates
+  static void poll() async {
+    //poll for update
+    try {
+      var update = await HttpUtil.postData(
+        url: HttpUtil.serverURL,
+        data: {
+          'method': 'getUpdate',
+          'data': _USERID,
+        },
+        decode: false,
+      );
+      print('update is $update');
+      //_updateHandler(update);
+      //call for another update
+      Timer(Duration(seconds: 2),poll);
+    } catch (error) {
+      Timer(Duration(seconds: 10),poll);
+    }
+  }
+
+  static void _updateHandler(Map update) {
+    //return if no updates
+    if (update['result'] == 'X') return;
+
+    //else, process update
+    switch (update['method']) {
+      case Methods.editSession:
+        updateSession(
+          sessionId: update['sessionId'],
+          field: update['field'],
+          value: update['value'],
+        );
+        break;
+    }
+  }
+
+  //local information update
+  static void updateSession({
     @required String sessionId,
     @required String field,
     @required String value,
