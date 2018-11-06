@@ -6,7 +6,7 @@ bool zach = false;
 
 abstract class HttpUtil {
   //for easy changing of ip                 //zach                                  //me
-  static final String serverURL = zach ? 'http://10.27.196.9:8080/meetpoint' : 'http://192.168.1.161:3000/meetpoint';
+  static final String serverURL = zach ? 'http://10.27.196.9:8080/meetpoint' : 'http://10.27.7.227:3000/meetpoint';
 
   //returns a map or string depending on 'decode' setting, throw the error code
   static Future getData({

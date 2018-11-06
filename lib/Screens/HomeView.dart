@@ -23,25 +23,106 @@ class HomeView extends View<HomeController> {
     refresh = false;
     return Scaffold(
       appBar: AppBar(
-        title: Text('Home'),
+        title: Text('Home - Your Sessions'),
         leading: Icon(Icons.home),
+      ),
+      drawer: Drawer(
+        child: ListView(
+          children: <Widget>[
+            Container(
+              height: 50.0,
+              color: Color.fromRGBO(11, 143, 160, 1.0),
+              child: Center(
+                child: Text(
+                  'Meetpoint',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 20.0,
+                  ),
+                ),
+              )
+            ),
+            Container(
+              height: 10.0,
+              color: Color.fromRGBO(11, 143, 160, 0.5),
+            ),
+            Container(
+              height: 5.0,
+              color: Colors.deepOrange,
+            ),
+            ListTile(
+              contentPadding: const EdgeInsets.fromLTRB(20.0, 10.0, 30.0, 0.0),
+              leading: Icon(
+                Icons.account_circle,
+                size: 40.0,
+              ),
+              title: Text('Default Information'),
+              onTap: null,
+              trailing: Icon(Icons.edit),
+            ),
+            ListTile(
+              contentPadding: const EdgeInsets.fromLTRB(20.0, 10.0, 30.0, 0.0),
+              leading: Icon(
+                Icons.info_outline,
+                size: 40.0,
+              ),
+              title: Text('About'),
+              onTap: null,
+            ),
+            ListTile(
+              contentPadding: const EdgeInsets.fromLTRB(20.0, 10.0, 30.0, 0.0),
+              leading: Icon(
+                Icons.help,
+                size: 40.0,
+              ),
+              title: Text('Help'),
+              onTap: null,
+            ),
+          ],
+        ),
       ),
       body: controller.model.body,
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       floatingActionButton: ButtonBar(
         children: <Widget>[
           RaisedButton(
-            child: Text('Join'),
+            child: Row(
+              children: <Widget>[
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 5.0),
+                  child: Text('Join'),
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 1.0),
+                  child: Icon(Icons.people),
+                ),
+              ],
+            ),
             onPressed: () => controller.navigateToJoinSession(context),
           ),
           RaisedButton(
             color: Colors.deepOrange,
             splashColor: Colors.white,
-            child: Text(
-              'Create',
-              style: TextStyle(
-                color: Colors.white,
-              ),
+            child: Row(
+              children: <Widget>[
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 1.0),
+                  child: Text(
+                    'Create',
+                    style: TextStyle(
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 1.0),
+                  child: Icon(
+                    Icons.add,
+                    color: Colors.white,
+                  ),
+                ),
+              ],
             ),
             onPressed: () => controller.navigateToCreateSession(context),
           ),
@@ -101,11 +182,17 @@ class HomeModel extends Model {
           ListTile(
             leading: Icon(
               Icons.place,
+              color: Colors.deepOrange,
               size: 30.0,
             ),
-            title: Text(session.title),
+            title: Text(
+              session.title,
+              textScaleFactor: 1.05,
+            ),
             subtitle: Text(session.chosenMeetpoint?.name ?? 'No chosen meetpoint'),
-            trailing: Icon(Icons.chevron_right),
+            trailing: Icon(
+              Icons.chevron_right,
+            ),
             onTap: () {
               //navigate to view
               MaterialPageRoute route = MaterialPageRoute(

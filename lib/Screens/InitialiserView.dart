@@ -24,6 +24,11 @@ class InitialiserView extends View<InitialiserController> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
+            Icon(
+              Icons.place,
+              size: 150.0,
+              color: Colors.deepOrange,
+            ),
             Container(
               padding: const EdgeInsets.symmetric(vertical: 20.0),
               child: Text(
@@ -93,7 +98,7 @@ class InitialiserController extends Controller<InitialiserModel> {
             content: Text(error),
             actions: <Widget>[
               FlatButton(
-                child: Text('Dismiss'),
+                child: Text('Try again'),
                 onPressed: () {
                   Navigator.of(context).pop();
                   initialise();

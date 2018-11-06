@@ -55,11 +55,25 @@ class SessionView extends View<SessionController> {
                 children: <Widget>[
                   RaisedButton(
                     color: Colors.deepOrange,
-                    child: Text(
-                      'Calculate',
-                      style: TextStyle(
-                        color: Colors.white,
-                      ),
+                    child: Row(
+                      children: <Widget>[
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 5.0),
+                          child: Text(
+                            'Calculate',
+                            style: TextStyle(
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 1.0),
+                          child: Icon(
+                            Icons.cached,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ],
                     ),
                     onPressed: () => controller.calcMeetpoints(), //TODO: think about how to validate-----------------
                   ),
@@ -389,8 +403,8 @@ class SessionController extends Controller<SessionModel> {
     //validate fields
     if (!formKey.currentState.validate()) {
       model.showErrorDialog('Please fill in your addresses!');
-    };
-
+      return;
+    }
     //ensure all text fields are updated and captured by server (covers user forgetfulness: changing and nor confirming)
     sendUpdateAddress1();
     sendUpdateAddress2();
@@ -588,12 +602,12 @@ class SessionModel extends Model {
             mainAxisAlignment: MainAxisAlignment.end,
             children: <Widget>[
               RaisedButton( //more button
-                child: Text('more'),
+                child: Text('More'),
                 onPressed: () {
                   MaterialPageRoute route = MaterialPageRoute(
                     builder: (context) => MoreSessionInfoView(MoreSessionInfoController(MoreSessionInfoModel(index))),
                   );
-                  Navigator.push(SessionView.viewContext, route);
+                  Navigator.push(SessionView.viewContext, route,);
                 },
               ),
               Container(width: 10.0,),
@@ -617,7 +631,7 @@ class SessionModel extends Model {
         children: <Widget>[
           Container(
             padding: const EdgeInsets.only(left:20.0),
-            child: Text(name),
+            child: Text('${index+1}. $name'),
           ),
           Container(
             child: Radio(
@@ -635,10 +649,12 @@ class SessionModel extends Model {
   //builds one map image
   Widget mapImage({@required String url}) {
     return Container(
-      color: Colors.blueGrey,
       height: 230.0,
       child: Center(
-        child: Text(url),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 2.0),
+          child: Text(url),
+        ),
       ),
     );
   }
@@ -649,7 +665,7 @@ class SessionModel extends Model {
       builder: (context) {
         return AlertDialog(
           title: Text('Oops!'),
-          content: Text(error),
+          content: Text(error.toString()),
           actions: <Widget>[
             FlatButton(
               child: Text('Dismiss'),

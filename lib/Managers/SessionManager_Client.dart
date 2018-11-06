@@ -78,11 +78,11 @@ class SessionManager_Client {
                     name: sessionObj['meetpoints'][i]['name'],
                     type: null,
                     /*
-                coordinates: <double>[
-                  joinedSession_mapForm['meetpoints'][i]['coordinates']['lat'],
-                  joinedSession_mapForm['meetpoints'][i]['coordinates']['lon'],
-                ],
-                */
+                    coordinates: <double>[
+                      joinedSession_mapForm['meetpoints'][i]['coordinates']['lat'],
+                      joinedSession_mapForm['meetpoints'][i]['coordinates']['lon'],
+                    ],
+                    */
                   )
               );
             }

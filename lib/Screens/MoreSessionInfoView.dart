@@ -21,7 +21,10 @@ class MoreSessionInfoView extends View<MoreSessionInfoController>{
           children: <Widget>[
             Container(
               margin: const EdgeInsets.symmetric(vertical: 5.0),
-              child: Text(controller.model.meetpoint.name),
+              child: Text(
+                controller.model.meetpoint.name,
+                textScaleFactor: 1.3,
+              ),
             ),
             Container(
               margin: const EdgeInsets.symmetric(vertical: 5.0),
