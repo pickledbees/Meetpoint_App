@@ -17,7 +17,6 @@ bool success = true;
 class SessionManager_Client {
   //token to connect to server
   static final String _USERID = 'dsadsadsadas';
-  static IOWebSocketChannel channel;
   //currently loaded sessions
   static List<Session_Client> _sessions = [];
   static Session_Client _loadedSession;
@@ -62,81 +61,80 @@ class SessionManager_Client {
     );
     //TODO: parse map into List<Session_Client>
 
-    print(sessions_mapForm.runtimeType);
-    //print(sessions_mapForm['result']);
-    print(sessions_mapForm.keys.toList().join(" "));
+    if (sessions_mapForm['result'] == 'O') {
 
-    /* PRELIMINARY PARSER
-    List<Session_Client> sessions = [];
-    sessions_mapForm.forEach((key,session) {
-      if (key == 'result') return;
-      String sessionId = session['sessionId'];
-      String title = session['title'];
-      String prefLocationType = session['prefLocationType'];
-      String U1N = session['U1N'];
-      String U1T = session['U1T'];
-      String U1A = session['U1A'];
-      String U2N = session['U2N'];
-      String U2T = session['U2T'];
-      String U2A = session['U2A'];
+      List<Session_Client> sessions = [];
 
-      List<Meetpoint_Client> meetpoints = [];
-      session['meetpoints'].forEach((key,meetpoint) {
-        String routeImage = meetpoint['routeImage'];
-        String name = meetpoint['name'];
-        List<double> coordinates = [
-          double.parse(meetpoint['coordinates']['lat']),
-          double.parse(meetpoint['coordinates']['lon']),
-        ];
-        meetpoints.add(Meetpoint_Client(
-          routeImage: routeImage,
-          name: name,
-          type: null,
-          coordinates: coordinates,
-        ));
-      });
+      if (sessions_mapForm['sessions'].length > 0) {
+        for (var sessionObj in sessions_mapForm['sessions']) {
+          //store meetpoints list
+          List<Meetpoint_Client> meetpoints = [];
+          //check for presence of meetpoints
+          if (sessionObj['meetpoints'].length > 0) {
+            for (int i = 0; i < sessionObj['meetpoints'].length; i++) {
+              meetpoints.add(
+                  Meetpoint_Client(
+                    routeImage: sessionObj['meetpoints'][i]['routeImage'],
+                    name: sessionObj['meetpoints'][i]['name'],
+                    type: null,
+                    /*
+                coordinates: <double>[
+                  joinedSession_mapForm['meetpoints'][i]['coordinates']['lat'],
+                  joinedSession_mapForm['meetpoints'][i]['coordinates']['lon'],
+                ],
+                */
+                  )
+              );
+            }
+          }
 
-      Meetpoint_Client chosenMeetpoint = meetpoints[session['chosenMeetpoint']];
+          Session_Client session = Session_Client(
+            sessionID: sessionObj['sessionId'],
+            title: sessionObj['title'],
+            chosenMeetpoint: meetpoints.length == 0
+                ? null
+                : meetpoints[int.parse(sessionObj['chosenMeetpoint'])],
+            meetpoints: meetpoints,
+            prefLocationType: LocationTypes.inList(sessionObj['prefLocationType'])
+                ? sessionObj['prefLocationType']
+                : LocationTypes.getList[0],
+            users: [
+              UserDetails_Client(
+                name: sessionObj['U1N'],
+                prefTravelMode: TravelModes.inList(sessionObj['U1T'])
+                    ? sessionObj['U1T']
+                    : TravelModes.getList[0],
+                prefStartCoords: Location_Client(
+                  name: sessionObj['U1A'],
+                  type: '',
+                  address: sessionObj['U1A'],
+                ),
+              ),
+              UserDetails_Client(
+                name: sessionObj['U2N'],
+                prefTravelMode: TravelModes.inList(sessionObj['U2T'])
+                    ? sessionObj['U2T']
+                    : TravelModes.getList[0],
+                prefStartCoords: Location_Client(
+                  name: sessionObj['U2A'],
+                  type: '',
+                  address: sessionObj['U2A'],
+                ),
+              ),
+            ],
+          );
+          sessions.add(session);
+        }
 
-      sessions.add(Session_Client(
-        sessionID: sessionId,
-        title: title,
-        prefLocationType: prefLocationType,
-        chosenMeetpoint: chosenMeetpoint,
-        meetpoints: meetpoints,
-        users: [
-          UserDetails_Client(
-            name: U1N,
-            prefTravelMode: U1T,
-            prefStartCoords: Location_Client(
-              name: U1A,
-              type: null,
-              address: U1A,
-            ),
-          ),
-          UserDetails_Client(
-            name: (U2N == '') ? null : U2N,
-            prefTravelMode: (U2T == '') ? null : U2T,
-            prefStartCoords: Location_Client(
-              name: (U2A == '') ? null : U2A,
-              type: null,
-              address: (U2A == '') ? null : U2A,
-            ),
-          ),
-        ],
-      ));
-    });
-    */
-
-    //TODO: REMOVE THIS CHUNK WHEN DONE
-    _sessions = await Future.delayed(timelag, () => //change assignment
-    success
-        ? TestData.returned_sessions
-        : throw 'error'
-    );
-
-    return;
-  }//TODO: parse sessions (map) into List<Session_Client> and assign to '_sessions' (X)
+        _sessions = sessions;
+        return;
+      } else {
+        return;
+      }
+    } else {
+      throw 'Failed to fetch your sessions.\n\nYou might not be connected to the Internet.';
+    }
+  }//TODO: Await testing with zach
 
   //completes to id if success, throws error if failed
   static Future createSession({@required String sessionTitle}) async {
@@ -162,12 +160,13 @@ class SessionManager_Client {
         users: [
           UserDetails_Client(
             name: createdSession_mapForm['U1N'],
-            prefTravelMode: createdSession_mapForm['U1T'],
+            prefTravelMode: TravelModes.inList(createdSession_mapForm['U1T'])
+                ? createdSession_mapForm['U1T']
+                : TravelModes.getList[0],
             prefStartCoords: Location_Client(
               name: createdSession_mapForm['U1A'],
               type: '',
               address: createdSession_mapForm['U1A'],
-              coordinates: [100.0,200.0],
             ),
           ),
           UserDetails_Client(
@@ -177,7 +176,6 @@ class SessionManager_Client {
               name: null,
               type: null,
               address: null,
-              coordinates: [null,null],
             ),
           ),
         ],
@@ -211,6 +209,7 @@ class SessionManager_Client {
     if (joinedSession_mapForm['result'] == 'O') {
       //store meetpoints list
       List<Meetpoint_Client> meetpoints = [];
+      //check for presence of meetpoints
       if (joinedSession_mapForm['meetpoints'].length > 0) {
         for (int i = 0; i < joinedSession_mapForm['meetpoints'].length; i++) {
           meetpoints.add(
@@ -218,10 +217,12 @@ class SessionManager_Client {
                 routeImage: joinedSession_mapForm['meetpoints'][i]['routeImage'],
                 name: joinedSession_mapForm['meetpoints'][i]['name'],
                 type: null,
+                /*
                 coordinates: <double>[
                   joinedSession_mapForm['meetpoints'][i]['coordinates']['lat'],
                   joinedSession_mapForm['meetpoints'][i]['coordinates']['lon'],
                 ],
+                */
               )
           );
         }
@@ -230,13 +231,19 @@ class SessionManager_Client {
       Session_Client session = Session_Client(
         sessionID: joinedSession_mapForm['sessionId'],
         title: joinedSession_mapForm['title'],
-        chosenMeetpoint: meetpoints[int.parse(joinedSession_mapForm['chosenMeetpoint'])],
+        chosenMeetpoint: meetpoints.length == 0
+            ? null
+            : meetpoints[int.parse(joinedSession_mapForm['chosenMeetpoint'])],
         meetpoints: meetpoints,
-        prefLocationType: joinedSession_mapForm['prefLocationType'],
+        prefLocationType: LocationTypes.inList(joinedSession_mapForm['prefLocationType'])
+            ? joinedSession_mapForm['prefLocationType']
+            : LocationTypes.getList[0],
         users: [
           UserDetails_Client(
             name: joinedSession_mapForm['U1N'],
-            prefTravelMode: joinedSession_mapForm['U1T'],
+            prefTravelMode: TravelModes.inList(joinedSession_mapForm['U1T'])
+                ? joinedSession_mapForm['U1T']
+                : TravelModes.getList[0],
             prefStartCoords: Location_Client(
               name: joinedSession_mapForm['U1A'],
               type: '',
@@ -245,7 +252,9 @@ class SessionManager_Client {
           ),
           UserDetails_Client(
             name: joinedSession_mapForm['U2N'],
-            prefTravelMode: joinedSession_mapForm['U2T'],
+            prefTravelMode: TravelModes.inList(joinedSession_mapForm['U2T'])
+                ? joinedSession_mapForm['U2T']
+                : TravelModes.getList[0],
             prefStartCoords: Location_Client(
               name: joinedSession_mapForm['U2A'],
               type: '',
@@ -333,10 +342,12 @@ class SessionManager_Client {
               routeImage: meetpoints_mapform['meetpoints'][i]['routeImage'],
               name: meetpoints_mapform['meetpoints'][i]['name'],
               type: null,
+              /*
               coordinates: <double>[
                 meetpoints_mapform['meetpoints'][i]['coordinates']['lat'],
                 meetpoints_mapform['meetpoints'][i]['coordinates']['lon'],
               ],
+              */
             )
         );
       }
@@ -433,7 +444,7 @@ class SessionManager_Client {
     } catch (error) {
       Timer(Duration(seconds: 10),poll);
     }
-  }
+  } //check implementation
 
   static void _updateHandler(Map update) {
     //return if no updates

@@ -33,10 +33,3 @@ class MeetPointApp extends StatelessWidget {
     );
   }
 }
-
-void looper() {
-  Timer(Duration(seconds: 2), () {
-    print('yo');
-    looper();
-  });
-}

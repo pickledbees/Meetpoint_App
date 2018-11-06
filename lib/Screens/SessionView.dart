@@ -11,7 +11,6 @@ class SessionView extends View<SessionController> {
   SessionView(c) : super(controller: c) {
     widget = this;
   }
-
   static BuildContext viewContext; //for access for dynamically built navigation buttons
   static SessionView widget; //reference to self object for others to access
 
@@ -307,7 +306,6 @@ class SessionController extends Controller<SessionModel> {
   TextEditingController address2;
   final formKey = GlobalKey<FormState>();
   Session_Client session;
-
   bool get isMounted => mounted;
 
   String validate(val) {
@@ -388,7 +386,10 @@ class SessionController extends Controller<SessionModel> {
 
   //send current loaded parameters for calculation
   calcMeetpoints() {
-    if (!formKey.currentState.validate()) return; //validate fields
+    //validate fields
+    if (!formKey.currentState.validate()) {
+      model.showErrorDialog('Please fill in your addresses!');
+    };
 
     //ensure all text fields are updated and captured by server (covers user forgetfulness: changing and nor confirming)
     sendUpdateAddress1();

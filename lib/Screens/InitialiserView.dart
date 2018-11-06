@@ -12,10 +12,12 @@ import 'package:web_socket_channel/io.dart';
 class InitialiserView extends View<InitialiserController> {
   InitialiserView(c) : super(controller : c);
   bool r = true;
+  static BuildContext viewContext;
 
   @override
   Widget build(BuildContext context) {
-    if (r) controller.initialise(context);
+    viewContext = context;
+    if (r) controller.initialise();
     r = false;
     return Scaffold(
       body: Center(
@@ -48,21 +50,18 @@ class InitialiserView extends View<InitialiserController> {
 class InitialiserController extends Controller<InitialiserModel> {
   InitialiserController(m) : super(model : m);
 
-  initialise(BuildContext context) async {
+  initialise() async {
     //load user
     UserDetails_Client user = await LocalUserInfoManager.loadUser();
 
     if (user == null) {
       //pause
       await Future.delayed(Duration(seconds: 1));
-      //open channel
-      model.setLoaderTextTo('Connecting to server...');
-      SessionManager_Client.channel = IOWebSocketChannel.connect('ws://echo.websocket.org');//'ws://echo.websocket.org'//'ws://10.27.196.9:9090'
       //navigate to first start view
       MaterialPageRoute route = MaterialPageRoute(
         builder: (context) => FirstStartView(FirstStartController(FirstStartModel())),
       );
-      Navigator.pushReplacement(context, route,);
+      Navigator.pushReplacement(InitialiserView.viewContext, route,);
 
     } else {
 
@@ -70,9 +69,6 @@ class InitialiserController extends Controller<InitialiserModel> {
         //fetch sessions
         model.setLoaderTextTo('Fetching your sessions...');
         await SessionManager_Client.fetchSessions();
-        //open channel
-        model.setLoaderTextTo('Connecting to server...');
-        SessionManager_Client.channel = IOWebSocketChannel.connect('ws://echo.websocket.org');//'ws://echo.websocket.org'
         //show welcome
         model.setLoaderTextTo('Welcome ${LocalUserInfoManager.getLocalUser.name}');
         await Future.delayed(Duration(seconds: 1)); //pause
@@ -80,13 +76,33 @@ class InitialiserController extends Controller<InitialiserModel> {
         MaterialPageRoute route = MaterialPageRoute(
           builder: (context) => HomeView(HomeController(HomeModel())),
         );
-        Navigator.pushReplacement(context, route,);
+        Navigator.pushReplacement(InitialiserView.viewContext, route,);
 
-      } catch (e) {
-        //**print appropriate error message**
-        print(e);
+      } catch (error) {
+        showErrorDialog(error);
       }
     }
+  }
+
+  showErrorDialog(error) {
+    showDialog(
+        context: InitialiserView.viewContext,
+        builder: (context) {
+          return AlertDialog(
+            title: Text('Oops!'),
+            content: Text(error),
+            actions: <Widget>[
+              FlatButton(
+                child: Text('Dismiss'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  initialise();
+                },
+              ),
+            ],
+          );
+        }
+    );
   }
 }
 

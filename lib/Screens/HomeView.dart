@@ -30,11 +30,6 @@ class HomeView extends View<HomeController> {
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       floatingActionButton: ButtonBar(
         children: <Widget>[
-          //set up listener for stream
-          StreamBuilder(
-            stream: SessionManager_Client.channel.stream,
-            builder: SessionManager_Client.streamHandler,
-          ),
           RaisedButton(
             child: Text('Join'),
             onPressed: () => controller.navigateToJoinSession(context),

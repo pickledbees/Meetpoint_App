@@ -25,7 +25,12 @@ abstract class HttpUtil {
     bool decode = true,
   }) async {
     var data2send = zach ? json.encode(data) : data;
-    http.Response res = await http.post(url, body: data2send,);
+    http.Response res = await http
+        .post(url, body: data2send,)
+        .timeout(
+          Duration(seconds: 5),
+          onTimeout: () => throw 'Failed to communicate with server.\n\nCheck your Internet connection.',
+        );
     if (res.statusCode != 200) throw 'Failed to communicate with server';
     return decode ? json.decode(res.body) : res.body;
   }
