@@ -84,7 +84,7 @@ class InitialiserController extends Controller<InitialiserModel> {
         Navigator.pushReplacement(InitialiserView.viewContext, route,);
 
       } catch (error) {
-        showErrorDialog(error);
+        //showErrorDialog(error);
       }
     }
   }

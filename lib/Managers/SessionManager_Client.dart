@@ -16,13 +16,15 @@ bool success = true;
 
 class SessionManager_Client {
   //token to connect to server
-  static final String _USERID = 'dsadsadsadas';
+  static String _USERID;
   //currently loaded sessions
   static List<Session_Client> _sessions = [];
   static Session_Client _loadedSession;
   //read-only
   static List<Session_Client> get getSessions => _sessions;
   static Session_Client get getLoadedSession => _loadedSession;
+  static String get userId => _USERID;
+  static set userId(String userId) => _USERID = userId;
 
   //returns session index based on session id, returns -1 if not found
   static int _findSession(String sessionId) {
@@ -60,6 +62,7 @@ class SessionManager_Client {
       decode: true,//for debug
     );
     //TODO: parse map into List<Session_Client>
+    print('got sessions');
 
     if (sessions_mapForm['result'] == 'O') {
 
@@ -315,8 +318,9 @@ class SessionManager_Client {
       },
     );
 
-    //PRELIMINARY PARSER
     bool ok = response['result'] == 'O';
+    if (ok) _USERID = response['userId'];
+    print('User id is $_USERID');
     return ok;
   }//TODO: Await testing with zach
 

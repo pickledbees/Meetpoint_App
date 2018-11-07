@@ -443,7 +443,7 @@ class SessionController extends Controller<SessionModel> {
                 .then((result) {
                   if (result) {
                     //navigate out of session
-                    Navigator.pop(context);
+                    try {Navigator.pop(context);} catch(e) {}
                   } else {
                     throw 'Failed to delete session on server, try again later.';
                   }
@@ -653,7 +653,7 @@ class SessionModel extends Model {
       child: Center(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 2.0),
-          child: Text(url),
+          child: Image.network(Uri.encodeFull(url)),
         ),
       ),
     );

@@ -45,17 +45,21 @@ class UserDetails_Client {
     name = map['name'];
     prefStartCoords = Location_Client(
       name: map['address'],
-      type: null,
+      type: map['id'],
       address: map['address'],
     );
     prefTravelMode = map['preTravelMode'];
   }
 
-  Map<String,dynamic> toJson() => {
-    'name': name,
-    'address' : prefStartCoords.address,
-    'preTravelMode' : prefTravelMode,
-  };
+  Map<String,dynamic> toJson() {
+    return {
+      'name': name,
+      'address' : prefStartCoords.address,
+      'preTravelMode' : prefTravelMode,
+      'id' : prefStartCoords.type,
+    };
+  }
+
 }
 
 class Location_Client {

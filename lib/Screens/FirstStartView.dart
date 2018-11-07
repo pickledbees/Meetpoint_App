@@ -28,7 +28,7 @@ class FirstStartView extends View<FirstStartController> {
                   'Your Default Settings',
                   style: TextStyle(
                     fontSize: 20.0,
-                    color: Colors.cyan,
+                    color: Color.fromRGBO(11, 143, 160, 1.0),
                   ),
                 ),
               ),

@@ -16,13 +16,17 @@ class LocalUserInfoManager {
     } catch (error) {
       return null;
     }
+    print('loading user...');
     _localUser = user;
+    SessionManager_Client.userId = user.prefStartCoords.type;
     return _localUser;
   }
 
   static Future saveUser(UserDetails_Client user) async {
     bool success = await SessionManager_Client.saveUser(user);
     if (success) {
+      user.prefStartCoords.type = SessionManager_Client.userId;
+      print('saving user...');
       await writeUserFile(user);
       _localUser = user;
       return true;
@@ -35,19 +39,27 @@ class LocalUserInfoManager {
     final directory = await getApplicationDocumentsDirectory();
     return directory.path;
   }
+
   static Future<File> get _localFile async {
     final path = await _localPath;
     return File('$path/user.txt');
   }
+
   static Future<UserDetails_Client> readUserFile() async {
     final file = await _localFile;
     // Read the file
     String contents = await file.readAsString();
     return UserDetails_Client.fromJson(json.decode(contents));
   }
+
   static Future<File> writeUserFile(UserDetails_Client user) async {
     final file = await _localFile;
     // Write the file
     return file.writeAsString(json.encode(user.toJson()));
   }
 }
+
+UserDetails_Client testUser = UserDetails_Client(
+    name: 'dsadsad',
+    prefStartCoords: Location_Client(name: 'dsadsadas', type: 'dasdasas'),
+    prefTravelMode: 'Car');

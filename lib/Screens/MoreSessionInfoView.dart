@@ -29,7 +29,7 @@ class MoreSessionInfoView extends View<MoreSessionInfoController>{
             Container(
               margin: const EdgeInsets.symmetric(vertical: 5.0),
               height: 300.0,
-              child: Text(controller.model.meetpoint.routeImage),
+              child: Image.network(Uri.encodeFull(controller.model.meetpoint.routeImage),),
             ),
             ButtonBar(
               alignment: MainAxisAlignment.center,
