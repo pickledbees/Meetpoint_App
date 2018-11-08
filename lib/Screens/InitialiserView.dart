@@ -4,10 +4,9 @@ import 'package:meetpoint/MVC.dart';
 import 'package:meetpoint/Managers/Entities.dart';
 import 'package:meetpoint/Managers/SessionManager_Client.dart';
 import 'package:meetpoint/Managers/LocalUserInfoManager.dart';
-import 'package:meetpoint/HttpUtil.dart';
 import 'FirstStartView.dart';
 import 'HomeView.dart';
-import 'package:web_socket_channel/io.dart';
+import 'package:http/http.dart' as http;
 
 class InitialiserView extends View<InitialiserController> {
   InitialiserView(c) : super(controller : c);
@@ -76,7 +75,7 @@ class InitialiserController extends Controller<InitialiserModel> {
         await SessionManager_Client.fetchSessions();
         //show welcome
         model.setLoaderTextTo('Welcome ${LocalUserInfoManager.getLocalUser.name}');
-        await Future.delayed(Duration(seconds: 1)); //pause
+        await Future.delayed(Duration(seconds: 1));
         //navigate to home view
         MaterialPageRoute route = MaterialPageRoute(
           builder: (context) => HomeView(HomeController(HomeModel())),
@@ -84,7 +83,7 @@ class InitialiserController extends Controller<InitialiserModel> {
         Navigator.pushReplacement(InitialiserView.viewContext, route,);
 
       } catch (error) {
-        //showErrorDialog(error);
+        showErrorDialog(error is http.ClientException ? error.message : error);
       }
     }
   }

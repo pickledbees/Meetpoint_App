@@ -1,9 +1,9 @@
 abstract class TravelModes {
   static List<String> _list = [
-    'No Preference',
-    'Car',
-    'Walking',
-    'Public Transport',
+    'no preference',
+    'driving',
+    'walking',
+    'transit',
   ];
 
   static List<String> get getList => _list;

@@ -417,6 +417,7 @@ class SessionController extends Controller<SessionModel> {
       if (success) model.updateMapsDisplay(type: 1);
       else model.updateMapsDisplay(type: 4);
     }).catchError((error) {
+      try {print(error);} catch (E) {}
       if (mounted) model.updateMapsDisplay(type: 5);
     });
   }
@@ -443,7 +444,7 @@ class SessionController extends Controller<SessionModel> {
                 .then((result) {
                   if (result) {
                     //navigate out of session
-                    try {Navigator.pop(context);} catch(e) {}
+                    Navigator.pop(SessionView.viewContext);
                   } else {
                     throw 'Failed to delete session on server, try again later.';
                   }

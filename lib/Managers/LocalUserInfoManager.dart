@@ -18,6 +18,7 @@ class LocalUserInfoManager {
     }
     print('loading user...');
     _localUser = user;
+    //loads user id into SessionManager_Client
     SessionManager_Client.userId = user.prefStartCoords.type;
     return _localUser;
   }

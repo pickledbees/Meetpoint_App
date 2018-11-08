@@ -1,11 +1,12 @@
 abstract class LocationTypes {
   static List<String> _list = [
-    'No Preference',
-    'Hospital',
-    'Library',
-    'Office',
-    'Park',
-    'Restaurant',
+    'no preference',
+    'hospital',
+    'library',
+    'office',
+    'park',
+    'food_beverages',
+    'shops',
   ];
 
   static List<String> get getList => _list;

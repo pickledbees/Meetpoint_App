@@ -2,7 +2,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
 
-bool zach = false;
+bool zach = true;
 
 abstract class HttpUtil {
   //for easy changing of ip                 //zach                                  //me
@@ -28,8 +28,8 @@ abstract class HttpUtil {
     http.Response res = await http
         .post(url, body: data2send,)
         .timeout(
-          Duration(seconds: 5),
-          onTimeout: () => throw 'Failed to communicate with server.\n\nCheck your Internet connection.',
+          Duration(seconds: 10),
+          onTimeout: () => throw 'Connection timed out.',
         );
     if (res.statusCode != 200) throw 'Failed to communicate with server';
     return decode ? json.decode(res.body) : res.body;

@@ -91,6 +91,8 @@ class SessionManager_Client {
             }
           }
 
+          int numOfUsers = (sessionObj['U1N'] != '' ? 1 : 0) + (sessionObj['U2N'] != '' ? 1 : 0);
+
           Session_Client session = Session_Client(
             sessionID: sessionObj['sessionId'],
             title: sessionObj['title'],
@@ -103,7 +105,7 @@ class SessionManager_Client {
                 : LocationTypes.getList[0],
             users: [
               UserDetails_Client(
-                name: sessionObj['U1N'],
+                name: numOfUsers == 1 ? sessionObj['U1N'] : sessionObj['U2N'],
                 prefTravelMode: TravelModes.inList(sessionObj['U1T'])
                     ? sessionObj['U1T']
                     : TravelModes.getList[0],
@@ -114,7 +116,7 @@ class SessionManager_Client {
                 ),
               ),
               UserDetails_Client(
-                name: sessionObj['U2N'],
+                name: numOfUsers == 1 ? '' : sessionObj['U2N'],
                 prefTravelMode: TravelModes.inList(sessionObj['U2T'])
                     ? sessionObj['U2T']
                     : TravelModes.getList[0],
@@ -159,7 +161,7 @@ class SessionManager_Client {
         title: sessionTitle,
         chosenMeetpoint: null,
         meetpoints: <Meetpoint_Client>[],
-        prefLocationType: 'No Preference',
+        prefLocationType: LocationTypes.getList[0],
         users: [
           UserDetails_Client(
             name: createdSession_mapForm['U1N'],
@@ -174,7 +176,7 @@ class SessionManager_Client {
           ),
           UserDetails_Client(
             name: null,
-            prefTravelMode: 'No Preference',
+            prefTravelMode: TravelModes.getList[0],
             prefStartCoords: Location_Client(
               name: null,
               type: null,
@@ -337,7 +339,19 @@ class SessionManager_Client {
       decode: true, //FOR DEBUGGING
     );
 
+    print(meetpoints_mapform);
+
+    /*
+    _loadedSession.meetpoints = [];
+    _loadedSession.chosenMeetpoint = null;
+    HomeView.refresh = true;
+    return true;
+    */
+
+
+    print('received meetpoints');
     if (meetpoints_mapform['result'] == 'O' && meetpoints_mapform['meetpoints'].length > 0) {
+      print('parsng meetpoints json');
       //store meetpoints list
       List<Meetpoint_Client> meetpoints = [];
       for (int i = 0; i < meetpoints_mapform['meetpoints'].length; i++) {
@@ -355,6 +369,7 @@ class SessionManager_Client {
             )
         );
       }
+
       //store into session
       _loadedSession.meetpoints = meetpoints;
       _loadedSession.chosenMeetpoint = meetpoints[0];
@@ -366,6 +381,7 @@ class SessionManager_Client {
       HomeView.refresh = true;
       return false;
     }
+
   }//TODO: Await testing with zach
 
   //completes to boolean true if success, throws error if failed
