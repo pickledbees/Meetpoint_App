@@ -83,7 +83,7 @@ class InitialiserController extends Controller<InitialiserModel> {
         Navigator.pushReplacement(InitialiserView.viewContext, route,);
 
       } catch (error) {
-        showErrorDialog(error is http.ClientException ? error.message : error);
+        //showErrorDialog(error is http.ClientException ? error.message : error);
       }
     }
   }

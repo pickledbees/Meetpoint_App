@@ -61,8 +61,6 @@ class SessionManager_Client {
       },
       decode: true,//for debug
     );
-    //TODO: parse map into List<Session_Client>
-    print('got sessions');
 
     if (sessions_mapForm['result'] == 'O') {
 
@@ -92,6 +90,7 @@ class SessionManager_Client {
           }
 
           int numOfUsers = (sessionObj['U1N'] != '' ? 1 : 0) + (sessionObj['U2N'] != '' ? 1 : 0);
+          print(numOfUsers);
 
           Session_Client session = Session_Client(
             sessionID: sessionObj['sessionId'],
@@ -132,6 +131,7 @@ class SessionManager_Client {
         }
 
         _sessions = sessions;
+        print('sessions parsed');
         return;
       } else {
         return;
