@@ -93,9 +93,8 @@ class FirstStartController extends Controller<FirstStartModel> {
 
   //saves the current inputs
   save (context) {
-
+    //validate if empty
     if (formKey.currentState.validate()) {
-
       //set local user (may want to change to setter)
       UserDetails_Client user = UserDetails_Client(
         name: nameController.text,
@@ -111,17 +110,13 @@ class FirstStartController extends Controller<FirstStartModel> {
           user
       ).then((success) {
         if (success) {
-
           //navigate to page
           MaterialPageRoute route = MaterialPageRoute(
             builder: (context) => HomeView(HomeController(HomeModel())),
           );
           Navigator.pushReplacement(context, route);
-
         } else {
-
           throw 'Save failed, try again later';
-
         }
       }).catchError((error) {print(error);}
         //TODO: handle error---------------------------------------------------------------------
