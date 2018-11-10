@@ -410,41 +410,6 @@ class SessionManager_Client {
     }
   }//TODO: await testing with zach
 
-  //for stream handler to identify latest snapshots
-  static bool getNew = true;
-  static var oldTimestamp;
-  //to handle unprompted incoming data in the background
-  static Widget streamHandler(BuildContext context, AsyncSnapshot snapshot) {
-    if (snapshot.hasData) {
-      print(snapshot.data.runtimeType);
-
-      /*
-      //extract data
-      Map body = json.decode(snapshot.data);
-
-      //process if it is new snapshot
-      if (body['timestamp'] != oldTimestamp) {
-        //update timestamp
-        oldTimestamp = body['timestamp'];
-        print(snapshot.data);
-
-        //parse request
-        switch (body['method']) {
-          case 'editSession': //up to zach to handle
-            updateSession(
-              sessionId: body['sessionId'],
-              field: body['field'],
-              value: body['value'],
-            );
-            break;
-        }
-      }
-      */
-    }
-    //just to fill the space
-    return Text('');
-  } //TODO: possibly make it handle other requests
-
   //polls for updates
   static void poll() async {
     //poll for update
@@ -464,8 +429,9 @@ class SessionManager_Client {
     } catch (error) {
       Timer(Duration(seconds: 10),poll);
     }
-  } //check implementation
+  }
 
+  //handler for updates
   static void _updateHandler(Map update) {
     //return if no updates
     if (update['result'] == 'X') return;
