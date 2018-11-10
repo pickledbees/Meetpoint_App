@@ -83,7 +83,7 @@ class InitialiserController extends Controller<InitialiserModel> {
         Navigator.pushReplacement(InitialiserView.viewContext, route,);
 
       } catch (error) {
-        //showErrorDialog(error is http.ClientException ? error.message : error);
+        showErrorDialog("Could not fetch sessions\n\nYou may not be connected to the Internet or the server is not responding correctly.");
       }
     }
   }

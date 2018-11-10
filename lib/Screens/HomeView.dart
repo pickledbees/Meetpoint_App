@@ -18,7 +18,6 @@ class HomeView extends View<HomeController> {
   @override
   Widget build(BuildContext context) {
     viewContext = context;
-
     if (refresh) controller.model.loadTiles(context);
     refresh = false;
     return Scaffold(
