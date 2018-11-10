@@ -5,6 +5,7 @@ import 'package:meetpoint/Managers/SessionManager_Client.dart';
 import 'package:meetpoint/Screens/SessionView.dart';
 import 'package:meetpoint/Screens/CreateSessionView.dart';
 import 'package:meetpoint/Screens/JoinSessionView.dart';
+import 'package:meetpoint/Screens/FirstStartView.dart';
 
 class HomeView extends View<HomeController> {
   HomeView(c) : super(controller: c) {
@@ -18,12 +19,19 @@ class HomeView extends View<HomeController> {
   @override
   Widget build(BuildContext context) {
     viewContext = context;
+    //if (refresh) controller.refresh(context); //TODO: test with actual server
     if (refresh) controller.model.loadTiles(context);
     refresh = false;
     return Scaffold(
       appBar: AppBar(
         title: Text('Home - Your Sessions'),
         leading: Icon(Icons.home),
+        actions: <Widget>[
+          IconButton(
+            icon: Icon(Icons.refresh),
+            onPressed: () => controller.refresh(context),
+          )
+        ],
       ),
       drawer: Drawer(
         child: ListView(
@@ -57,7 +65,7 @@ class HomeView extends View<HomeController> {
                 size: 40.0,
               ),
               title: Text('Default Information'),
-              onTap: null,
+              onTap: () => controller.navigateToFirstStartView(context),
               trailing: Icon(Icons.edit),
             ),
             ListTile(
@@ -151,6 +159,19 @@ class HomeController extends Controller<HomeModel> {
     Navigator.push(context, route,);
   }
 
+  navigateToFirstStartView(BuildContext context) {
+    //navigate to first start view
+    MaterialPageRoute route = MaterialPageRoute(
+      builder: (context) => FirstStartView(FirstStartController(FirstStartModel())),
+    );
+    Navigator.pushReplacement(context, route,);
+  }
+
+  refresh(BuildContext context) async {
+    setViewState(() => model.body = Center(child: Text('Refreshing...')));
+    await SessionManager_Client.fetchSessions();
+    setViewState(() => model.loadTiles(context));
+  }
 }
 
 class HomeModel extends Model {
@@ -158,10 +179,7 @@ class HomeModel extends Model {
   bool get isMounted => mounted;
   
   Widget body = Center(
-    child: Text(
-      'Loading...',
-      textScaleFactor: 1.3,
-    ),
+    child: Text('Loading...'),
   );
 
   loadTiles(BuildContext context) {

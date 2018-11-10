@@ -14,6 +14,12 @@ class MoreSessionInfoView extends View<MoreSessionInfoController>{
         title: Text(
           '${controller.model.meetpoint.name} - ${controller.model.session.title}',
         ),
+        actions: <Widget>[
+          IconButton(
+            icon: Icon(Icons.close),
+            onPressed: () => Navigator.pop(context),
+          ),
+        ],
       ),
       body: Center(
         child: Column(
@@ -56,6 +62,7 @@ class MoreSessionInfoController extends Controller<MoreSessionInfoModel> {
 
   openInMaps() async {
     List<double> coords = model.meetpoint.coordinates;
+    print(coords[0] + coords[1]);
   } //TODO: implement--------------------------------------------------------------
 
   searchOnGoogle() async {

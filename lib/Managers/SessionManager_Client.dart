@@ -78,19 +78,18 @@ class SessionManager_Client {
                     routeImage: sessionObj['meetpoints'][i]['routeImage'],
                     name: sessionObj['meetpoints'][i]['name'],
                     type: null,
-                    /*
+
                     coordinates: <double>[
-                      joinedSession_mapForm['meetpoints'][i]['coordinates']['lat'],
-                      joinedSession_mapForm['meetpoints'][i]['coordinates']['lon'],
+                      double.parse(sessionObj['meetpoints'][i]['coordinates']['lat']),
+                      double.parse(sessionObj['meetpoints'][i]['coordinates']['lon']),
                     ],
-                    */
+
                   )
               );
             }
           }
 
-          int numOfUsers = (sessionObj['U1N'] != '' ? 1 : 0) + (sessionObj['U2N'] != '' ? 1 : 0);
-          print(numOfUsers);
+          print('users are' + sessionObj['U1N'] + sessionObj['U2N']);
 
           Session_Client session = Session_Client(
             sessionID: sessionObj['sessionId'],
@@ -104,7 +103,7 @@ class SessionManager_Client {
                 : LocationTypes.getList[0],
             users: [
               UserDetails_Client(
-                name: numOfUsers == 1 ? sessionObj['U1N'] : sessionObj['U2N'],
+                name: sessionObj['U1N'],
                 prefTravelMode: TravelModes.inList(sessionObj['U1T'])
                     ? sessionObj['U1T']
                     : TravelModes.getList[0],
@@ -115,7 +114,7 @@ class SessionManager_Client {
                 ),
               ),
               UserDetails_Client(
-                name: numOfUsers == 1 ? '' : sessionObj['U2N'],
+                name: sessionObj['U2N'],
                 prefTravelMode: TravelModes.inList(sessionObj['U2T'])
                     ? sessionObj['U2T']
                     : TravelModes.getList[0],
@@ -222,16 +221,15 @@ class SessionManager_Client {
                 routeImage: joinedSession_mapForm['meetpoints'][i]['routeImage'],
                 name: joinedSession_mapForm['meetpoints'][i]['name'],
                 type: null,
-                /*
                 coordinates: <double>[
-                  joinedSession_mapForm['meetpoints'][i]['coordinates']['lat'],
-                  joinedSession_mapForm['meetpoints'][i]['coordinates']['lon'],
+                  double.parse(joinedSession_mapForm['meetpoints'][i]['coordinates']['lat']),
+                  double.parse(joinedSession_mapForm['meetpoints'][i]['coordinates']['lon']),
                 ],
-                */
               )
           );
         }
       }
+
 
       Session_Client session = Session_Client(
         sessionID: joinedSession_mapForm['sessionId'],
@@ -360,12 +358,10 @@ class SessionManager_Client {
               routeImage: meetpoints_mapform['meetpoints'][i]['routeImage'],
               name: meetpoints_mapform['meetpoints'][i]['name'],
               type: null,
-              /*
               coordinates: <double>[
-                meetpoints_mapform['meetpoints'][i]['coordinates']['lat'],
-                meetpoints_mapform['meetpoints'][i]['coordinates']['lon'],
+                double.parse(meetpoints_mapform['meetpoints'][i]['coordinates']['lat']),
+                double.parse(meetpoints_mapform['meetpoints'][i]['coordinates']['lon']),
               ],
-              */
             )
         );
       }

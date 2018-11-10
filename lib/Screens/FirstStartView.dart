@@ -11,9 +11,19 @@ class FirstStartView extends View<FirstStartController> {
 
   @override
   Widget build(BuildContext context) {
+
     if (r) controller.model.loadTiles();
     r = false;
     return Scaffold(
+      appBar: AppBar(
+        title: Text('Profile'),
+        actions: <Widget>[
+          IconButton(
+            icon: Icon(Icons.close),
+            onPressed: () => controller.navigateToHome(context),
+          ),
+        ],
+      ),
       body: Container(
         padding: const EdgeInsets.symmetric(horizontal: 20.0,),
         child: Form(
@@ -38,7 +48,7 @@ class FirstStartView extends View<FirstStartController> {
                   validator: controller.validate,
                   controller: controller.nameController,
                   decoration: InputDecoration(
-                    hintText: 'Name',
+                    hintText: LocalUserInfoManager.getLocalUser == null ? 'Name' : 'Name - ' + LocalUserInfoManager.getLocalUser.name,
                   ),
                 ),
               ),
@@ -48,7 +58,7 @@ class FirstStartView extends View<FirstStartController> {
                   validator: controller.validate,
                   controller: controller.addressController,
                   decoration: InputDecoration(
-                    hintText: 'Address',
+                    hintText: LocalUserInfoManager.getLocalUser == null ? 'Address' : 'Address - ' + LocalUserInfoManager.getLocalUser.prefStartCoords.name,
                   ),
                 ),
               ),
@@ -66,7 +76,6 @@ class FirstStartView extends View<FirstStartController> {
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       floatingActionButton: RaisedButton(
-        color: Colors.white,
         child: Text('Save'),
         onPressed: () => controller.save(context),
       ),
@@ -83,7 +92,7 @@ class FirstStartController extends Controller<FirstStartModel> {
 
   //validator for text fields
   String validate (val) {
-    if (val.isEmpty) return 'This field is required';
+    if (val.isEmpty && LocalUserInfoManager.getLocalUser == null) return 'This field is required';
   }
 
   //updates the value in the dropdown button
@@ -92,7 +101,7 @@ class FirstStartController extends Controller<FirstStartModel> {
   }
 
   //saves the current inputs
-  save (context) {
+  save (context) async {
     //validate if empty
     if (formKey.currentState.validate()) {
       //set local user (may want to change to setter)
@@ -106,27 +115,31 @@ class FirstStartController extends Controller<FirstStartModel> {
         prefTravelMode: model.dropdownButtonValue,
       );
 
-      LocalUserInfoManager.saveUser(
-          user
-      ).then((success) {
+      try {
+        bool success = await LocalUserInfoManager.saveUser(user);
         if (success) {
-          //navigate to page
-          MaterialPageRoute route = MaterialPageRoute(
-            builder: (context) => HomeView(HomeController(HomeModel())),
-          );
-          Navigator.pushReplacement(context, route);
+          navigateToHome(context);
         } else {
           throw 'Save failed, try again later';
         }
-      }).catchError((error) {print(error);}
-        //TODO: handle error---------------------------------------------------------------------
-      );
+      } catch (error) {
+        print(error);
+      }
     }
+  }
+
+  navigateToHome(BuildContext context) {
+    HomeView.refresh = true;
+    //navigate to page
+    MaterialPageRoute route = MaterialPageRoute(
+      builder: (context) => HomeView(HomeController(HomeModel())),
+    );
+    Navigator.pushReplacement(context, route);
   }
 }
 
 class FirstStartModel extends Model {
-  String dropdownButtonValue = TravelModes.getList[0];
+  String dropdownButtonValue = LocalUserInfoManager.getLocalUser == null ? TravelModes.getList[0] : LocalUserInfoManager.getLocalUser.prefTravelMode;
   List<DropdownMenuItem> items = [];
   
   loadTiles() {

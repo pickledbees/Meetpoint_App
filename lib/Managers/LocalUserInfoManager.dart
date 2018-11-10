@@ -7,6 +7,7 @@ import 'dart:convert';
 
 class LocalUserInfoManager {
   static UserDetails_Client _localUser;
+
   static UserDetails_Client get getLocalUser => _localUser;
 
   static Future loadUser() async {
