@@ -56,6 +56,7 @@ class JoinSessionController extends Controller<JoinSessionModel> {
   String validate(val) {
     if (val.isEmpty) return 'Please fill in session title';
   }
+
   joinSessionAndNavigateToSession(BuildContext context) async {
 
     if (formKey.currentState.validate()) {

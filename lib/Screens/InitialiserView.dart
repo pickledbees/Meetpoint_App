@@ -9,7 +9,10 @@ import 'HomeView.dart';
 import 'package:http/http.dart' as http;
 
 class InitialiserView extends View<InitialiserController> {
-  InitialiserView(c) : super(controller : c);
+  InitialiserView(c) : super(controller : c) {
+    view = this;
+  }
+  static InitialiserView view;
   bool r = true;
   static BuildContext viewContext;
 
@@ -54,6 +57,7 @@ class InitialiserView extends View<InitialiserController> {
 class InitialiserController extends Controller<InitialiserModel> {
   InitialiserController(m) : super(model : m);
 
+  //performs initialising sequence by calling on appropriate managers
   initialise() async {
     //load user
     UserDetails_Client user = await LocalUserInfoManager.loadUser();
@@ -83,9 +87,17 @@ class InitialiserController extends Controller<InitialiserModel> {
         Navigator.pushReplacement(InitialiserView.viewContext, route,);
 
       } catch (error) {
-        showErrorDialog("Could not fetch sessions\n\nYou may not be connected to the Internet or the server is not responding correctly.");
+        model.showErrorDialog("Could not fetch sessions\n\nYou may not be connected to the Internet or the server is not responding correctly.");
       }
     }
+  }
+}
+
+class InitialiserModel extends Model {
+  String loaderText = 'Loading...';
+
+  setLoaderTextTo(String txt) {
+    setViewState(() => loaderText = txt);
   }
 
   showErrorDialog(error) {
@@ -100,20 +112,12 @@ class InitialiserController extends Controller<InitialiserModel> {
                 child: Text('Try again'),
                 onPressed: () {
                   Navigator.of(context).pop();
-                  initialise();
+                  InitialiserView.view.controller.initialise();
                 },
               ),
             ],
           );
         }
     );
-  }
-}
-
-class InitialiserModel extends Model {
-  String loaderText = 'Loading...';
-
-  setLoaderTextTo(String txt) {
-    setViewState(() => loaderText = txt);
   }
 }

@@ -2,11 +2,11 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
 
-bool zach = true;
+bool deployed = false;
 
 abstract class HttpUtil {
   //for easy changing of ip                        //server                                  //me
-  static final String serverURL = zach ? 'http://10.27.196.9:8080/meetpoint' : 'http://192.168.0.183:3000/';
+  static final String serverURL = deployed ? 'http://10.27.196.9:8080/meetpoint' : 'http://192.168.0.183:3000/';
 
   //returns a map or string depending on 'decode' setting, throw the error code
   static Future postData({
@@ -16,7 +16,7 @@ abstract class HttpUtil {
   }) async {
     print(data);
     http.Response res = await http
-        .post(url, body: zach ? json.encode(data) : data,)
+        .post(url, body: deployed ? json.encode(data) : data,)
         .timeout(
           Duration(seconds: 10),
           onTimeout: () => throw 'Connection timed out.',

@@ -42,7 +42,7 @@ class SessionView extends View<SessionController> {
               sessionIdPrompt(controller.model.session.sessionID),
 
               //users joined in session---------------------------------------------------
-              usersBar(controller.model.session.users), //TODO:find some way to update this-----------
+              usersBar(controller.model.session.users),
 
               //maps display--------------------------------------------------------------
               Divider(height: 20.0,),
@@ -75,7 +75,7 @@ class SessionView extends View<SessionController> {
                         ),
                       ],
                     ),
-                    onPressed: () => controller.calcMeetpoints(), //TODO: think about how to validate-----------------
+                    onPressed: () => controller.calcMeetpoints(),
                   ),
                   Container(width: 10.0,),
                 ],
@@ -186,23 +186,6 @@ class SessionView extends View<SessionController> {
           ),
         ),
       ),
-      /*
-      floatingActionButton: FloatingActionButton(
-        child: Icon(Icons.send),
-        onPressed: () {
-          print('test data sent');
-          Map data = {
-            'method' : 'editSession',
-            'sessionId' : '123A',
-            'field' : 'CM',
-            'value' : '2',
-            'timestamp' : DateTime.now().millisecondsSinceEpoch
-          };
-          //SessionManager_Client.channel.sink.add(json.encode(data));
-          SessionManager_Client.channel.sink.add(1312423);
-        },
-      ),
-      */
     );
   }
 
@@ -265,7 +248,7 @@ class SessionView extends View<SessionController> {
     for (UserDetails_Client user in users) {
       bar.add(
         Container(
-          margin: const EdgeInsets.symmetric(horizontal: 20.0),
+          margin: const EdgeInsets.only(left: 20.0),
           child: Text(user.name ?? ''),
         )
       );
@@ -571,13 +554,14 @@ class SessionModel extends Model {
     List<Widget> mapPages = [];
     int index = 0;
     for (Meetpoint_Client meetpoint in meetpoints) {
-      Widget mapPage = singleMapDisplay(
+      Widget mapPage = singlePageDisplay(
         mapTitleBar: mapTitleBar(
           name: meetpoint.name,
           index: index,
         ),
-        mapImage: mapImage(
-          url: meetpoint.routeImage,
+        mapImage: mapImages(
+          url1: meetpoint.routeImage,
+          url2: meetpoint.routeImage2,
         ),
         index: index++,
       );
@@ -589,7 +573,7 @@ class SessionModel extends Model {
   }
 
   //builds a single map display, TITLE BAR + MAP + MORE button
-  Widget singleMapDisplay({
+  Widget singlePageDisplay({
     @required Widget mapTitleBar,
     @required Widget mapImage,
     @required int index,
@@ -624,6 +608,8 @@ class SessionModel extends Model {
     @required String name,
     @required int index,
   }) {
+    final int maxChar = 40;
+
     return Container(
       color: Colors.white,
       height: 30.0,
@@ -632,7 +618,7 @@ class SessionModel extends Model {
         children: <Widget>[
           Container(
             padding: const EdgeInsets.only(left:20.0),
-            child: Text('${index+1}. $name'),
+            child: Text('${index+1}. ${name.length <= maxChar ? name : '${name.substring(0,maxChar-1)}...'}')
           ),
           Container(
             child: Radio(
@@ -648,15 +634,34 @@ class SessionModel extends Model {
   }
 
   //builds one map image
-  Widget mapImage({@required String url}) {
+  Widget mapImages({@required String url1, String url2}) {
     return Container(
       height: 230.0,
-      child: Center(
+      padding: const EdgeInsets.symmetric(horizontal: 5.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          Expanded(
+            child: Image.network(Uri.encodeFull(url1)),
+          ),
+          Container(
+            width: 5.0,
+            height: 5.0,
+          ),
+          Expanded(
+            child: Image.network(Uri.encodeFull(url2)),
+          ),
+        ],
+      ),
+
+/*
+      Center(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 2.0),
-          child: Image.network(Uri.encodeFull(url)),
+          child: Image.network(Uri.encodeFull(url2)),
         ),
       ),
+*/
     );
   }
 

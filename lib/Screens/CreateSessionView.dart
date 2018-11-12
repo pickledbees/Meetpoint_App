@@ -59,6 +59,7 @@ class CreateSessionController extends Controller<CreateSessionModel> {
   String validate(val) {
     if (val.isEmpty) return 'Please fill in session title';
   }
+
   createSessionAndNavigateToSession(BuildContext context) async {
     if (formKey.currentState.validate()) {
       try {
@@ -74,10 +75,19 @@ class CreateSessionController extends Controller<CreateSessionModel> {
         Navigator.pushReplacement(context, route);
       } catch (e) {
         //show error
-        showErrorDialog(e);
+        model.showErrorDialog(e);
         model.setHeaderTextTo('Failed to create session, try again.');
       }
     }
+  }
+
+}
+
+class CreateSessionModel extends Model {
+  String headerText = 'Title your session below';
+
+  setHeaderTextTo(String text) {
+    setViewState(() => headerText = text);
   }
 
   showErrorDialog(error) {
@@ -96,13 +106,5 @@ class CreateSessionController extends Controller<CreateSessionModel> {
           );
         }
     );
-  }
-}
-
-class CreateSessionModel extends Model {
-  String headerText = 'Title your session below';
-
-  setHeaderTextTo(String text) {
-    setViewState(() => headerText = text);
   }
 }

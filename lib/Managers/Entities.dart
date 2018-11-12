@@ -76,9 +76,11 @@ class Location_Client {
 
 class Meetpoint_Client extends Location_Client {
   String routeImage;
+  String routeImage2;
 
   Meetpoint_Client({
     @required this.routeImage,
+    @required this.routeImage2,
     @required String name,
     @required String type,
     String address,
@@ -92,7 +94,7 @@ class Meetpoint_Client extends Location_Client {
 }
 
 
-
+/*
 class TestData {
   static List<Session_Client> returned_sessions = (() {
     List<Session_Client> arr = [];
@@ -251,3 +253,4 @@ class TestData {
     prefTravelMode: null,
   );
 }
+*/

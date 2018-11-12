@@ -94,12 +94,10 @@ class FirstStartController extends Controller<FirstStartModel> {
   String validate (val) {
     if (val.isEmpty && LocalUserInfoManager.getLocalUser == null) return 'This field is required';
   }
-
   //updates the value in the dropdown button
   updatePreference (val) {
     model.updateDropdownValue(val);
   }
-
   //saves the current inputs
   save (context) async {
     //validate if empty
@@ -127,7 +125,7 @@ class FirstStartController extends Controller<FirstStartModel> {
       }
     }
   }
-
+  //goes to homepage
   navigateToHome(BuildContext context) {
     HomeView.refresh = true;
     //navigate to page
@@ -141,7 +139,8 @@ class FirstStartController extends Controller<FirstStartModel> {
 class FirstStartModel extends Model {
   String dropdownButtonValue = LocalUserInfoManager.getLocalUser == null ? TravelModes.getList[0] : LocalUserInfoManager.getLocalUser.prefTravelMode;
   List<DropdownMenuItem> items = [];
-  
+
+  //renders data required for dropdown menu
   loadTiles() {
     for (String mode in TravelModes.getList) {
       DropdownMenuItem item = DropdownMenuItem(
@@ -151,7 +150,8 @@ class FirstStartModel extends Model {
       items.add(item);
     }
   }
-  
+
+  //visually update
   updateDropdownValue(val) {
     setViewState(() => dropdownButtonValue = val);
   }

@@ -65,7 +65,6 @@ class SessionManager_Client {
     if (sessions_mapForm['result'] == 'O') {
 
       List<Session_Client> sessions = [];
-
       if (sessions_mapForm['sessions'].length > 0) {
         for (var sessionObj in sessions_mapForm['sessions']) {
           //store meetpoints list
@@ -76,6 +75,7 @@ class SessionManager_Client {
               meetpoints.add(
                   Meetpoint_Client(
                     routeImage: sessionObj['meetpoints'][i]['routeImage'],
+                    routeImage2: sessionObj['meetpoints'][i]['routeImage2'],
                     name: sessionObj['meetpoints'][i]['name'],
                     type: null,
 
@@ -88,8 +88,6 @@ class SessionManager_Client {
               );
             }
           }
-
-          print('users are' + sessionObj['U1N'] + sessionObj['U2N']);
 
           Session_Client session = Session_Client(
             sessionID: sessionObj['sessionId'],
@@ -194,7 +192,7 @@ class SessionManager_Client {
       throw 'Server failed to create session.';
     }
 
-  }//TODO: Await testing with zach
+  }
 
   //completes to id if success, throws error if failed
   static Future joinSession({@required String sessionId}) async {
@@ -219,6 +217,7 @@ class SessionManager_Client {
           meetpoints.add(
               Meetpoint_Client(
                 routeImage: joinedSession_mapForm['meetpoints'][i]['routeImage'],
+                routeImage2: joinedSession_mapForm['meetpoints'][i]['routeImage2'],
                 name: joinedSession_mapForm['meetpoints'][i]['name'],
                 type: null,
                 coordinates: <double>[
@@ -276,7 +275,7 @@ class SessionManager_Client {
       throw 'Session may be full or does not exist.';
     }
 
-  }//TODO: Await testing with zach
+  }
 
   //completes to boolean true if success, false if processing completed but action failed, throws error if processing failed
   static Future deleteSession({@required String sessionId}) async {
@@ -299,7 +298,7 @@ class SessionManager_Client {
     } else {
       return false;
     }
-  }//TODO: Await zach testing
+  }
 
   //completes to boolean true if success, false if processing completed but action failed, throws error if processing failed
   static Future saveUser(UserDetails_Client user) async {
@@ -322,7 +321,7 @@ class SessionManager_Client {
     if (ok) _USERID = response['userId'];
     print('User id is $_USERID');
     return ok;
-  }//TODO: Await testing with zach
+  }
 
   //completes to boolean true if success, false if processing completed but action failed, throws error if processing failed
   static Future calcMeetpoint() async {
@@ -356,6 +355,7 @@ class SessionManager_Client {
         meetpoints.add(
             Meetpoint_Client(
               routeImage: meetpoints_mapform['meetpoints'][i]['routeImage'],
+              routeImage2: meetpoints_mapform['meetpoints'][i]['routeImage2'],
               name: meetpoints_mapform['meetpoints'][i]['name'],
               type: null,
               coordinates: <double>[
@@ -378,7 +378,7 @@ class SessionManager_Client {
       return false;
     }
 
-  }//TODO: Await testing with zach
+  }
 
   //completes to boolean true if success, throws error if failed
   static Future requestSessionEdit({
@@ -404,7 +404,7 @@ class SessionManager_Client {
     } else {
       throw 'Failed to complete action.\n\nYou might not be connected to the Internet.';
     }
-  }//TODO: await testing with zach
+  }
 
   //polls for updates
   static void poll() async {
@@ -413,13 +413,13 @@ class SessionManager_Client {
       var update = await HttpUtil.postData(
         url: HttpUtil.serverURL,
         data: {
-          'method': 'getUpdate',
+          'method': Methods.getUpdate,
           'data': _USERID,
         },
         decode: false,
       );
       print('update is $update');
-      //_updateHandler(update);
+      _updateHandler(update);
       //call for another update
       Timer(Duration(seconds: 2),poll);
     } catch (error) {
@@ -498,7 +498,7 @@ class SessionManager_Client {
     }
     */
     HomeView.refresh = true;
-  }//TODO: can update local memory, but not the UI, maybe try to fix---------------------------------------------------------------------
+  }
 }
 
 abstract class Field {
@@ -518,4 +518,5 @@ abstract class Methods {
   static const deleteSession = 'deleteSession';
   static const editSession = 'editSession';
   static const calculate = 'calculate';
+  static const getUpdate = 'getUpdate';
 }

@@ -13,14 +13,14 @@ class HomeView extends View<HomeController> {
   }
 
   static HomeView widget; //reference to self object for others to access
-  BuildContext viewContext;
+  static BuildContext viewContext;
   static bool refresh = true;
 
   @override
   Widget build(BuildContext context) {
     viewContext = context;
-    //if (refresh) controller.refresh(context); //TODO: test with actual server
-    if (refresh) controller.model.loadTiles(context);
+    if (refresh) controller.refresh(context); //TODO: test with actual server
+    //if (refresh) controller.model.loadTiles(context);
     refresh = false;
     return Scaffold(
       appBar: AppBar(
@@ -143,7 +143,9 @@ class HomeController extends Controller<HomeModel> {
   HomeController(m) : super(model: m) ;
   bool get isMounted => mounted;
 
+  //navigators
   navigateToCreateSession(BuildContext context) {
+    HomeView.refresh = true;
     //navigate to create session view
     MaterialPageRoute route = MaterialPageRoute(
       builder: (context) => CreateSessionView(CreateSessionController(CreateSessionModel())),
@@ -152,6 +154,7 @@ class HomeController extends Controller<HomeModel> {
   }
 
   navigateToJoinSession(BuildContext context) {
+    HomeView.refresh = true;
     //navigate to join session view
     MaterialPageRoute route = MaterialPageRoute(
       builder: (context) => JoinSessionView(JoinSessionController(JoinSessionModel())),
@@ -160,6 +163,7 @@ class HomeController extends Controller<HomeModel> {
   }
 
   navigateToFirstStartView(BuildContext context) {
+    HomeView.refresh = true;
     //navigate to first start view
     MaterialPageRoute route = MaterialPageRoute(
       builder: (context) => FirstStartView(FirstStartController(FirstStartModel())),
@@ -167,21 +171,25 @@ class HomeController extends Controller<HomeModel> {
     Navigator.pushReplacement(context, route,);
   }
 
+  //reloads the page
   refresh(BuildContext context) async {
     setViewState(() => model.body = Center(child: Text('Refreshing...')));
-    await SessionManager_Client.fetchSessions();
+    try {
+      await SessionManager_Client.fetchSessions();
+    } catch (error) {
+      model.showErrorDialog('Failed to refresh sessions');
+    }
     setViewState(() => model.loadTiles(context));
   }
 }
 
 class HomeModel extends Model {
-
-  bool get isMounted => mounted;
-  
+  //default text in place of session tiles
   Widget body = Center(
     child: Text('Loading...'),
   );
 
+  //assembles sessions data required for tiled view
   loadTiles(BuildContext context) {
     List<Session_Client> sessions = SessionManager_Client.getSessions;
     List<ListTile> listTiles = <ListTile>[];
@@ -211,6 +219,7 @@ class HomeModel extends Model {
               Icons.chevron_right,
             ),
             onTap: () {
+              HomeView.refresh = true;
               //navigate to view
               MaterialPageRoute route = MaterialPageRoute(
                 builder: (context) => SessionView(SessionController(SessionModel(session.sessionID))),
@@ -229,5 +238,23 @@ class HomeModel extends Model {
         );
       });
     }
+  }
+
+  showErrorDialog(error) {
+    showDialog(
+        context: SessionView.viewContext,
+        builder: (context) {
+          return AlertDialog(
+            title: Text('Oops!'),
+            content: Text(error.toString()),
+            actions: <Widget>[
+              FlatButton(
+                child: Text('Dismiss'),
+                onPressed: () => Navigator.of(context).pop(),
+              ),
+            ],
+          );
+        }
+    );
   }
 }
