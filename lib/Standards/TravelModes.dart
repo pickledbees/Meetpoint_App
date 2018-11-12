@@ -1,6 +1,5 @@
 abstract class TravelModes {
   static List<String> _list = [
-    'no preference',
     'driving',
     'walking',
     'transit',

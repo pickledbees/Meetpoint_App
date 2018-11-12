@@ -550,10 +550,12 @@ class SessionModel extends Model {
 
   //builds the scrollable consisting of single map displays
   Widget pagedMapsDisplay() {
+    print('loading maps');
     List<Meetpoint_Client> meetpoints = session.meetpoints;
     List<Widget> mapPages = [];
     int index = 0;
     for (Meetpoint_Client meetpoint in meetpoints) {
+      print('loading maps $index');
       Widget mapPage = singlePageDisplay(
         mapTitleBar: mapTitleBar(
           name: meetpoint.name,
@@ -578,6 +580,7 @@ class SessionModel extends Model {
     @required Widget mapImage,
     @required int index,
   }) {
+    print('loading single map $index');
     return Center(
       child: Column(
         children: <Widget>[
@@ -608,7 +611,7 @@ class SessionModel extends Model {
     @required String name,
     @required int index,
   }) {
-    final int maxChar = 40;
+    final int maxChar = 35;
 
     return Container(
       color: Colors.white,
@@ -653,15 +656,6 @@ class SessionModel extends Model {
           ),
         ],
       ),
-
-/*
-      Center(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 2.0),
-          child: Image.network(Uri.encodeFull(url2)),
-        ),
-      ),
-*/
     );
   }
 

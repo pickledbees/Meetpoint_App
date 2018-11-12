@@ -1,11 +1,10 @@
 abstract class LocationTypes {
   static List<String> _list = [
-    'no preference',
+    'food_beverages',
     'accommodation',
     'attractions',
     'bars_clubs',
     'tour',
-    'food_beverages',
     'shops',
   ];
 

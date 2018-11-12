@@ -16,7 +16,7 @@ bool success = true;
 
 class SessionManager_Client {
   //token to connect to server
-  static String _USERID;
+  static String _USERID = null;
   //currently loaded sessions
   static List<Session_Client> _sessions = [];
   static Session_Client _loadedSession;
@@ -296,6 +296,7 @@ class SessionManager_Client {
       HomeView.refresh = true;
       return true;
     } else {
+      print('could not delete');
       return false;
     }
   }
@@ -336,17 +337,9 @@ class SessionManager_Client {
       decode: true, //FOR DEBUGGING
     );
 
-    print(meetpoints_mapform);
-
-    /*
-    _loadedSession.meetpoints = [];
-    _loadedSession.chosenMeetpoint = null;
-    HomeView.refresh = true;
-    return true;
-    */
-
-
     print('received meetpoints');
+    print(meetpoints_mapform['result']);
+    if (meetpoints_mapform['result'] == 'X') return false;
     if (meetpoints_mapform['result'] == 'O' && meetpoints_mapform['meetpoints'].length > 0) {
       print('parsng meetpoints json');
       //store meetpoints list

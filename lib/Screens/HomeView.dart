@@ -179,7 +179,7 @@ class HomeController extends Controller<HomeModel> {
     } catch (error) {
       model.showErrorDialog('Failed to refresh sessions');
     }
-    setViewState(() => model.loadTiles(context));
+    model.loadTiles(context);
   }
 }
 
@@ -219,12 +219,13 @@ class HomeModel extends Model {
               Icons.chevron_right,
             ),
             onTap: () {
-              HomeView.refresh = true;
-              //navigate to view
-              MaterialPageRoute route = MaterialPageRoute(
-                builder: (context) => SessionView(SessionController(SessionModel(session.sessionID))),
-              );
-              Navigator.push(context, route);
+              SessionManager_Client.fetchSessions().then((_) {
+                //navigate to view
+                MaterialPageRoute route = MaterialPageRoute(
+                  builder: (context) => SessionView(SessionController(SessionModel(session.sessionID))),
+                );
+                Navigator.push(context, route);
+              });
             },
           )
       );

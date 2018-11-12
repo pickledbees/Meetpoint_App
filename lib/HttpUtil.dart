@@ -2,7 +2,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
 
-bool deployed = false;
+bool deployed = true;
 
 abstract class HttpUtil {
   //for easy changing of ip                        //server                                  //me
@@ -18,7 +18,7 @@ abstract class HttpUtil {
     http.Response res = await http
         .post(url, body: deployed ? json.encode(data) : data,)
         .timeout(
-          Duration(seconds: 10),
+          Duration(seconds: 20),
           onTimeout: () => throw 'Connection timed out.',
         );
     if (res.statusCode != 200) throw 'Failed to communicate with server';
