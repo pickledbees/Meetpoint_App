@@ -168,7 +168,7 @@ class HomeController extends Controller<HomeModel> {
     MaterialPageRoute route = MaterialPageRoute(
       builder: (context) => FirstStartView(FirstStartController(FirstStartModel())),
     );
-    Navigator.pushReplacement(context, route,);
+    Navigator.push(context, route,);
   }
 
   //reloads the page
