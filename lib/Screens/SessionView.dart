@@ -391,12 +391,18 @@ class SessionController extends Controller<SessionModel> {
     //ensure all text fields are updated and captured by server (covers user forgetfulness: changing and nor confirming)
     sendUpdateAddress1();
     sendUpdateAddress2();
+    sendUpdatePreferredLocation(LocationTypes.getList[0]);
+    sendUpdatePreferredTravelMode1(TravelModes.getList[0]);
+    sendUpdatePreferredTravelMode2(TravelModes.getList[1]);
 
     model.updateMapsDisplay(type: 2); //show loader text
 
     SessionManager_Client.calcMeetpoint() //calculate and wait for result
     .then((success) {
-      if (!mounted) return;
+      if (!mounted) {
+        print("not mounted!");
+        return;
+      }
       if (success) model.updateMapsDisplay(type: 1);
       else model.updateMapsDisplay(type: 4);
     }).catchError((error) {
@@ -508,6 +514,7 @@ class SessionModel extends Model {
   //update to proper state
   updateMapsDisplay({@required int type}) {
     setViewState(() {
+      session = SessionManager_Client.getLoadedSession;
       switch(type) {
         case 1: //loaded maps display
           chosenMeetpointIndex = 0;
@@ -550,12 +557,10 @@ class SessionModel extends Model {
 
   //builds the scrollable consisting of single map displays
   Widget pagedMapsDisplay() {
-    print('loading maps');
     List<Meetpoint_Client> meetpoints = session.meetpoints;
     List<Widget> mapPages = [];
     int index = 0;
     for (Meetpoint_Client meetpoint in meetpoints) {
-      print('loading maps $index');
       Widget mapPage = singlePageDisplay(
         mapTitleBar: mapTitleBar(
           name: meetpoint.name,
@@ -570,6 +575,9 @@ class SessionModel extends Model {
       mapPages.add(mapPage);
     }
     return PageView(
+      controller: PageController(
+        initialPage: session.chosenMeetpointIndex
+      ),
       children: mapPages,
     );
   }
@@ -580,7 +588,6 @@ class SessionModel extends Model {
     @required Widget mapImage,
     @required int index,
   }) {
-    print('loading single map $index');
     return Center(
       child: Column(
         children: <Widget>[
