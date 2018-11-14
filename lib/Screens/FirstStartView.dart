@@ -7,7 +7,7 @@ import 'HomeView.dart';
 
 class FirstStartView extends View<FirstStartController> {
   FirstStartView(c) : super(controller: c);
-  bool r = true;
+  static bool r = true;
 
   @override
   Widget build(BuildContext context) {
@@ -20,7 +20,7 @@ class FirstStartView extends View<FirstStartController> {
         actions: <Widget>[
           IconButton(
             icon: Icon(Icons.close),
-            onPressed: () => controller.navigateToHome(context),
+            onPressed: LocalUserInfoManager.getLocalUser == null ? null : () => controller.navigateToHome(context),
           ),
         ],
       ),
