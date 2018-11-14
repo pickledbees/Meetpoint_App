@@ -304,6 +304,7 @@ class SessionController extends Controller<SessionModel> {
   final formKey = GlobalKey<FormState>();
   Session_Client session;
   bool get isMounted => mounted;
+  bool calculated = false;
 
   String validate(val) {
     if (val.isEmpty) return 'This field is required';
@@ -391,9 +392,12 @@ class SessionController extends Controller<SessionModel> {
     //ensure all text fields are updated and captured by server (covers user forgetfulness: changing and nor confirming)
     sendUpdateAddress1();
     sendUpdateAddress2();
-    sendUpdatePreferredLocation(LocationTypes.getList[0]);
-    sendUpdatePreferredTravelMode1(TravelModes.getList[0]);
-    sendUpdatePreferredTravelMode2(TravelModes.getList[1]);
+    if (!calculated) {
+      calculated = true;
+      sendUpdatePreferredLocation(LocationTypes.getList[0]);
+      sendUpdatePreferredTravelMode1(TravelModes.getList[0]);
+      sendUpdatePreferredTravelMode2(TravelModes.getList[0]);
+    }
 
     model.updateMapsDisplay(type: 2); //show loader text
 
