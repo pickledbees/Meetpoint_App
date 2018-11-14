@@ -69,10 +69,6 @@ class Controller<M extends Model> {
   //getter for reference to associated view widget, makes it available for subclasses
   Widget get widget => _widget;
 
-  void dispose() {
-    _state?.reDeactivate();
-  }
-
   //allows controller to reload the view
   void setViewState(VoidCallback fn) {
     _state.reState(fn);
@@ -91,7 +87,6 @@ class Model {
     _state.reState(fn);
   }
 }
-
 
 
 
