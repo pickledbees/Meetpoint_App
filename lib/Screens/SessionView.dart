@@ -304,7 +304,7 @@ class SessionController extends Controller<SessionModel> {
   final formKey = GlobalKey<FormState>();
   Session_Client session;
   bool get isMounted => mounted;
-  bool calculated = false;
+  List<bool> updated = [false,false,false];
 
   String validate(val) {
     if (val.isEmpty) return 'This field is required';
@@ -317,7 +317,10 @@ class SessionController extends Controller<SessionModel> {
       field: Field.preferredLocationType,
       value: val,
     ).then((success) {
-      if (success) updatePreferredLocation(val); //local
+      if (success) {
+        updated[0] = true;
+        updatePreferredLocation(val);
+      } //local
       else throw 'server failed to update field';
     }).catchError(model.showErrorDialog);
   }
@@ -347,7 +350,10 @@ class SessionController extends Controller<SessionModel> {
       field: Field.user1PreferredTravelMode,
       value: val,
     ).then((success) {
-      if (success) updatePreferredTravelMode1(val); //local
+      if (success) {
+        updated[1] = true;
+        updatePreferredTravelMode1(val);
+      } //local
       else throw 'server failed to update field';
     }).catchError(model.showErrorDialog);
   }
@@ -357,7 +363,10 @@ class SessionController extends Controller<SessionModel> {
       field: Field.user2PreferredTravelMode,
       value: val,
     ).then((success) {
-      if (success) updatePreferredTravelMode2(val); //local
+      if (success) {
+        updated[2] = true;
+        updatePreferredTravelMode2(val);
+      } //local
       else throw 'server failed to update field';
     }).catchError(model.showErrorDialog);
   }
@@ -392,12 +401,9 @@ class SessionController extends Controller<SessionModel> {
     //ensure all text fields are updated and captured by server (covers user forgetfulness: changing and nor confirming)
     sendUpdateAddress1();
     sendUpdateAddress2();
-    if (!calculated) {
-      calculated = true;
-      sendUpdatePreferredLocation(LocationTypes.getList[0]);
-      sendUpdatePreferredTravelMode1(TravelModes.getList[0]);
-      sendUpdatePreferredTravelMode2(TravelModes.getList[0]);
-    }
+    if (!updated[0]) sendUpdatePreferredLocation(LocationTypes.getList[0]);
+    if (!updated[1]) sendUpdatePreferredTravelMode1(TravelModes.getList[0]);
+    if (!updated[2]) sendUpdatePreferredTravelMode2(TravelModes.getList[0]);
 
     model.updateMapsDisplay(type: 2); //show loader text
 

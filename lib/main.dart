@@ -6,7 +6,7 @@ import 'dart:async';
 void main() {
   print('App starting...');
   runApp(MeetPointApp());
-  //SessionManager_Client.poll();
+  SessionManager_Client.poll();
   //runApp(Test());
   //runApp(Test2());
 }

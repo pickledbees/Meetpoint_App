@@ -401,7 +401,18 @@ class SessionManager_Client {
 
   //polls for updates
   static void poll() async {
+    try {
+      await fetchSessions();
+      if (HomeView.widget?.controller?.model?.mounted ?? false) {
+        HomeView.widget.controller.model.loadTiles(HomeView.viewContext);
+      }
+      Timer(Duration(seconds: 2), poll);
+    } catch (e) {
+      Timer(Duration(seconds: 20), poll);
+      print(e);
+    }
     //poll for update
+    /*
     try {
       var update = await HttpUtil.postData(
         url: HttpUtil.serverURL,
@@ -412,12 +423,13 @@ class SessionManager_Client {
         decode: false,
       );
       print('update is $update');
-      _updateHandler(update);
+      //_updateHandler(update);
       //call for another update
       Timer(Duration(seconds: 2),poll);
     } catch (error) {
       Timer(Duration(seconds: 10),poll);
     }
+    */
   }
 
   //handler for updates
