@@ -99,7 +99,7 @@ class FirstStartController extends Controller<FirstStartModel> {
     model.updateDropdownValue(val);
   }
   //saves the current inputs
-  save (context) async {
+`  save (context) async {
     //validate if empty
     if (formKey.currentState.validate()) {
       //set local user (may want to change to setter)

@@ -131,6 +131,7 @@ class SessionManager_Client {
         print('sessions parsed');
         return;
       } else {
+        _sessions = [];
         return;
       }
     } else {
