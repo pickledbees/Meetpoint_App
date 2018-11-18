@@ -1,6 +1,8 @@
 import 'package:flutter/foundation.dart';
+import 'LocalUserInfoManager.dart';
 
-//Session_Client definition
+///Represents a session joined / created by a user.
+///A user can have many sessions.
 class Session_Client {
   final String sessionID;
   final String title;
@@ -20,6 +22,7 @@ class Session_Client {
     this.timeCreated,
   });
 
+  ///Returns the index of a particular instance of [Meetpoint_Client] object in [meetpoints] given the name of [chosenMeetpoint]
   int get chosenMeetpointIndex {
     int index = 0;
     if (chosenMeetpoint == null) return -1;
@@ -30,6 +33,8 @@ class Session_Client {
   }
 }
 
+///Represents a single user and his/her associated details.
+///Present in multiples inside a [Session_Client] object.
 class UserDetails_Client {
   String name;
   Location_Client prefStartCoords;
@@ -41,6 +46,7 @@ class UserDetails_Client {
     @required this.prefTravelMode,
   });
 
+  ///Converts a [Map] object into a [UserDetails_Client] object, used by [LocalUserInfoManager] for conversions.
   UserDetails_Client.fromJson(Map<String,dynamic> map) {
     name = map['name'];
     prefStartCoords = Location_Client(
@@ -51,6 +57,7 @@ class UserDetails_Client {
     prefTravelMode = map['preTravelMode'];
   }
 
+  ///Converts a [UserDetails_Client] object into a [Map] object, used by [LocalUserInfoManager] for conversions.
   Map<String,dynamic> toJson() {
     return {
       'name': name,
@@ -62,6 +69,7 @@ class UserDetails_Client {
 
 }
 
+///Represents a location and its associated details.
 class Location_Client {
   String name,type,address; //add address
   List<double> coordinates; //may want to remove
@@ -74,6 +82,7 @@ class Location_Client {
   });
 }
 
+///Represents a Meetpoint and its associated details.
 class Meetpoint_Client extends Location_Client {
   String routeImage;
   String routeImage2;
@@ -92,165 +101,3 @@ class Meetpoint_Client extends Location_Client {
     super.coordinates = coordinates;
   }
 }
-
-
-/*
-class TestData {
-  static List<Session_Client> returned_sessions = (() {
-    List<Session_Client> arr = [];
-    for (int i = 0; i < 10; i++) {
-      arr.add(
-        Session_Client(
-          sessionID: '${i}23A',
-          title: 'Picnic with fren $i',
-          chosenMeetpoint: Meetpoint_Client(
-            routeImage: 'path/img.jpg',
-            name: 'ParkABC',
-            type: 'Park',
-            coordinates: [0.0,0.0],
-          ),
-          meetpoints: [
-            Meetpoint_Client(
-              routeImage: 'path/img.jpg',
-              name: 'ParkABC',
-              type: 'Park',
-              coordinates: [0.0,0.0],
-            ),
-            Meetpoint_Client(
-              routeImage: 'path/img.jpg',
-              name: 'ParkABD',
-              type: 'Park',
-              coordinates: [0.0,0.0],
-            ),
-            Meetpoint_Client(
-              routeImage: 'path/img.jpg',
-              name: 'ParkABE',
-              type: 'Park',
-              coordinates: [0.0,0.0],
-            ),
-          ],
-          prefLocationType: 'Park',
-          users: [
-            UserDetails_Client(
-              name: 'jon',
-              prefTravelMode: 'Car',
-              prefStartCoords: Location_Client(
-                name: 'Home',
-                type: 'Housing',
-                address: 'Block 1234',
-                coordinates: [100.0, 200.0],
-              ),
-            ),
-            UserDetails_Client(
-              name: 'jane',
-              prefTravelMode: 'Walking',
-              prefStartCoords: Location_Client(
-                name: 'Work',
-                type: 'Office',
-                address: 'Block 324657',
-                coordinates: [200.0, 100.0],
-              ),
-            ),
-          ],
-          timeCreated: 12134223423,
-        ),
-      );
-    }
-    return arr;
-  })();
-
-  static int count = 0;
-
-  static Session_Client created_session (String sessionTitle) => Session_Client(
-    sessionID: '${count++}Z',
-    title: sessionTitle,
-    chosenMeetpoint: null,
-    meetpoints: <Meetpoint_Client>[],
-    prefLocationType: 'No Preference',
-    users: [
-      UserDetails_Client(
-        name: 'jon',
-        prefTravelMode: 'Car',
-        prefStartCoords: Location_Client(
-          name: 'Home',
-          type: 'Housing',
-          address: 'Home',
-          coordinates: [100.0,200.0],
-        ),
-      ),
-      UserDetails_Client(
-        name: null,
-        prefTravelMode: 'No Preference',
-        prefStartCoords: Location_Client(
-          name: null,
-          type: null,
-          address: null,
-          coordinates: [null,null],
-        ),
-      ),
-    ],
-    timeCreated: 12134223423,
-  );
-
-
-  static Session_Client joined_session (String sessionId) => Session_Client(
-    sessionID: sessionId,
-    title: 'Picnic with fren $sessionId',
-    chosenMeetpoint: Meetpoint_Client(
-      routeImage: 'path/img.jpg',
-      name: 'ParkABC',
-      type: 'Park',
-    ),
-    meetpoints: [
-      Meetpoint_Client(
-        routeImage: 'path/img.jpg',
-        name: 'ParkABC',
-        type: 'Park',
-      ),
-      Meetpoint_Client(
-        routeImage: 'path/img.jpg',
-        name: 'ParkABD',
-        type: 'Park',
-      ),
-      Meetpoint_Client(
-        routeImage: 'path/img.jpg',
-        name: 'ParkABE',
-        type: 'Park',
-      ),
-    ],
-    prefLocationType: 'Park',
-    users: [
-      UserDetails_Client(
-        name: 'jon',
-        prefTravelMode: 'Car',
-        prefStartCoords: Location_Client(
-          name: 'Home',
-          type: 'Housing',
-          address: 'Block 203',
-          coordinates: [100.0,200.0],
-        ),
-      ),
-      UserDetails_Client(
-        name: 'jane',
-        prefTravelMode: 'Walking',
-        prefStartCoords: Location_Client(
-          name: 'Work',
-          type: 'Office',
-          address: 'Office 21',
-          coordinates: [200.0,100.0],
-        ),
-      ),
-    ],
-    timeCreated: 12134223423,
-  );
-
-  static UserDetails_Client user = UserDetails_Client(
-    name: 'jon',
-    prefStartCoords: Location_Client(
-      name: null,
-      type: null,
-    ),
-    prefTravelMode: null,
-  );
-}
-*/

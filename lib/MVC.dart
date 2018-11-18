@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 
-//View abstract class
+///Super class for all view classes. Represents the 'view' portion of the application
 abstract class View<C extends Controller> extends StatefulWidget {
   View({this.controller, Key key,}) : super(key: key);
 
+  ///Controller of View
   final C controller;
 
-  //pass reference of state object created to the controller and model
-  //to allow access to state object
+  ///Creates the [State] object upon instantiation and addition to [Widget] tree.
   @override
   _ViewState createState() {
     _ViewState state = _ViewState(this);
@@ -17,46 +17,50 @@ abstract class View<C extends Controller> extends StatefulWidget {
     return state;
   }
 
-  //allows the view to be reloaded
+  ///Reloads the [View], updating it.
   void setState(VoidCallback fn) {
     controller?.setViewState(fn);
   }
 
-  //abstract method to be implemented, is used by the state class to rebuild
+  ///Abstract method to be implemented, builds the [Widget] tree of the view.
   Widget build(BuildContext context);
 }
 
-//_ViewState class: dependency class for View class
+///Represents the state of the view. [Controller] and [Model] classes interact with the [View] class through this class
 class _ViewState extends State<View> {
   _ViewState(this._view);
 
   final View _view;
 
-  //allows outside classes to use the private class method 'setState()'
+  ///Visually updates the associated [View] object.
   void reState(VoidCallback fn) {
     setState(fn);
   }
 
+  ///Disposes of visual elements in the [Widget] tree the associated [View] object.
   void reDispose() {
     super.dispose();
   }
 
+  ///Permanently removes a [Widget] in the [Widget] tree of the associated [View] object.
   void reDeactivate() {
     super.deactivate();
   }
 
+  ///Sets up its own initial state.
   void reInitState() {
     super.initState();
   }
 
+  ///Calls on its associated [View] to build its [Widget] tree.
   @override
   Widget build(BuildContext context) {
     return _view.build(context);
   }
 }
 
-//Controller class
-class Controller<M extends Model> {
+///Super class for all controller classes. Represents the 'controller' portion of the application
+abstract class Controller<M extends Model> {
   Controller({this.model});
 
   Widget _widget;
@@ -66,23 +70,23 @@ class Controller<M extends Model> {
   //to check if state object is loaded
   bool get mounted => _state?.mounted;
 
-  //getter for reference to associated view widget, makes it available for subclasses
+  //getter for reference to associated view widget, makes it available for subclasses.
   Widget get widget => _widget;
 
-  //allows controller to reload the view
+  ///Visually updates the associated [View] of this [Controller].
   void setViewState(VoidCallback fn) {
     _state.reState(fn);
   }
 }
 
-//Model class
-class Model {
+///Super class for all model classes. Represents the 'model' portion of the application
+abstract class Model {
   _ViewState _state;
 
   //to check if state object is loaded
   bool get mounted => _state?.mounted;
 
-  //allows model to reload the view
+  ///Visually updates the associated [View] of this [Model].
   void setViewState(VoidCallback fn) {
     _state.reState(fn);
   }

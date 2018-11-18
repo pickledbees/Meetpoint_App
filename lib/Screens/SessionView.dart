@@ -7,6 +7,7 @@ import 'package:meetpoint/Standards/LocationTypes.dart';
 import 'package:meetpoint/Screens/MoreSessionInfoView.dart';
 import 'package:meetpoint/Screens/HomeView.dart';
 
+///Represents the [View] portion of the Session View.
 class SessionView extends View<SessionController> {
   SessionView(c) : super(controller: c) {
     widget = this;
@@ -14,6 +15,7 @@ class SessionView extends View<SessionController> {
   static BuildContext viewContext; //for access for dynamically built navigation buttons
   static SessionView widget; //reference to self object for others to access
 
+  ///Builds up [Widget] tree of view.
   @override
   Widget build(BuildContext context) {
     viewContext = context;
@@ -189,7 +191,7 @@ class SessionView extends View<SessionController> {
     );
   }
 
-  //generate primer text
+  ///Generates the primer text at the top of the page.
   static Widget primer() {
     return Container(
       margin: const EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 7.0),
@@ -201,7 +203,7 @@ class SessionView extends View<SessionController> {
     );
   }
 
-  //generate session id display
+  ///Generates session ID display.
   static Widget sessionIdPrompt(String sessionId) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
@@ -227,7 +229,7 @@ class SessionView extends View<SessionController> {
     );
   }
 
-  //generate users in users bar
+  ///Generates users bar.
   static Widget usersBar(List<UserDetails_Client> users) {
     List<Widget> bar = [
       Container(
@@ -262,7 +264,7 @@ class SessionView extends View<SessionController> {
     );
   }
 
-  //generate location type dropdown list
+  ///Generates the dropdown list tiles for preferred location types.
   static List<DropdownMenuItem> prefLocationTypeDropdownItems() {
     List<DropdownMenuItem> items = [];
     List<String> types = LocationTypes.getList;
@@ -276,7 +278,7 @@ class SessionView extends View<SessionController> {
     return items;
   }
 
-  //generate travel mode dropdown list
+  ///Generates the dropdown lists tiles for travel mode types.
   static List<DropdownMenuItem> prefTravelModeDropdownItems() {
     List<DropdownMenuItem> items = [];
     List<String> modes = TravelModes.getList;
@@ -291,6 +293,7 @@ class SessionView extends View<SessionController> {
   }
 }
 
+///Represents the [Controller] portion of the Session View.
 class SessionController extends Controller<SessionModel> {
   SessionController(m) : super(model: m) {
     session = SessionManager_Client.getLoadedSession;
@@ -306,11 +309,13 @@ class SessionController extends Controller<SessionModel> {
   bool get isMounted => mounted;
   List<bool> updated = [false,false,false];
 
+  ///Checks if the address text fields are empty.
   String validate(val) {
     if (val.isEmpty) return 'This field is required';
   }
 
   //local memory + server update
+  ///Requests through [SessionManager_Client] to update and edit the 'preferred location' field on the server side.
   sendUpdatePreferredLocation(val) {
     SessionManager_Client.requestSessionEdit(
       sessionId: session.sessionID,
@@ -324,6 +329,8 @@ class SessionController extends Controller<SessionModel> {
       else throw 'server failed to update field';
     }).catchError(model.showErrorDialog);
   }
+
+  ///Requests through [SessionManager_Client] to update and edit the first address field on the server side.
   sendUpdateAddress1() {
     SessionManager_Client.requestSessionEdit(
       sessionId: session.sessionID,
@@ -334,6 +341,8 @@ class SessionController extends Controller<SessionModel> {
       else throw 'server failed to update field';
     }).catchError(model.showErrorDialog);
   }
+
+  ///Requests through [SessionManager_Client] to update and edit the second address field on the server side.
   sendUpdateAddress2() {
     SessionManager_Client.requestSessionEdit(
       sessionId: session.sessionID,
@@ -344,6 +353,8 @@ class SessionController extends Controller<SessionModel> {
       else throw 'server failed to update field';
     }).catchError(model.showErrorDialog);
   }
+
+  ///Requests through [SessionManager_Client] to update and edit the first 'preferred travel mode' field on the server side.
   sendUpdatePreferredTravelMode1(val) {
     SessionManager_Client.requestSessionEdit(
       sessionId: session.sessionID,
@@ -357,6 +368,8 @@ class SessionController extends Controller<SessionModel> {
       else throw 'server failed to update field';
     }).catchError(model.showErrorDialog);
   }
+
+  ///Requests through [SessionManager_Client] to update and edit the second 'preferred travel mode' field on the server side.
   sendUpdatePreferredTravelMode2(val) {
     SessionManager_Client.requestSessionEdit(
       sessionId: session.sessionID,
@@ -372,26 +385,35 @@ class SessionController extends Controller<SessionModel> {
   }
 
   //local memory plus visual updates
+  ///locally edit the 'preferred location' field in the currently loaded [Session_Client].
   updatePreferredLocation(val) {
     session.prefLocationType = val;
     model.updatePreferredLocation(val);
   }
+
+  ///locally edit the first address field in the currently loaded [Session_Client].
   updateAddress1() {
     session.users[0].prefStartCoords.address = address1.text;
   }
+
+  ///locally edit the second address field in the currently loaded [Session_Client].
   updateAddress2() {
     session.users[1].prefStartCoords.address = address2.text;
   }
+
+  ///locally edit the first 'preferred travel mode' field in the currently loaded [Session_Client].
   updatePreferredTravelMode1(val) {
     session.users[0].prefTravelMode = val;
     model.updatePreferredTravelMode1(val);
   }
+
+  ///locally edit the second 'preferred travel mode' field in the currently loaded [Session_Client].
   updatePreferredTravelMode2(val) {
     session.users[1].prefTravelMode = val;
     model.updatePreferredTravelMode2(val);
   }
 
-  //send current loaded parameters for calculation
+  ///Requests through [SessionManager_Client] to calculate Meetpoints based on current loaded session parameters.
   calcMeetpoints() {
     //validate fields
     if (!formKey.currentState.validate()) {
@@ -421,7 +443,7 @@ class SessionController extends Controller<SessionModel> {
     });
   }
 
-  //prompts delete dialog box
+  ///Displays dialog box asking for a confirmation on the delete action.
   promptDelete() {
     showDialog(
       context: SessionView.viewContext,
@@ -485,6 +507,7 @@ class SessionModel extends Model {
   String preferredLocationType = LocationTypes.getList[0];
   String preferredTravelMode1;
   String preferredTravelMode2;
+  ///Contains the [Widget] of the map display in [SessionView].
   Widget mapsDisplay;
   int chosenMeetpointIndex;
 
@@ -492,15 +515,22 @@ class SessionModel extends Model {
   bool get isMounted => mounted;
 
   //local visual updates
+  ///Visually update the 'preferred location' field in the [SessionView].
   updatePreferredLocation(val) {
     setViewState(() => preferredLocationType = val);
   }
+
+  ///Visually update the first 'preferred travel mode' field in the [SessionView].
   updatePreferredTravelMode1(val) {
     setViewState(() => preferredTravelMode1 = val);
   }
+
+  ///Visually update the second 'preferred travel mode' field in the [SessionView].
   updatePreferredTravelMode2(val) {
     setViewState(() => preferredTravelMode2 = val);
   }
+
+  ///Visually update the radio buttons in the [SessionView].
   updateChosenMeetpoint(val) {
     //send update
     SessionManager_Client.requestSessionEdit(
@@ -521,7 +551,7 @@ class SessionModel extends Model {
     }).catchError(showErrorDialog);
   }
 
-  //update to proper state
+  ///Visually updates the map display to display the appropriate text / maps.
   updateMapsDisplay({@required int type}) {
     setViewState(() {
       session = SessionManager_Client.getLoadedSession;
@@ -546,7 +576,7 @@ class SessionModel extends Model {
     });
   }
 
-  //builds a blank display with chosen text
+  ///Builds a blank display with specified text passed into method for the map display
   Widget blankMapsDisplay({
     @required IconData icon,
     @required String text,
@@ -565,7 +595,8 @@ class SessionModel extends Model {
     );
   }
 
-  //builds the scrollable consisting of single map displays
+  ///Builds the nested [PageView] containing Meetpoint details in each page.
+  ///Each page displays information for one Meetpoint.
   Widget pagedMapsDisplay() {
     List<Meetpoint_Client> meetpoints = session.meetpoints;
     List<Widget> mapPages = [];
@@ -592,7 +623,7 @@ class SessionModel extends Model {
     );
   }
 
-  //builds a single map display, TITLE BAR + MAP + MORE button
+  ///Builds a page for a Meetpoint in the map display.
   Widget singlePageDisplay({
     @required Widget mapTitleBar,
     @required Widget mapImage,
@@ -623,7 +654,7 @@ class SessionModel extends Model {
     );
   }
 
-  //builds the title bar for a map
+  ///Builds the title bar for a page in the map display.
   Widget mapTitleBar({
     @required String name,
     @required int index,
@@ -653,7 +684,7 @@ class SessionModel extends Model {
     );
   }
 
-  //builds one map image
+  ///Builds the thumbnail map images for a Meetpoint in each page of the map display.
   Widget mapImages({@required String url1, String url2}) {
     return Container(
       height: 230.0,
@@ -676,6 +707,7 @@ class SessionModel extends Model {
     );
   }
 
+  ///Shows error dialog box.
   showErrorDialog(error) {
     showDialog(
       context: SessionView.viewContext,

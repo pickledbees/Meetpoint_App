@@ -3,10 +3,12 @@ import 'package:meetpoint/MVC.dart';
 import 'SessionView.dart';
 import 'package:meetpoint/Managers/SessionManager_Client.dart';
 
+///Represents the [View] portion of the Create Session View.
 class CreateSessionView extends View<CreateSessionController> {
   CreateSessionView(c) : super(controller: c);
   static BuildContext viewContext;
 
+  ///Builds up [Widget] tree of view.
   @override
   Widget build(BuildContext context) {
     viewContext = context;
@@ -51,15 +53,19 @@ class CreateSessionView extends View<CreateSessionController> {
   }
 }
 
+///Represents the [Controller] portion of the Create Session View.
 class CreateSessionController extends Controller<CreateSessionModel> {
   CreateSessionController(m) : super(model: m);
   TextEditingController fieldController = TextEditingController();
   final formKey = GlobalKey<FormState>();
 
+  ///Checks if the 'Session Title' text field is empty.
   String validate(val) {
     if (val.isEmpty) return 'Please fill in session title';
   }
 
+  ///Requests through [SessionManager_Client] to request for a session creation on the server side.
+  ///Navigates user to [SessionView] of created session on success.
   createSessionAndNavigateToSession(BuildContext context) async {
     if (formKey.currentState.validate()) {
       try {
@@ -83,13 +89,16 @@ class CreateSessionController extends Controller<CreateSessionModel> {
 
 }
 
+///Represents the [Model] portion of the Create Session View.
 class CreateSessionModel extends Model {
   String headerText = 'Title your session below';
 
+  ///Changes text prompt above the 'Session Title' text field.
   setHeaderTextTo(String text) {
     setViewState(() => headerText = text);
   }
 
+  ///Shows error dialog box.
   showErrorDialog(error) {
     showDialog(
         context: CreateSessionView.viewContext,

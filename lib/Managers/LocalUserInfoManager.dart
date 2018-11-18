@@ -5,11 +5,13 @@ import 'package:meetpoint/Managers/SessionManager_Client.dart';
 import 'package:path_provider/path_provider.dart';
 import 'dart:convert';
 
+///Manages the information of the local user
 class LocalUserInfoManager {
   static UserDetails_Client _localUser;
-  //enable read-only from outside
   static UserDetails_Client get getLocalUser => _localUser;
 
+  ///Reads user file on local system and loads the details as an [UserDetails_Client] object in the [_localUser] field.
+  ///Also sets the [userId] property of [SessionManager_Client]
   static Future loadUser() async {
     UserDetails_Client user;
     try {
@@ -23,6 +25,8 @@ class LocalUserInfoManager {
     SessionManager_Client.userId = user.prefStartCoords.type;
     return _localUser;
   }
+
+  ///Requests a save / update from the server of the local user's details as well as saves user details into local file system.
   static Future saveUser(UserDetails_Client user) async {
     bool success = await SessionManager_Client.saveUser(user);
     if (success) {
@@ -38,24 +42,27 @@ class LocalUserInfoManager {
     }
   }
 
-  //below methods are private
-  //getters for file and directory path
+  ///Gets path to default app data file.
   static Future<String> get _localPath async {
     final directory = await getApplicationDocumentsDirectory();
     return directory.path;
   }
+
+  ///Gets the default app data file.
   static Future<File> get _localFile async {
     final path = await _localPath;
     return File('$path/user.txt');
   }
-  //reader for the file
+
+  ///Reads user file and returns the associated [UserDetails_Client] object.
   static Future<UserDetails_Client> _readUserFile() async {
     final file = await _localFile;
     // Read the file
     String contents = await file.readAsString();
     return UserDetails_Client.fromJson(json.decode(contents));
   }
-  //writer for the file
+
+  ///Writes user's details into user file.
   static Future<File> _writeUserFile(UserDetails_Client user) async {
     final file = await _localFile;
     // Write the file

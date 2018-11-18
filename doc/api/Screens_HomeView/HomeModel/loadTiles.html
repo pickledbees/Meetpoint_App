@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="API docs for the loadTiles method from the HomeModel class, for the Dart programming language.">
+  <title>loadTiles method - HomeModel class - HomeView library - Dart API</title>
+  <!-- required because all the links are pseudo-absolute -->
+  <base href="../..">
+
+  <link href="https://fonts.googleapis.com/css?family=Source+Code+Pro:500,400i,400,300|Source+Sans+Pro:400,300,700" rel="stylesheet">
+  <link rel="stylesheet" href="static-assets/github.css">
+  <link rel="stylesheet" href="static-assets/styles.css">
+  <link rel="icon" href="static-assets/favicon.png">
+
+</head>
+
+<body>
+
+<div id="overlay-under-drawer"></div>
+
+<header id="title">
+  <button id="sidenav-left-toggle" type="button">&nbsp;</button>
+  <ol class="breadcrumbs gt-separated dark hidden-xs">
+    <li><a href="index.html">meetpoint</a></li>
+    <li><a href="Screens_HomeView/Screens_HomeView-library.html">HomeView</a></li>
+    <li><a href="Screens_HomeView/HomeModel-class.html">HomeModel</a></li>
+    <li class="self-crumb">loadTiles method</li>
+  </ol>
+  <div class="self-name">loadTiles</div>
+  <form class="search navbar-right" role="search">
+    <input type="text" id="search-box" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+</header>
+
+<main>
+
+  <div class="col-xs-6 col-sm-3 col-md-2 sidebar sidebar-offcanvas-left">
+    <h5>HomeModel class</h5>
+    <ol>
+      <li class="section-title"><a href="Screens_HomeView/HomeModel-class.html#constructors">Constructors</a></li>
+      <li><a href="Screens_HomeView/HomeModel/HomeModel.html">HomeModel</a></li>
+    
+      <li class="section-title">
+        <a href="Screens_HomeView/HomeModel-class.html#instance-properties">Properties</a>
+      </li>
+      <li><a href="Screens_HomeView/HomeModel/body.html">body</a></li>
+      <li class="inherited"><a href="MVC/Model/hashCode.html">hashCode</a></li>
+      <li class="inherited"><a href="MVC/Model/mounted.html">mounted</a></li>
+      <li class="inherited"><a href="MVC/Model/runtimeType.html">runtimeType</a></li>
+    
+      <li class="section-title"><a href="Screens_HomeView/HomeModel-class.html#instance-methods">Methods</a></li>
+      <li><a href="Screens_HomeView/HomeModel/loadTiles.html">loadTiles</a></li>
+      <li><a href="Screens_HomeView/HomeModel/showErrorDialog.html">showErrorDialog</a></li>
+      <li class="inherited"><a href="MVC/Model/noSuchMethod.html">noSuchMethod</a></li>
+      <li class="inherited"><a href="MVC/Model/setViewState.html">setViewState</a></li>
+      <li class="inherited"><a href="MVC/Model/toString.html">toString</a></li>
+    
+      <li class="section-title inherited"><a href="Screens_HomeView/HomeModel-class.html#operators">Operators</a></li>
+      <li class="inherited"><a href="MVC/Model/operator_equals.html">operator ==</a></li>
+    
+    
+    
+    </ol>
+  </div><!--/.sidebar-offcanvas-->
+
+  <div class="col-xs-12 col-sm-9 col-md-8 main-content">
+    <h1>loadTiles method</h1>
+
+    <section class="multi-line-signature">
+      <span class="returntype">dynamic</span>
+      <span class="name ">loadTiles</span>
+(<wbr><span class="parameter" id="loadTiles-param-context"><span class="type-annotation">BuildContext</span> <span class="parameter-name">context</span></span>)
+    </section>
+    <section class="desc markdown">
+      <p>Assembles sessions data required for <code>ListView</code> of sessions in <a href="Screens_HomeView/HomeView-class.html">HomeView</a>.</p>
+    </section>
+    
+    <section class="summary source-code" id="source">
+      <h2><span>Implementation</span> </h2>
+      <pre class="language-dart"><code class="language-dart">loadTiles(BuildContext context) {
+  List&lt;Session_Client&gt; sessions = SessionManager_Client.getSessions;
+  List&lt;ListTile&gt; listTiles = &lt;ListTile&gt;[];
+  if (sessions.length == 0) {
+    setViewState(() {
+      body = Center(
+        child: Text(
+          &#39;You have no sessions currently&#39;
+        ),
+      );
+    });
+  } else {
+    &#47;&#47;generate tiles
+    for (Session_Client session in sessions) listTiles.add(
+        ListTile(
+          leading: Icon(
+            Icons.place,
+            color: Colors.deepOrange,
+            size: 30.0,
+          ),
+          title: Text(
+            session.title,
+            textScaleFactor: 1.05,
+          ),
+          subtitle: Text(session.chosenMeetpoint?.name ?? &#39;No chosen meetpoint&#39;),
+          trailing: Icon(
+            Icons.chevron_right,
+          ),
+          onTap: () {
+            SessionManager_Client.fetchSessions().then((_) {
+              &#47;&#47;navigate to view
+              MaterialPageRoute route = MaterialPageRoute(
+                builder: (context) =&gt; SessionView(SessionController(SessionModel(session.sessionID))),
+              );
+              Navigator.push(context, route);
+            });
+          },
+        )
+    );
+    &#47;&#47;update display
+    setViewState(() {
+      body = Center(
+        child: ListView(
+          padding: const EdgeInsets.symmetric(horizontal: 10.0),
+          children: listTiles,
+        ),
+      );
+    });
+  }
+}</code></pre>
+    </section>
+
+  </div> <!-- /.main-content -->
+
+  <div class="col-xs-6 col-sm-6 col-md-2 sidebar sidebar-offcanvas-right">
+  </div><!--/.sidebar-offcanvas-->
+
+</main>
+
+<footer>
+  <span class="no-break">
+    meetpoint 1.0.0+1
+  </span>
+
+</footer>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script src="static-assets/typeahead.bundle.min.js"></script>
+<script src="static-assets/highlight.pack.js"></script>
+<script src="static-assets/URI.js"></script>
+<script src="static-assets/script.js"></script>
+
+
+</body>
+
+</html>

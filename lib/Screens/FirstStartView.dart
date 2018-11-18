@@ -5,10 +5,12 @@ import 'package:meetpoint/Managers/LocalUserInfoManager.dart';
 import 'package:meetpoint/Managers/Entities.dart';
 import 'HomeView.dart';
 
+///Represents the [View] portion of the First Start View.
 class FirstStartView extends View<FirstStartController> {
   FirstStartView(c) : super(controller: c);
   static bool r = true;
 
+  ///Builds up [Widget] tree of view.
   @override
   Widget build(BuildContext context) {
 
@@ -83,22 +85,24 @@ class FirstStartView extends View<FirstStartController> {
   }
 }
 
+///Represents the [Controller] portion of the First Start View.
 class FirstStartController extends Controller<FirstStartModel> {
   FirstStartController(m) : super(model: m);
-  //controllers for text fields
   TextEditingController nameController = TextEditingController();
   TextEditingController addressController = TextEditingController();
   final formKey = GlobalKey<FormState>();
 
-  //validator for text fields
+  ///Checks if fields are empty.
   String validate (val) {
-    if (val.isEmpty && LocalUserInfoManager.getLocalUser == null) return 'This field is required';
+    if (val.isEmpty) return 'This field is required';
   }
-  //updates the value in the dropdown button
+
+  ///Updates the value in the dropdown button for preferred travel mode.
   updatePreference (val) {
     model.updateDropdownValue(val);
   }
-  //saves the current inputs
+
+  ///Requests for a save of the user details on the server side, as well as calling on [LocalUserInfoManager] to save the user.
   save (context) async {
     //validate if empty
     if (formKey.currentState.validate()) {
@@ -136,11 +140,12 @@ class FirstStartController extends Controller<FirstStartModel> {
   }
 }
 
+///Represents the [Model] portion of the First Start View.
 class FirstStartModel extends Model {
   String dropdownButtonValue = LocalUserInfoManager.getLocalUser == null ? TravelModes.getList[0] : LocalUserInfoManager.getLocalUser.prefTravelMode;
   List<DropdownMenuItem> items = [];
 
-  //renders data required for dropdown menu
+  ///Renders data required for the dropdown menu.
   loadTiles() {
     for (String mode in TravelModes.getList) {
       DropdownMenuItem item = DropdownMenuItem(
@@ -151,7 +156,7 @@ class FirstStartModel extends Model {
     }
   }
 
-  //visually update
+  ///visually update focus for the dropdown menu
   updateDropdownValue(val) {
     setViewState(() => dropdownButtonValue = val);
   }

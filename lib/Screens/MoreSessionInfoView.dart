@@ -5,12 +5,14 @@ import 'package:meetpoint/Managers/SessionManager_Client.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:photo_view/photo_view.dart';
 
+///Represents the [View] portion of the More Session Info View.
 class MoreSessionInfoView extends View<MoreSessionInfoController>{
   MoreSessionInfoView(c) : super(controller: c);
   static BuildContext viewContext;
 
+  ///Builds up [Widget] tree of view.
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context)  {
     viewContext = context;
 
     return Scaffold(
@@ -76,9 +78,11 @@ class MoreSessionInfoView extends View<MoreSessionInfoController>{
   }
 }
 
+///Represents the [Controller] portion of the More Session Info View.
 class MoreSessionInfoController extends Controller<MoreSessionInfoModel> {
   MoreSessionInfoController(m) : super(model: m);
 
+  ///Launches the Google Maps App, if available, to the coordinates of the [Meetpoint_Client] on display in the current [MoreSessionInfoView].
   openInMaps() async {
     final List<double> coords = model.meetpoint.coordinates;
     double lat = coords[0];
@@ -91,6 +95,7 @@ class MoreSessionInfoController extends Controller<MoreSessionInfoModel> {
     }
   }
 
+  ///Launches the default mobile browser, if available, with a search query of the [Meetpoint_Client] on display in the current [MoreSessionInfoView].
   searchOnGoogle() async {
     final String searchTerm = '${model.meetpoint.name}';
     final String url = 'https://www.google.com/search?q=${Uri.encodeFull(
@@ -103,6 +108,7 @@ class MoreSessionInfoController extends Controller<MoreSessionInfoModel> {
   }
 }
 
+///Represents the [Model] portion of the More Session Info View.
 class MoreSessionInfoModel extends Model {
   MoreSessionInfoModel(int meetpointIndex) {
     session = SessionManager_Client.getLoadedSession;
@@ -111,6 +117,7 @@ class MoreSessionInfoModel extends Model {
   Session_Client session;
   Meetpoint_Client meetpoint;
 
+  ///Shows error dialog box.
   showErrorDialog(error) {
     showDialog(
         context: MoreSessionInfoView.viewContext,

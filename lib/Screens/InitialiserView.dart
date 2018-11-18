@@ -8,14 +8,17 @@ import 'FirstStartView.dart';
 import 'HomeView.dart';
 import 'package:http/http.dart' as http;
 
+///Represents the [View] portion of the Initialiser View.
 class InitialiserView extends View<InitialiserController> {
   InitialiserView(c) : super(controller : c) {
     view = this;
   }
   static InitialiserView view;
+  ///Toggled to prevent intilialising application twice.
   bool r = true;
   static BuildContext viewContext;
 
+  ///Builds up [Widget] tree of view.
   @override
   Widget build(BuildContext context) {
     viewContext = context;
@@ -54,10 +57,11 @@ class InitialiserView extends View<InitialiserController> {
   }
 }
 
+///Represents the [Controller] portion of the Initialiser View.
 class InitialiserController extends Controller<InitialiserModel> {
   InitialiserController(m) : super(model : m);
 
-  //performs initialising sequence by calling on appropriate managers
+  ///Performs initialising sequence
   initialise() async {
     //load user
     UserDetails_Client user = await LocalUserInfoManager.loadUser();
@@ -93,13 +97,16 @@ class InitialiserController extends Controller<InitialiserModel> {
   }
 }
 
+///Represents the [Model] portion of the Initialiser View.
 class InitialiserModel extends Model {
   String loaderText = 'Loading...';
 
+  ///Changes subtext below application name onscreen to appropriate message
   setLoaderTextTo(String txt) {
     setViewState(() => loaderText = txt);
   }
 
+  ///Shows error dialog box.
   showErrorDialog(error) {
     showDialog(
         context: InitialiserView.viewContext,

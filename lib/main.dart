@@ -3,6 +3,7 @@ import 'package:meetpoint/Screens/InitialiserView.dart';
 import 'package:meetpoint/Managers/SessionManager_Client.dart';
 import 'dart:async';
 
+///Entry point of application.
 void main() {
   print('App starting...');
   runApp(MeetPointApp());
@@ -11,8 +12,10 @@ void main() {
   //runApp(Test2());
 }
 
+///Represents the Meetpoint application.
 class MeetPointApp extends StatelessWidget {
 
+  //Builds the [Widget] tree of the application scaffold.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(

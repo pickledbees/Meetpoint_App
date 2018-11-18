@@ -7,6 +7,7 @@ import 'package:meetpoint/Screens/CreateSessionView.dart';
 import 'package:meetpoint/Screens/JoinSessionView.dart';
 import 'package:meetpoint/Screens/FirstStartView.dart';
 
+///Represents the [View] portion of the Home View.
 class HomeView extends View<HomeController> {
   HomeView(c) : super(controller: c) {
     widget = this;
@@ -14,8 +15,10 @@ class HomeView extends View<HomeController> {
 
   static HomeView widget; //reference to self object for others to access
   static BuildContext viewContext;
+  ///Toggled to trigger lazy refresh of [HomeView]
   static bool refresh = true;
 
+  ///Builds up [Widget] tree of vieww
   @override
   Widget build(BuildContext context) {
     viewContext = context;
@@ -139,11 +142,12 @@ class HomeView extends View<HomeController> {
   }
 }
 
+///Represents the [Controller] portion of the Home View.
 class HomeController extends Controller<HomeModel> {
   HomeController(m) : super(model: m) ;
   bool get isMounted => mounted;
 
-  //navigators
+  ///Navigates user to the [CreateSessionView]
   navigateToCreateSession(BuildContext context) {
     HomeView.refresh = true;
     //navigate to create session view
@@ -153,6 +157,7 @@ class HomeController extends Controller<HomeModel> {
     Navigator.push(context, route,);
   }
 
+  ///Navigates user to the [JoinSessionView]
   navigateToJoinSession(BuildContext context) {
     HomeView.refresh = true;
     //navigate to join session view
@@ -162,6 +167,7 @@ class HomeController extends Controller<HomeModel> {
     Navigator.push(context, route,);
   }
 
+  ///Navigates user to the [FirstStartView]
   navigateToFirstStartView(BuildContext context) {
     HomeView.refresh = true;
     //navigate to first start view
@@ -171,7 +177,7 @@ class HomeController extends Controller<HomeModel> {
     Navigator.pushReplacement(context, route,);
   }
 
-  //reloads the page
+  ///Prompts for a fetching of sessions by calling on the [SessionManager_Client] and refreshes the [HomeView].
   refresh(BuildContext context) async {
     setViewState(() => model.body = Center(child: Text('Refreshing...')));
     try {
@@ -183,13 +189,15 @@ class HomeController extends Controller<HomeModel> {
   }
 }
 
+///Represents the [Model] portion of the Home View.
 class HomeModel extends Model {
-  //default text in place of session tiles
+
+  ///Default [Text] in place of [ListView] of sessions in [HomeView].
   Widget body = Center(
     child: Text('Loading...'),
   );
 
-  //assembles sessions data required for tiled view
+  ///Assembles sessions data required for [ListView] of sessions in [HomeView].
   loadTiles(BuildContext context) {
     List<Session_Client> sessions = SessionManager_Client.getSessions;
     List<ListTile> listTiles = <ListTile>[];
@@ -241,9 +249,10 @@ class HomeModel extends Model {
     }
   }
 
+  ///Shows error dialog box.
   showErrorDialog(error) {
     showDialog(
-        context: SessionView.viewContext,
+        context: HomeView.viewContext,
         builder: (context) {
           return AlertDialog(
             title: Text('Oops!'),

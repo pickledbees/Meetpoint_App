@@ -3,9 +3,11 @@ import 'package:meetpoint/MVC.dart';
 import 'SessionView.dart';
 import 'package:meetpoint/Managers/SessionManager_Client.dart';
 
+///Represents the [View] portion of the Join Session View.
 class JoinSessionView extends View<JoinSessionController> {
   JoinSessionView(c) : super(controller: c);
 
+  ///Builds up [Widget] tree of view.
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -48,15 +50,19 @@ class JoinSessionView extends View<JoinSessionController> {
   }
 }
 
+///Represents the [Controller] portion of the Join Session View.
 class JoinSessionController extends Controller<JoinSessionModel> {
   JoinSessionController(m) : super(model: m);
   TextEditingController fieldController = TextEditingController();
   final formKey = GlobalKey<FormState>();
 
+  ///Checks if the 'Session ID' text field is empty.
   String validate(val) {
     if (val.isEmpty) return 'Please fill in session title';
   }
 
+  ///Requests through [SessionManager_Client] to request for a session join on the server side.
+  ///Navigates user to [SessionView] of joined session on success.
   joinSessionAndNavigateToSession(BuildContext context) async {
 
     if (formKey.currentState.validate()) {
@@ -78,9 +84,11 @@ class JoinSessionController extends Controller<JoinSessionModel> {
   }
 }
 
+///Represents the [Model] portion of the Join Session View.
 class JoinSessionModel extends Model {
   String headerText = 'Key in session ID below';
 
+  ///Changes text prompt above the 'Session ID' text field.
   setHeaderTextTo(String text) {
     setViewState(() => headerText = text);
   }

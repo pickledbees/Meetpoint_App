@@ -11,22 +11,28 @@ import 'package:web_socket_channel/io.dart';
 import 'dart:convert';
 import 'LocalUserInfoManager.dart';
 
-Duration timelag = Duration(milliseconds: 10);
-bool success = true;
-
+///Class that manages the information of the local user
+///Extended by [Meetpoint_Client]
+///@author Lim Han Quan
+///@version 2.3
+///@since 2018-11-13
 class SessionManager_Client {
-  //token to connect to server
-  static String _USERID = null;
-  //currently loaded sessions
+
+  ///Unique token to connect to server.
+  static String _USERID = "hello";
+
+  ///Currently loaded sessions.
   static List<Session_Client> _sessions = [];
+
+  //Current session loaded in view of the user.
   static Session_Client _loadedSession;
-  //read-only
+
   static List<Session_Client> get getSessions => _sessions;
   static Session_Client get getLoadedSession => _loadedSession;
   static String get userId => _USERID;
   static set userId(String userId) => _USERID = userId;
 
-  //returns session index based on session id, returns -1 if not found
+  ///Returns index in [_sessions] list based on session id.
   static int _findSession(String sessionId) {
     //print('finding $sessionId');
     int index;
@@ -41,7 +47,7 @@ class SessionManager_Client {
     return index ?? -1;
   }
 
-  //loads session to be the currently open session
+  ///Loads session to be the currently open session.
   static Session_Client loadSession({@required String sessionId}) {
     //print('opening session $sessionId');
     if (_findSession(sessionId) == -1) throw 'no such session';
@@ -50,7 +56,7 @@ class SessionManager_Client {
     return _loadedSession;
   }
 
-  //fetch sessions from server, returns true if success throws error if failed
+  ///Fetches sessions from server and loads them into [_sessions] list.
   static Future fetchSessions() async {
 
     Map sessions_mapForm = await HttpUtil.postData(
@@ -135,11 +141,12 @@ class SessionManager_Client {
         return;
       }
     } else {
+      print('ds');
       throw 'Failed to fetch your sessions.\n\nYou might not be connected to the Internet.';
     }
-  }//TODO: Await testing with zach
+  }
 
-  //completes to id if success, throws error if failed
+  ///Creates a session on the server side and loads it into [_loadedSession].
   static Future createSession({@required String sessionTitle}) async {
     //creates session on server side
     var createdSession_mapForm = await HttpUtil.postData(
@@ -195,7 +202,7 @@ class SessionManager_Client {
 
   }
 
-  //completes to id if success, throws error if failed
+  ///Joins a session on the server side and loads it into [_loadedSession].
   static Future joinSession({@required String sessionId}) async {
     //check if session is already inside local memory
     if (_findSession(sessionId) != -1) return null;
@@ -278,7 +285,7 @@ class SessionManager_Client {
 
   }
 
-  //completes to boolean true if success, false if processing completed but action failed, throws error if processing failed
+  ///Deletes a session on the server side and removes it from [_sessions] list.
   static Future deleteSession({@required String sessionId}) async {
     //delete session on server
     var response = await HttpUtil.postData(
@@ -302,7 +309,7 @@ class SessionManager_Client {
     }
   }
 
-  //completes to boolean true if success, false if processing completed but action failed, throws error if processing failed
+  ///Requests from the server to save the user.
   static Future saveUser(UserDetails_Client user) async {
     print('saving user...');
     //send save request
@@ -325,7 +332,7 @@ class SessionManager_Client {
     return ok;
   }
 
-  //completes to boolean true if success, false if processing completed but action failed, throws error if processing failed
+  ///Requests a calculation of the currently loaded session from the server.
   static Future calcMeetpoint() async {
     //calculate meetpoint
     var meetpoints_mapform = await HttpUtil.postData(
@@ -374,7 +381,7 @@ class SessionManager_Client {
 
   }
 
-  //completes to boolean true if success, throws error if failed
+  ///Requests an edit of session details.
   static Future requestSessionEdit({
     @required String sessionId,
     @required String field,
@@ -400,57 +407,7 @@ class SessionManager_Client {
     }
   }
 
-  //polls for updates
-  static void poll() async {
-    try {
-      await fetchSessions();
-      if (HomeView.widget?.controller?.model?.mounted ?? false) {
-        HomeView.widget.controller.model.loadTiles(HomeView.viewContext);
-      }
-      Timer(Duration(seconds: 2), poll);
-    } catch (e) {
-      Timer(Duration(seconds: 20), poll);
-      print(e);
-    }
-    //poll for update
-    /*
-    try {
-      var update = await HttpUtil.postData(
-        url: HttpUtil.serverURL,
-        data: {
-          'method': Methods.getUpdate,
-          'data': _USERID,
-        },
-        decode: false,
-      );
-      print('update is $update');
-      //_updateHandler(update);
-      //call for another update
-      Timer(Duration(seconds: 2),poll);
-    } catch (error) {
-      Timer(Duration(seconds: 10),poll);
-    }
-    */
-  }
-
-  //handler for updates
-  static void _updateHandler(Map update) {
-    //return if no updates
-    if (update['result'] == 'X') return;
-
-    //else, process update
-    switch (update['method']) {
-      case Methods.editSession:
-        updateSession(
-          sessionId: update['sessionId'],
-          field: update['field'],
-          value: update['value'],
-        );
-        break;
-    }
-  }
-
-  //local information update
+  ///Edits fields of sessions loaded in [_sessions].
   static void updateSession({
     @required String sessionId,
     @required String field,
@@ -507,6 +464,7 @@ class SessionManager_Client {
   }
 }
 
+///Holder of constants recognised by server to identify fields in a session; used by requestSessionEdit.
 abstract class Field {
   static const String preferredLocationType = 'LT';
   static const String chosenMeetpoint = 'CM';
@@ -516,6 +474,7 @@ abstract class Field {
   static const String user2PreferredTravelMode = 'U2T';
 }
 
+///Holder of constants recognised by server to identify method to invoke.
 abstract class Methods {
   static const String saveUser = 'updateUser';
   static const getSessions = 'getSessions';

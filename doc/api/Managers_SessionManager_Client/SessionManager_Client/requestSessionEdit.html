@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="API docs for the requestSessionEdit method from the SessionManager_Client class, for the Dart programming language.">
+  <title>requestSessionEdit method - SessionManager_Client class - SessionManager_Client library - Dart API</title>
+  <!-- required because all the links are pseudo-absolute -->
+  <base href="../..">
+
+  <link href="https://fonts.googleapis.com/css?family=Source+Code+Pro:500,400i,400,300|Source+Sans+Pro:400,300,700" rel="stylesheet">
+  <link rel="stylesheet" href="static-assets/github.css">
+  <link rel="stylesheet" href="static-assets/styles.css">
+  <link rel="icon" href="static-assets/favicon.png">
+
+</head>
+
+<body>
+
+<div id="overlay-under-drawer"></div>
+
+<header id="title">
+  <button id="sidenav-left-toggle" type="button">&nbsp;</button>
+  <ol class="breadcrumbs gt-separated dark hidden-xs">
+    <li><a href="index.html">meetpoint</a></li>
+    <li><a href="Managers_SessionManager_Client/Managers_SessionManager_Client-library.html">SessionManager_Client</a></li>
+    <li><a href="Managers_SessionManager_Client/SessionManager_Client-class.html">SessionManager_Client</a></li>
+    <li class="self-crumb">requestSessionEdit method</li>
+  </ol>
+  <div class="self-name">requestSessionEdit</div>
+  <form class="search navbar-right" role="search">
+    <input type="text" id="search-box" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+</header>
+
+<main>
+
+  <div class="col-xs-6 col-sm-3 col-md-2 sidebar sidebar-offcanvas-left">
+    <h5>SessionManager_Client class</h5>
+    <ol>
+      <li class="section-title"><a href="Managers_SessionManager_Client/SessionManager_Client-class.html#constructors">Constructors</a></li>
+      <li><a href="Managers_SessionManager_Client/SessionManager_Client/SessionManager_Client.html">SessionManager_Client</a></li>
+    
+      <li class="section-title inherited">
+        <a href="Managers_SessionManager_Client/SessionManager_Client-class.html#instance-properties">Properties</a>
+      </li>
+      <li class="inherited"><a href="Managers_SessionManager_Client/SessionManager_Client/hashCode.html">hashCode</a></li>
+      <li class="inherited"><a href="Managers_SessionManager_Client/SessionManager_Client/runtimeType.html">runtimeType</a></li>
+    
+      <li class="section-title inherited"><a href="Managers_SessionManager_Client/SessionManager_Client-class.html#instance-methods">Methods</a></li>
+      <li class="inherited"><a href="Managers_SessionManager_Client/SessionManager_Client/noSuchMethod.html">noSuchMethod</a></li>
+      <li class="inherited"><a href="Managers_SessionManager_Client/SessionManager_Client/toString.html">toString</a></li>
+    
+      <li class="section-title inherited"><a href="Managers_SessionManager_Client/SessionManager_Client-class.html#operators">Operators</a></li>
+      <li class="inherited"><a href="Managers_SessionManager_Client/SessionManager_Client/operator_equals.html">operator ==</a></li>
+    
+      <li class="section-title"><a href="Managers_SessionManager_Client/SessionManager_Client-class.html#static-properties">Static properties</a></li>
+      <li><a href="Managers_SessionManager_Client/SessionManager_Client/getLoadedSession.html">getLoadedSession</a></li>
+      <li><a href="Managers_SessionManager_Client/SessionManager_Client/getSessions.html">getSessions</a></li>
+      <li><a href="Managers_SessionManager_Client/SessionManager_Client/userId.html">userId</a></li>
+    
+      <li class="section-title"><a href="Managers_SessionManager_Client/SessionManager_Client-class.html#static-methods">Static methods</a></li>
+      <li><a href="Managers_SessionManager_Client/SessionManager_Client/calcMeetpoint.html">calcMeetpoint</a></li>
+      <li><a href="Managers_SessionManager_Client/SessionManager_Client/createSession.html">createSession</a></li>
+      <li><a href="Managers_SessionManager_Client/SessionManager_Client/deleteSession.html">deleteSession</a></li>
+      <li><a href="Managers_SessionManager_Client/SessionManager_Client/fetchSessions.html">fetchSessions</a></li>
+      <li><a href="Managers_SessionManager_Client/SessionManager_Client/joinSession.html">joinSession</a></li>
+      <li><a href="Managers_SessionManager_Client/SessionManager_Client/loadSession.html">loadSession</a></li>
+      <li><a href="Managers_SessionManager_Client/SessionManager_Client/requestSessionEdit.html">requestSessionEdit</a></li>
+      <li><a href="Managers_SessionManager_Client/SessionManager_Client/saveUser.html">saveUser</a></li>
+      <li><a href="Managers_SessionManager_Client/SessionManager_Client/updateSession.html">updateSession</a></li>
+    
+    </ol>
+  </div><!--/.sidebar-offcanvas-->
+
+  <div class="col-xs-12 col-sm-9 col-md-8 main-content">
+    <h1>requestSessionEdit method</h1>
+
+    <section class="multi-line-signature">
+      <span class="returntype">Future</span>
+      <span class="name ">requestSessionEdit</span>
+(<wbr>{<span class="parameter" id="requestSessionEdit-param-sessionId"><span>@required</span> <span class="type-annotation">String</span> <span class="parameter-name">sessionId</span>, </span> <span class="parameter" id="requestSessionEdit-param-field"><span>@required</span> <span class="type-annotation">String</span> <span class="parameter-name">field</span>, </span> <span class="parameter" id="requestSessionEdit-param-value"><span>@required</span> <span class="type-annotation">String</span> <span class="parameter-name">value</span></span> })
+    </section>
+    <section class="desc markdown">
+      <p>Requests an edit of session details.</p>
+    </section>
+    
+    <section class="summary source-code" id="source">
+      <h2><span>Implementation</span> </h2>
+      <pre class="language-dart"><code class="language-dart">static Future requestSessionEdit({
+  @required String sessionId,
+  @required String field,
+  @required String value,
+}) async {
+  &#47;&#47;send edit request
+  var response = await HttpUtil.postData(
+    url: HttpUtil.serverURL,
+    data: {
+      &#39;method&#39; : Methods.editSession,
+      &#39;userId&#39; : _USERID,
+      &#39;sessionId&#39; : sessionId,
+      &#39;field&#39; : field,
+      &#39;value&#39; : value,
+    },
+    decode: true,
+  );
+
+  if (response[&#39;result&#39;] == &#39;O&#39;) {
+    return true;
+  } else {
+    throw &#39;Failed to complete action.\n\nYou might not be connected to the Internet.&#39;;
+  }
+}</code></pre>
+    </section>
+
+  </div> <!-- /.main-content -->
+
+  <div class="col-xs-6 col-sm-6 col-md-2 sidebar sidebar-offcanvas-right">
+  </div><!--/.sidebar-offcanvas-->
+
+</main>
+
+<footer>
+  <span class="no-break">
+    meetpoint 1.0.0+1
+  </span>
+
+</footer>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script src="static-assets/typeahead.bundle.min.js"></script>
+<script src="static-assets/highlight.pack.js"></script>
+<script src="static-assets/URI.js"></script>
+<script src="static-assets/script.js"></script>
+
+
+</body>
+
+</html>
