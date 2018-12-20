@@ -107,7 +107,7 @@ abstract class Model {
 
 
 
-
+/*
 //Usage
 class TestApp extends StatelessWidget {
   @override
@@ -173,4 +173,5 @@ class CounterModel extends Model {
     setViewState(() => _count-=100);
   }
 }
+*/
 

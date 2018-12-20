@@ -6,7 +6,7 @@ bool deployed = true;
 
 abstract class HttpUtil {
   //for easy changing of ip                        //server                                  //me
-  static final String serverURL = deployed ? 'http://192.168.1.120:8080/meetpoint' : 'http://192.168.0.183:3333/';
+  static final String serverURL = deployed ? 'http://10.27.196.9:8080/meetpoint' : 'http://192.168.0.183:3333/';
 
   //returns a map or string depending on 'decode' setting, throw the error code
   ///Sends a POST request to the server and asynchronously returns the response body upon reception of the response.

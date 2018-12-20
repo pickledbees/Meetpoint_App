@@ -19,7 +19,7 @@ import 'LocalUserInfoManager.dart';
 class SessionManager_Client {
 
   ///Unique token to connect to server.
-  static String _USERID = "hello";
+  static String _USERID = null;
 
   ///Currently loaded sessions.
   static List<Session_Client> _sessions = [];
